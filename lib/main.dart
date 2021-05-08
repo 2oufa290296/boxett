@@ -208,99 +208,102 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       child: SafeArea(
         child: Scaffold(
-          body: mainWidget,
-          // floatingActionButtonLocation:
-          //     FloatingActionButtonLocation.centerDocked,
-          extendBody: true,
-          bottomNavigationBar: CustomNavBar(
-            reloadMain: (String categ) {
-              setState(() {
-                homeKey.currentState.refresh(categ);
-              });
-            },
-            // openingCat: (bool open) {
-            //   homeKey.currentState.openingCat(open);
-            // },
-            chatKey: chatKey,
-            height: 50,
-            backgroundColor: Colors.transparent,
-            index: bottomBarIndex,
-            items: <Widget>[
-              Icon(
-                Icons.person,
-                color: color4,
-              ),
-              Icon(
-                Icons.location_on,
-                color: color1,
-              ),
-              Icon(
-                Icons.home,
-                color: color2,
-              ),
-              Icon(
-                Icons.favorite,
-                color: color3,
-              ),
-              Icon(
-                MdiIcons.forum,
-                color: color0,
-              )
-            ],
-            onTap: (index) {
-              switch (index) {
-                case 0:
-                  setState(() {
-                    bottomBarIndex = 0;
-                    mainWidget = Profile();
-                  });
+                  body: Scaffold(
+            body: mainWidget,
+            // floatingActionButtonLocation:
+            //     FloatingActionButtonLocation.centerDocked,
+            
+            extendBody: true,
+            bottomNavigationBar: CustomNavBar(
+              reloadMain: (String categ) {
+                setState(() {
+                  homeKey.currentState.refresh(categ);
+                });
+              },
+              // openingCat: (bool open) {
+              //   homeKey.currentState.openingCat(open);
+              // },
+              chatKey: chatKey,
+              height: 50,
+              backgroundColor: Colors.transparent,
+              index: bottomBarIndex,
+              items: <Widget>[
+                Icon(
+                  Icons.person,
+                  color: color4,
+                ),
+                Icon(
+                  Icons.location_on,
+                  color: color1,
+                ),
+                Icon(
+                  Icons.home,
+                  color: color2,
+                ),
+                Icon(
+                  Icons.favorite,
+                  color: color3,
+                ),
+                Icon(
+                  MdiIcons.forum,
+                  color: color0,
+                )
+              ],
+              onTap: (index) {
+                switch (index) {
+                  case 0:
+                    setState(() {
+                      bottomBarIndex = 0;
+                      mainWidget = Profile();
+                    });
 
-                  break;
+                    break;
 
-                case 1:
-                  setState(() {
-                    bottomBarIndex = 1;
-                    mainWidget = MapsPage();
+                  case 1:
+                    setState(() {
+                      bottomBarIndex = 1;
+                      mainWidget = MapsPage();
 
-                    // mainWidget = Center(child: CircularProgressIndicator());
-                  });
+                      // mainWidget = Center(child: CircularProgressIndicator());
+                    });
 
-                  break;
+                    break;
 
-                case 2:
-                  setState(() {
-                    mainWidget = HomePage(key: homeKey);
-                  });
+                  case 2:
+                    setState(() {
+                      mainWidget = HomePage(key: homeKey);
+                    });
 
-                  break;
+                    break;
 
-                case 3:
-                  setState(() {
-                    bottomBarIndex = 3;
-                    mainWidget = FavPage();
-                  });
+                  case 3:
+                    setState(() {
+                      bottomBarIndex = 3;
+                      mainWidget = FavPage();
+                    });
 
-                  break;
+                    break;
 
-                case 4:
-                  setState(() {
-                    bottomBarIndex = 4;
-                    mainWidget = ChatPage(
-                        key: chatKey,
-                        uid: uid,
-                        profImg: profImg,
-                        backHome: backHome);
-                  });
+                  case 4:
+                    setState(() {
+                      bottomBarIndex = 4;
+                      mainWidget = ChatPage(
+                          key: chatKey,
+                          uid: uid,
+                          profImg: profImg,
+                          backHome: backHome);
+                    });
 
-                  break;
+                    break;
 
-                default:
-                  break;
-              }
-            },
+                  default:
+                    break;
+                }
+              },
+            ),
+            // floatingActionButton:
+            //     Stack(children: <Widget>[BreathingButton(shown)]),
           ),
-          // floatingActionButton:
-          //     Stack(children: <Widget>[BreathingButton(shown)]),
         ),
       ),
     );
