@@ -32,7 +32,6 @@ class ChatPageState extends State<ChatPage> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   ScrollController scrollController;
   double width, height;
-  double bottom = 0;
   int yourMessages = 0;
   int pageMessages = 0;
   Stream stream;
@@ -288,8 +287,7 @@ class ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
-    bottom = WidgetsBinding.instance.window.viewInsets.bottom;
-
+    
     return Scaffold(
       key: chatKey,
       appBar: PreferredSize(
