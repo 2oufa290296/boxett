@@ -1,0 +1,27 @@
+import 'package:flutter/material.dart';
+
+class ProfilePage extends StatefulWidget {
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+
+  
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(children: <Widget>[
+        Column(children: <Widget>[
+          Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.only(bottomRight:Radius.circular(112),
+            )),
+            child:Image.network('')
+          )
+        ],)
+      ],)
+    );
+  }
+}
