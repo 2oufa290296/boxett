@@ -93,9 +93,9 @@ class _AddAddressState extends State<AddAddress>
         resizeToAvoidBottomInset: false,
         body: Stack(children: <Widget>[
           Positioned(
-            top: 80,
+            top: 0,
             left: 0,
-            height: height - 80,
+            height: height ,
             width: width,
             child: showProgressBar
                 ? Center(child:  Container(
