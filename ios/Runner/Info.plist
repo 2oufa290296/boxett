@@ -98,6 +98,8 @@
 		<string>fbshareextension</string>
 	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<key>NSLocationUsageDescription</key>
 	<key>NSLocationAlwaysUsageDescription</key>
 </dict>
 </plist>
