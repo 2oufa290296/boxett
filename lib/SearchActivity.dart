@@ -175,221 +175,124 @@ class _SearchActivityState extends State<SearchActivity>
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Stack(children: <Widget>[
-        showLoading
-            ? Center(
-                child: Container(width: 50, height: 50, child: refreshFlare))
-            : internetError
-                ? Positioned(
-                    height: height,
-                    width: width,
-                    top: 0,
-                    left: 0,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                            margin: EdgeInsets.only(top: 15),
-                            child: Text(
-                              'No Internet Connection',
-                              style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 18,
-                                  ),
-                            )),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(top: 25),
-                              width: width / 3,
-                              height: 30,
-                              clipBehavior: Clip.antiAlias,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Color.fromRGBO(18, 42, 76, 1),
-                                      Color.fromRGBO(5, 150, 197, 1),
-                                      Color.fromRGBO(18, 42, 76, 1),
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  )),
-                              child: Material(
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(4),
+    return SafeArea(
+          child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Stack(children: <Widget>[
+          showLoading
+              ? Center(
+                  child: Container(width: 50, height: 50, child: refreshFlare))
+              : internetError
+                  ? Positioned(
+                      height: height,
+                      width: width,
+                      top: 0,
+                      left: 0,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                              margin: EdgeInsets.only(top: 15),
+                              child: Text(
+                                'No Internet Connection',
+                                style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 18,
+                                    ),
+                              )),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.only(top: 25),
+                                width: width / 3,
+                                height: 30,
                                 clipBehavior: Clip.antiAlias,
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      retrying = true;
-                                    });
-                                    Future.delayed(Duration(milliseconds: 1000),
-                                        () async {
-                                      _loadData(searchText);
-                                    });
-                                  },
-                                  child: Center(
-                                      child: retrying
-                                          ? Container(
-                                              height: 15,
-                                              width: 15,
-                                              child: CircularProgressIndicator(
-                                                valueColor:
-                                                    AlwaysStoppedAnimation(
-                                                        Colors.white),
-                                                strokeWidth: 1,
-                                              ),
-                                            )
-                                          : Text(
-                                              'RETRY',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16),
-                                            )),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Color.fromRGBO(18, 42, 76, 1),
+                                        Color.fromRGBO(5, 150, 197, 1),
+                                        Color.fromRGBO(18, 42, 76, 1),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    )),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(4),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        retrying = true;
+                                      });
+                                      Future.delayed(Duration(milliseconds: 1000),
+                                          () async {
+                                        _loadData(searchText);
+                                      });
+                                    },
+                                    child: Center(
+                                        child: retrying
+                                            ? Container(
+                                                height: 15,
+                                                width: 15,
+                                                child: CircularProgressIndicator(
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation(
+                                                          Colors.white),
+                                                  strokeWidth: 1,
+                                                ),
+                                              )
+                                            : Text(
+                                                'RETRY',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16),
+                                              )),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                : noPrevGifts || noMatches
-                    ? Center(
-                        child: Text(
-                          noMatches
-                              ? 'No matched gifts'
-                              : 'You havent viewed any gifts',
-                          style: TextStyle(color: Colors.white70, fontSize: 18),
-                        ),
-                      )
-                    : Positioned(
-                        top: 100,
-                        left: 0,
-                        child: Container(
-                          height: height - 90,
-                          width: width,
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  : noPrevGifts || noMatches
+                      ? Center(
+                          child: Text(
+                            noMatches
+                                ? 'No matched gifts'
+                                : 'You havent viewed any gifts',
+                            style: TextStyle(color: Colors.white70, fontSize: 18),
+                          ),
+                        )
+                      : Positioned(
+                          top: 100,
+                          left: 0,
                           child: Container(
-                              margin: EdgeInsets.only(left: 3, right: 3),
-                              child: AnimationLimiter(
-                                child: ListView.builder(
-                                    controller: mainListController,
-                                    padding: EdgeInsets.all(0),
-                                    itemCount: searchText.isNotEmpty
-                                        ? searchList.length
-                                        : recentList.length,
-                                    itemBuilder: (context, index) {
-                                      if (searchText.isNotEmpty) {
-                                        if (index == 0) {
-                                          return Column(children: <Widget>[
-                                            Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 40, bottom: 10),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    Expanded(
-                                                        child: Container(
-                                                      child: Divider(
-                                                        color: Colors.grey,
-                                                        height: 10,
-                                                      ),
-                                                      margin: EdgeInsets.only(
-                                                          left: 10.0,
-                                                          right: 10.0),
-                                                    )),
-                                                    Container(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      height: 30,
-                                                      child: Text('Results',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: Colors
-                                                                  .white70)),
-                                                    ),
-                                                    Expanded(
-                                                        child: Container(
-                                                      child: Divider(
-                                                        color: Colors.grey,
-                                                        height: 10,
-                                                      ),
-                                                      margin: EdgeInsets.only(
-                                                          left: 10.0,
-                                                          right:
-                                                              searchText.isEmpty
-                                                                  ? 10.0
-                                                                  : 0),
-                                                    )),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        if (filterOpened) {
-                                                          setState(() {
-                                                            filterOpened =
-                                                                false;
-                                                          });
-                                                        } else {
-                                                          setState(() {
-                                                            filterOpened = true;
-                                                          });
-                                                        }
-                                                      },
-                                                      child: Padding(
-                                                          padding:
-                                                              EdgeInsets.all(5),
-                                                          child: Icon(
-                                                              Icons.filter_list,
-                                                              color:
-                                                                  Colors.white,
-                                                              size: 20)),
-                                                    )
-                                                  ],
-                                                )),
-                                            AnimationConfiguration
-                                                .staggeredList(
-                                                    position: index,
-                                                    duration: const Duration(
-                                                        milliseconds: 375),
-                                                    child: SlideAnimation(
-                                                      verticalOffset: 100.0,
-                                                      child: FadeInAnimation(
-                                                        child: displayCardItem(
-                                                            searchList[index]),
-                                                      ),
-                                                    ))
-                                          ]);
-                                        } else {
-                                          return AnimationConfiguration
-                                              .staggeredList(
-                                                  position: index,
-                                                  duration: const Duration(
-                                                      milliseconds: 375),
-                                                  child: SlideAnimation(
-                                                    verticalOffset: 100.0,
-                                                    child: FadeInAnimation(
-                                                      child: displayCardItem(
-                                                          searchList[index]),
-                                                    ),
-                                                  ));
-                                        }
-                                      } else {
-                                        if (index == 0) {
-                                          return Column(
-                                            children: <Widget>[
+                            height: height - 90,
+                            width: width,
+                            child: Container(
+                                margin: EdgeInsets.only(left: 3, right: 3),
+                                child: AnimationLimiter(
+                                  child: ListView.builder(
+                                      controller: mainListController,
+                                      padding: EdgeInsets.all(0),
+                                      itemCount: searchText.isNotEmpty
+                                          ? searchList.length
+                                          : recentList.length,
+                                      itemBuilder: (context, index) {
+                                        if (searchText.isNotEmpty) {
+                                          if (index == 0) {
+                                            return Column(children: <Widget>[
                                               Container(
                                                   margin: EdgeInsets.only(
                                                       top: 40, bottom: 10),
                                                   child: Row(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
+                                                        CrossAxisAlignment.center,
                                                     children: <Widget>[
                                                       Expanded(
                                                           child: Container(
@@ -405,8 +308,7 @@ class _SearchActivityState extends State<SearchActivity>
                                                         alignment:
                                                             Alignment.center,
                                                         height: 30,
-                                                        child: Text(
-                                                            'Recently Viewed',
+                                                        child: Text('Results',
                                                             style: TextStyle(
                                                                 fontWeight:
                                                                     FontWeight
@@ -422,8 +324,33 @@ class _SearchActivityState extends State<SearchActivity>
                                                         ),
                                                         margin: EdgeInsets.only(
                                                             left: 10.0,
-                                                            right: 10.0),
+                                                            right:
+                                                                searchText.isEmpty
+                                                                    ? 10.0
+                                                                    : 0),
                                                       )),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          if (filterOpened) {
+                                                            setState(() {
+                                                              filterOpened =
+                                                                  false;
+                                                            });
+                                                          } else {
+                                                            setState(() {
+                                                              filterOpened = true;
+                                                            });
+                                                          }
+                                                        },
+                                                        child: Padding(
+                                                            padding:
+                                                                EdgeInsets.all(5),
+                                                            child: Icon(
+                                                                Icons.filter_list,
+                                                                color:
+                                                                    Colors.white,
+                                                                size: 20)),
+                                                      )
                                                     ],
                                                   )),
                                               AnimationConfiguration
@@ -434,373 +361,397 @@ class _SearchActivityState extends State<SearchActivity>
                                                       child: SlideAnimation(
                                                         verticalOffset: 100.0,
                                                         child: FadeInAnimation(
-                                                          child: index ==
-                                                                  recentList
-                                                                          .length -
-                                                                      1
-                                                              ? Column(
-                                                                  children: <
-                                                                      Widget>[
-                                                                    displayCardItem(
-                                                                        recentList[
-                                                                            index]),
-                                                                    Container(
-                                                                      height:
-                                                                          showMore?15:20,
-                                                                      width: showMore?15:width,
-                                                                      child: showMore
-                                                                          ? Center(
-                                                                              child: CircularProgressIndicator(
-                                                                                valueColor: AlwaysStoppedAnimation(
-                                                                                  Colors.white70,
-                                                                                ),
-                                                                                strokeWidth: 1,
-                                                                              ),
-                                                                            )
-                                                                          : Row(children:<Widget>[
-                                                SizedBox(width:10),
-                                                Expanded(child:Divider(color: Colors.grey,height: 10,),),
-                                                Container(margin:EdgeInsets.only(left:10,right:10),child: Text('No More Gifts Available',style:TextStyle(color:Colors.white70))),
-                                                Expanded(child:Divider(color: Colors.grey,height: 10,)),
-                                                  SizedBox(width:10),]),
-
-                                                                      margin:  EdgeInsets.only(
-                                                                              bottom: 20,
-                                                                              top: 5)
-                                                                          
-                                                                    )
-                                                                  ],
-                                                                )
-                                                              : displayCardItem(
-                                                                  recentList[
-                                                                      index]),
+                                                          child: displayCardItem(
+                                                              searchList[index]),
                                                         ),
                                                       ))
-                                            ],
-                                          );
+                                            ]);
+                                          } else {
+                                            return AnimationConfiguration
+                                                .staggeredList(
+                                                    position: index,
+                                                    duration: const Duration(
+                                                        milliseconds: 375),
+                                                    child: SlideAnimation(
+                                                      verticalOffset: 100.0,
+                                                      child: FadeInAnimation(
+                                                        child: displayCardItem(
+                                                            searchList[index]),
+                                                      ),
+                                                    ));
+                                          }
                                         } else {
-                                          return AnimationConfiguration
-                                              .staggeredList(
-                                                  position: index,
-                                                  duration: const Duration(
-                                                      milliseconds: 375),
-                                                  child: SlideAnimation(
-                                                    verticalOffset: 100.0,
-                                                    child: FadeInAnimation(
-                                                      child: index ==
-                                                              recentList
-                                                                      .length -
-                                                                  1
-                                                          ? Column(
-                                                              children: <
-                                                                  Widget>[
-                                                                displayCardItem(
+                                          if (index == 0) {
+                                            return Column(
+                                              children: <Widget>[
+                                                Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 40, bottom: 10),
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Expanded(
+                                                            child: Container(
+                                                          child: Divider(
+                                                            color: Colors.grey,
+                                                            height: 10,
+                                                          ),
+                                                          margin: EdgeInsets.only(
+                                                              left: 10.0,
+                                                              right: 10.0),
+                                                        )),
+                                                        Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          height: 30,
+                                                          child: Text(
+                                                              'Recently Viewed',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .white70)),
+                                                        ),
+                                                        Expanded(
+                                                            child: Container(
+                                                          child: Divider(
+                                                            color: Colors.grey,
+                                                            height: 10,
+                                                          ),
+                                                          margin: EdgeInsets.only(
+                                                              left: 10.0,
+                                                              right: 10.0),
+                                                        )),
+                                                      ],
+                                                    )),
+                                                AnimationConfiguration
+                                                    .staggeredList(
+                                                        position: index,
+                                                        duration: const Duration(
+                                                            milliseconds: 375),
+                                                        child: SlideAnimation(
+                                                          verticalOffset: 100.0,
+                                                          child: FadeInAnimation(
+                                                            child: index ==
+                                                                    recentList
+                                                                            .length -
+                                                                        1
+                                                                ? Column(
+                                                                    children: <
+                                                                        Widget>[
+                                                                      displayCardItem(
+                                                                          recentList[
+                                                                              index]),
+                                                                      Container(
+                                                                        height:
+                                                                            showMore?15:20,
+                                                                        width: showMore?15:width,
+                                                                        child: showMore
+                                                                            ? Center(
+                                                                                child: CircularProgressIndicator(
+                                                                                  valueColor: AlwaysStoppedAnimation(
+                                                                                    Colors.white70,
+                                                                                  ),
+                                                                                  strokeWidth: 1,
+                                                                                ),
+                                                                              )
+                                                                            : Row(children:<Widget>[
+                                                  SizedBox(width:10),
+                                                  Expanded(child:Divider(color: Colors.grey,height: 10,),),
+                                                  Container(margin:EdgeInsets.only(left:10,right:10),child: Text('No More Gifts Available',style:TextStyle(color:Colors.white70))),
+                                                  Expanded(child:Divider(color: Colors.grey,height: 10,)),
+                                                    SizedBox(width:10),]),
+
+                                                                        margin:  EdgeInsets.only(
+                                                                                bottom: 20,
+                                                                                top: 5)
+                                                                            
+                                                                      )
+                                                                    ],
+                                                                  )
+                                                                : displayCardItem(
                                                                     recentList[
                                                                         index]),
-                                                                Container(
-                                                                  height: showMore?15:20,
-                                                                  width: showMore?15:width,
-                                                                  child: showMore
-                                                                      ? Center(
-                                                                          child:
-                                                                              CircularProgressIndicator(
-                                                                            valueColor:
-                                                                                AlwaysStoppedAnimation(
-                                                                              Colors.white70,
+                                                          ),
+                                                        ))
+                                              ],
+                                            );
+                                          } else {
+                                            return AnimationConfiguration
+                                                .staggeredList(
+                                                    position: index,
+                                                    duration: const Duration(
+                                                        milliseconds: 375),
+                                                    child: SlideAnimation(
+                                                      verticalOffset: 100.0,
+                                                      child: FadeInAnimation(
+                                                        child: index ==
+                                                                recentList
+                                                                        .length -
+                                                                    1
+                                                            ? Column(
+                                                                children: <
+                                                                    Widget>[
+                                                                  displayCardItem(
+                                                                      recentList[
+                                                                          index]),
+                                                                  Container(
+                                                                    height: showMore?15:20,
+                                                                    width: showMore?15:width,
+                                                                    child: showMore
+                                                                        ? Center(
+                                                                            child:
+                                                                                CircularProgressIndicator(
+                                                                              valueColor:
+                                                                                  AlwaysStoppedAnimation(
+                                                                                Colors.white70,
+                                                                              ),
+                                                                              strokeWidth:
+                                                                                  1,
                                                                             ),
-                                                                            strokeWidth:
-                                                                                1,
-                                                                          ),
-                                                                        )
-                                                                      :  Row(children:<Widget>[
-                                                SizedBox(width:10),
-                                                Expanded(child:Divider(color: Colors.grey,height: 10,),),
-                                                Container(margin:EdgeInsets.only(left:10,right:10),child: Text('No More Gifts Available',style:TextStyle(color:Colors.white70))),
-                                                Expanded(child:Divider(color: Colors.grey,height: 10,)),
-                                                  SizedBox(width:10),]),
+                                                                          )
+                                                                        :  Row(children:<Widget>[
+                                                  SizedBox(width:10),
+                                                  Expanded(child:Divider(color: Colors.grey,height: 10,),),
+                                                  Container(margin:EdgeInsets.only(left:10,right:10),child: Text('No More Gifts Available',style:TextStyle(color:Colors.white70))),
+                                                  Expanded(child:Divider(color: Colors.grey,height: 10,)),
+                                                    SizedBox(width:10),]),
 
-                                                                  margin:  EdgeInsets.only(
-                                                                          bottom:
-                                                                              20,
-                                                                          top:
-                                                                              5)
-                                                                      
-                                                                )
-                                                              ],
-                                                            )
-                                                          : displayCardItem(
-                                                              recentList[
-                                                                  index]),
-                                                    ),
-                                                  ));
+                                                                    margin:  EdgeInsets.only(
+                                                                            bottom:
+                                                                                20,
+                                                                            top:
+                                                                                5)
+                                                                        
+                                                                  )
+                                                                ],
+                                                              )
+                                                            : displayCardItem(
+                                                                recentList[
+                                                                    index]),
+                                                      ),
+                                                    ));
+                                          }
                                         }
-                                      }
-                                    }),
-                              )),
-                        )),
-        Positioned(
-          left: 0,
-          top: 30,
-          child: SlideTransition(
-            position: dropAnimation,
-            child: Container(
-              height: 100,
-              width: width,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(50),
-                    bottomRight: Radius.circular(50),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      spreadRadius: 1,
-                    )
-                  ],
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color.fromRGBO(18, 42, 76, 1),
-                      Color.fromRGBO(5, 150, 197, 1),
-                      Color.fromRGBO(18, 42, 76, 1)
-                    ],
-                  )),
-            ),
-          ),
-        ),
-        Positioned(
-            top: 180,
-            right: 10,
-            child: AnimatedContainer(
-                duration: Duration(milliseconds: 200),
-                width: filterOpened ? 120 : 0,
-                height: filterOpened ? 130 : 0,
+                                      }),
+                                )),
+                          )),
+          Positioned(
+            left: 0,
+            top: 30,
+            child: SlideTransition(
+              position: dropAnimation,
+              child: Container(
+                height: 100,
+                width: width,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Color(0xFF282828),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(50),
+                      bottomRight: Radius.circular(50),
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: filterOpened
-                            ? Colors.grey.withOpacity(0.5)
-                            : Colors.transparent,
-                        // changes position of shadow
+                        spreadRadius: 1,
                       )
-                    ]),
-                child: Column(
-                  children: <Widget>[
-                    AnimatedContainer(
-                        duration: Duration(milliseconds: 200),
-                        alignment: Alignment.center,
-                        height: filterOpened ? 30 : 0,
-                        child: InkWell(
-                            onTap: () {
-                              filter = 'lowestprice';
-                              filterOpened = false;
-                              if (searchList.isNotEmpty) {
-                                sortedList = searchList.toList();
-                              }
-                              searchList.clear();
-                              setState(() {
-                                showLoading = true;
-                              });
-                              Future.delayed(Duration(milliseconds: 500), () {
-                                sortedList
-                                    .sort((a, b) => a.price.compareTo(b.price));
-                                searchList = sortedList;
-
-                                setState(() {
-                                  showLoading = false;
-                                });
-                              });
-                            },
-                            child: Text('Lowest Price',
-                                style: TextStyle(
-                                    color: filter == 'lowestprice'
-                                        ? Colors.white
-                                        : Colors.white54)))),
-                    Expanded(
-                        child: Divider(
-                      color: Colors.grey,
-                      height: 3,
+                    ],
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color.fromRGBO(18, 42, 76, 1),
+                        Color.fromRGBO(5, 150, 197, 1),
+                        Color.fromRGBO(18, 42, 76, 1)
+                      ],
                     )),
-                    AnimatedContainer(
-                        duration: Duration(milliseconds: 200),
-                        alignment: Alignment.center,
-                        height: filterOpened ? 30 : 0,
-                        child: InkWell(
-                            onTap: () {
-                              filter = 'highestprice';
-                              filterOpened = false;
-                              if (searchList.isNotEmpty) {
-                                sortedList = searchList.toList();
-                              }
-                              searchList.clear();
-                              setState(() {
-                                showLoading = true;
-                              });
-                              Future.delayed(Duration(milliseconds: 500), () {
-                                sortedList
-                                    .sort((a, b) => b.price.compareTo(a.price));
-                                searchList = sortedList;
-
+              ),
+            ),
+          ),
+          Positioned(
+              top: 180,
+              right: 10,
+              child: AnimatedContainer(
+                  duration: Duration(milliseconds: 200),
+                  width: filterOpened ? 120 : 0,
+                  height: filterOpened ? 130 : 0,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Color(0xFF282828),
+                      boxShadow: [
+                        BoxShadow(
+                          color: filterOpened
+                              ? Colors.grey.withOpacity(0.5)
+                              : Colors.transparent,
+                          // changes position of shadow
+                        )
+                      ]),
+                  child: Column(
+                    children: <Widget>[
+                      AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          alignment: Alignment.center,
+                          height: filterOpened ? 30 : 0,
+                          child: InkWell(
+                              onTap: () {
+                                filter = 'lowestprice';
+                                filterOpened = false;
+                                if (searchList.isNotEmpty) {
+                                  sortedList = searchList.toList();
+                                }
+                                searchList.clear();
                                 setState(() {
-                                  showLoading = false;
+                                  showLoading = true;
                                 });
-                              });
-                            },
-                            child: Text('Highest Price',
-                                style: TextStyle(
-                                    color: filter == 'highestprice'
-                                        ? Colors.white
-                                        : Colors.white54)))),
-                    Expanded(
-                        child: Divider(
-                      color: Colors.grey,
-                      height: 3,
-                    )),
-                    AnimatedContainer(
-                        duration: Duration(milliseconds: 200),
-                        alignment: Alignment.center,
-                        height: filterOpened ? 30 : 0,
-                        child: InkWell(
-                            onTap: () {
-                              filter = 'mostrecently';
-                              filterOpened = false;
-                              if (searchList.isNotEmpty) {
-                                sortedList = searchList.toList();
-                              }
-                              searchList.clear();
-                              setState(() {
-                                showLoading = true;
-                              });
-                              Future.delayed(Duration(milliseconds: 500), () {
-                                sortedList
-                                    .sort((a, b) => a.date.compareTo(b.date));
-                                searchList = sortedList;
+                                Future.delayed(Duration(milliseconds: 500), () {
+                                  sortedList
+                                      .sort((a, b) => a.price.compareTo(b.price));
+                                  searchList = sortedList;
 
-                                setState(() {
-                                  showLoading = false;
+                                  setState(() {
+                                    showLoading = false;
+                                  });
                                 });
-                              });
-                            },
-                            child: Text('Most Recently',
-                                style: TextStyle(
-                                    color: filter == 'mostrecently'
-                                        ? Colors.white
-                                        : Colors.white54)))),
-                    Expanded(
-                        child: Divider(
-                      color: Colors.grey,
-                      height: 3,
-                    )),
-                    AnimatedContainer(
-                        duration: Duration(milliseconds: 200),
-                        alignment: Alignment.center,
-                        height: filterOpened ? 30 : 0,
-                        child: InkWell(
-                            onTap: () {
-                              filter = 'highestrate';
-                              filterOpened = false;
-                              if (searchList.isNotEmpty) {
-                                sortedList = searchList.toList();
-                              }
-                              searchList.clear();
-                              setState(() {
-                                showLoading = true;
-                              });
-                              Future.delayed(Duration(milliseconds: 500), () {
-                                sortedList.sort((a, b) {
-                                  if (a.rate == null && b.rate == null) {
-                                    return 0;
-                                  } else if (a.rate == null) {
-                                    return 0.compareTo(b.rate);
-                                  } else {
-                                    return a.rate.compareTo(0);
-                                  }
-                                });
-                                searchList = sortedList;
-
-                                setState(() {
-                                  showLoading = false;
-                                });
-                              });
-                            },
-                            child: Text('Highest Rate',
-                                style: TextStyle(
-                                    color: filter == 'highestrate'
-                                        ? Colors.white
-                                        : Colors.white54)))),
-                  ],
-                ))),
-        Positioned.fill(
-            child: TestDropdown(key: menuKey, changeIcon: changeIcon)),
-        Positioned(
-          left: 30,
-          top: 30,
-          child: SlideTransition(
-            position: dropAnimation,
-            child: Container(
-                height: 100,
-                padding: EdgeInsets.only(bottom: 10),
-                alignment: Alignment.bottomCenter,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: width - 100,
-                      height: 40,
-                      child: Card(
-                        margin: EdgeInsets.all(0),
-                        clipBehavior: Clip.antiAlias,
-                        color: Color(0xFF282828),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            side: BorderSide(
-                                color: Colors.white,
-                                style: BorderStyle.solid,
-                                width: 1)),
-                        child: new Row(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                  margin: EdgeInsets.only(left: 10, right: 10),
-                                  child: new Icon(
-                                    Icons.search,
-                                    size: 30,
-                                    color: Colors.white70,
-                                  )),
-                              Expanded(
-                                child: TextField(
-                                  cursorColor: Colors.white54,
-                                  onChanged: _onChangeHandler,
-                                  decoration: InputDecoration(
-                                      contentPadding:
-                                          EdgeInsets.only(bottom: 10),
-                                      focusedBorder: InputBorder.none,
-                                      hintText: menuIcon == MdiIcons.gift
-                                          ? 'Search Gifts'
-                                          : menuIcon == Icons.calendar_today
-                                              ? 'Search Occasions'
-                                              : menuIcon ==
-                                                      Icons.store_mall_directory
-                                                  ? 'Search Gift Shops'
-                                                  : 'Search',
-                                      hintStyle: TextStyle(
-                                          color: Colors.white70, fontSize: 20)),
+                              },
+                              child: Text('Lowest Price',
                                   style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              )
-                            ]),
-                      ),
-                    ),
-                    Container(
-                        margin: EdgeInsets.only(left: 5),
+                                      color: filter == 'lowestprice'
+                                          ? Colors.white
+                                          : Colors.white54)))),
+                      Expanded(
+                          child: Divider(
+                        color: Colors.grey,
+                        height: 3,
+                      )),
+                      AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          alignment: Alignment.center,
+                          height: filterOpened ? 30 : 0,
+                          child: InkWell(
+                              onTap: () {
+                                filter = 'highestprice';
+                                filterOpened = false;
+                                if (searchList.isNotEmpty) {
+                                  sortedList = searchList.toList();
+                                }
+                                searchList.clear();
+                                setState(() {
+                                  showLoading = true;
+                                });
+                                Future.delayed(Duration(milliseconds: 500), () {
+                                  sortedList
+                                      .sort((a, b) => b.price.compareTo(a.price));
+                                  searchList = sortedList;
+
+                                  setState(() {
+                                    showLoading = false;
+                                  });
+                                });
+                              },
+                              child: Text('Highest Price',
+                                  style: TextStyle(
+                                      color: filter == 'highestprice'
+                                          ? Colors.white
+                                          : Colors.white54)))),
+                      Expanded(
+                          child: Divider(
+                        color: Colors.grey,
+                        height: 3,
+                      )),
+                      AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          alignment: Alignment.center,
+                          height: filterOpened ? 30 : 0,
+                          child: InkWell(
+                              onTap: () {
+                                filter = 'mostrecently';
+                                filterOpened = false;
+                                if (searchList.isNotEmpty) {
+                                  sortedList = searchList.toList();
+                                }
+                                searchList.clear();
+                                setState(() {
+                                  showLoading = true;
+                                });
+                                Future.delayed(Duration(milliseconds: 500), () {
+                                  sortedList
+                                      .sort((a, b) => a.date.compareTo(b.date));
+                                  searchList = sortedList;
+
+                                  setState(() {
+                                    showLoading = false;
+                                  });
+                                });
+                              },
+                              child: Text('Most Recently',
+                                  style: TextStyle(
+                                      color: filter == 'mostrecently'
+                                          ? Colors.white
+                                          : Colors.white54)))),
+                      Expanded(
+                          child: Divider(
+                        color: Colors.grey,
+                        height: 3,
+                      )),
+                      AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          alignment: Alignment.center,
+                          height: filterOpened ? 30 : 0,
+                          child: InkWell(
+                              onTap: () {
+                                filter = 'highestrate';
+                                filterOpened = false;
+                                if (searchList.isNotEmpty) {
+                                  sortedList = searchList.toList();
+                                }
+                                searchList.clear();
+                                setState(() {
+                                  showLoading = true;
+                                });
+                                Future.delayed(Duration(milliseconds: 500), () {
+                                  sortedList.sort((a, b) {
+                                    if (a.rate == null && b.rate == null) {
+                                      return 0;
+                                    } else if (a.rate == null) {
+                                      return 0.compareTo(b.rate);
+                                    } else {
+                                      return a.rate.compareTo(0);
+                                    }
+                                  });
+                                  searchList = sortedList;
+
+                                  setState(() {
+                                    showLoading = false;
+                                  });
+                                });
+                              },
+                              child: Text('Highest Rate',
+                                  style: TextStyle(
+                                      color: filter == 'highestrate'
+                                          ? Colors.white
+                                          : Colors.white54)))),
+                    ],
+                  ))),
+          Positioned.fill(
+              child: TestDropdown(key: menuKey, changeIcon: changeIcon)),
+          Positioned(
+            left: 30,
+            top: 30,
+            child: SlideTransition(
+              position: dropAnimation,
+              child: Container(
+                  height: 100,
+                  padding: EdgeInsets.only(bottom: 10),
+                  alignment: Alignment.bottomCenter,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: width - 100,
+                        height: 40,
                         child: Card(
-                          elevation: 8,
+                          margin: EdgeInsets.all(0),
                           clipBehavior: Clip.antiAlias,
                           color: Color(0xFF282828),
                           shape: RoundedRectangleBorder(
@@ -809,90 +760,141 @@ class _SearchActivityState extends State<SearchActivity>
                                   color: Colors.white,
                                   style: BorderStyle.solid,
                                   width: 1)),
-                          child: InkWell(
-                            onTap: () {
-                              if (resetTimer == null || !resetTimer.isActive) {
-                                resetTimer =
-                                    Timer(Duration(milliseconds: 1000), () {
-                                  if (clicked) clicked = false;
-                                  if (menuKey.currentState.clicked)
-                                    menuKey.currentState.clicked = false;
-                                  resetTimer.cancel();
-                                });
-                              }
-                              if (!clicked) {
-                                clicked = true;
-                                menuKey.currentState.clicked = true;
-                                if (menuOpened) {
-                                  menuKey.currentState.closeMenu();
-                                  blinkController.forward();
-
-                                  setState(() {
-                                    menuOpened = false;
-                                    // menuWidget = Container(
-                                    //   height: 0,
-                                    // );
-                                  });
-                                } else {
-                                  menuKey.currentState.openMenu();
-                                  blinkController.forward();
-
-                                  setState(() {
-                                    // menuWidget = TestDropdown( key:menuKey,changeIcon:changeIcon);
-                                    menuOpened = true;
+                          child: new Row(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                    margin: EdgeInsets.only(left: 10, right: 10),
+                                    child: new Icon(
+                                      Icons.search,
+                                      size: 30,
+                                      color: Colors.white70,
+                                    )),
+                                Expanded(
+                                  child: TextField(
+                                    cursorColor: Colors.white54,
+                                    onChanged: _onChangeHandler,
+                                    decoration: InputDecoration(
+                                        contentPadding:
+                                            EdgeInsets.only(bottom: 10),
+                                        focusedBorder: InputBorder.none,
+                                        hintText: menuIcon == MdiIcons.gift
+                                            ? 'Search Gifts'
+                                            : menuIcon == Icons.calendar_today
+                                                ? 'Search Occasions'
+                                                : menuIcon ==
+                                                        Icons.store_mall_directory
+                                                    ? 'Search Gift Shops'
+                                                    : 'Search',
+                                        hintStyle: TextStyle(
+                                            color: Colors.white70, fontSize: 20)),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                )
+                              ]),
+                        ),
+                      ),
+                      Container(
+                          margin: EdgeInsets.only(left: 5),
+                          child: Card(
+                            elevation: 8,
+                            clipBehavior: Clip.antiAlias,
+                            color: Color(0xFF282828),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                                side: BorderSide(
+                                    color: Colors.white,
+                                    style: BorderStyle.solid,
+                                    width: 1)),
+                            child: InkWell(
+                              onTap: () {
+                                if (resetTimer == null || !resetTimer.isActive) {
+                                  resetTimer =
+                                      Timer(Duration(milliseconds: 1000), () {
+                                    if (clicked) clicked = false;
+                                    if (menuKey.currentState.clicked)
+                                      menuKey.currentState.clicked = false;
+                                    resetTimer.cancel();
                                   });
                                 }
-                              }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: AnimatedSwitcher(
-                                transitionBuilder: (Widget child,
-                                    Animation<double> animation) {
-                                  return ScaleTransition(
-                                    scale: blinkAnimation,
-                                    child: child,
-                                  );
-                                },
-                                duration: Duration(milliseconds: 250),
-                                child: menuOpened
-                                    ? Container(
-                                        width: 30,
-                                        height: 30,
-                                        child: Icon(Icons.close,
-                                            color: Colors.white70, size: 20))
-                                    : Container(
-                                        height: 30,
-                                        width: 30,
-                                        child: Icon(menuIcon,
-                                            color: Colors.white70, size: 25),
-                                      ),
+                                if (!clicked) {
+                                  clicked = true;
+                                  menuKey.currentState.clicked = true;
+                                  if (menuOpened) {
+                                    menuKey.currentState.closeMenu();
+                                    blinkController.forward();
+
+                                    setState(() {
+                                      menuOpened = false;
+                                      // menuWidget = Container(
+                                      //   height: 0,
+                                      // );
+                                    });
+                                  } else {
+                                    menuKey.currentState.openMenu();
+                                    blinkController.forward();
+
+                                    setState(() {
+                                      // menuWidget = TestDropdown( key:menuKey,changeIcon:changeIcon);
+                                      menuOpened = true;
+                                    });
+                                  }
+                                }
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: AnimatedSwitcher(
+                                  transitionBuilder: (Widget child,
+                                      Animation<double> animation) {
+                                    return ScaleTransition(
+                                      scale: blinkAnimation,
+                                      child: child,
+                                    );
+                                  },
+                                  duration: Duration(milliseconds: 250),
+                                  child: menuOpened
+                                      ? Container(
+                                          width: 30,
+                                          height: 30,
+                                          child: Icon(Icons.close,
+                                              color: Colors.white70, size: 20))
+                                      : Container(
+                                          height: 30,
+                                          width: 30,
+                                          child: Icon(menuIcon,
+                                              color: Colors.white70, size: 25),
+                                        ),
+                                ),
                               ),
                             ),
-                          ),
-                        ))
-                  ],
-                )),
+                          ))
+                    ],
+                  )),
+            ),
           ),
-        ),
-        Positioned(
-            left: (width / 2) - 15,
-            top: 35,
-            height: 30,
-            width: 30,
-            child: SlideTransition(
-              position: dropAnimation,
-              child: InkWell(
-                  onTap: () {
-                    dropController.reverse();
-                    Future.delayed(Duration(milliseconds: 500), () {
-                      Navigator.pop(context);
-                    });
-                  },
-                  child: Icon(Icons.keyboard_arrow_up,
-                      color: Colors.white70, size: 30)),
-            )),
-      ]),
+          Positioned(
+              left: (width / 2) - 15,
+              top: 35,
+              height: 30,
+              width: 30,
+              child: SlideTransition(
+                position: dropAnimation,
+                child: InkWell(
+                    onTap: () {
+                      dropController.reverse();
+                      Future.delayed(Duration(milliseconds: 500), () {
+                        Navigator.pop(context);
+                      });
+                    },
+                    child: Icon(Icons.keyboard_arrow_up,
+                        color: Colors.white70, size: 30)),
+              )),
+        ]),
+      ),
     );
   }
 
