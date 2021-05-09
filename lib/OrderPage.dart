@@ -186,531 +186,669 @@ selected=widget.selection[0];
         total = widget.price + delivery + widget.boxetPackaging;
       }
     }
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: PreferredSize(
-          child: Container(
-              height: 50,
-              margin: EdgeInsets.only(top: 30),
-              child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                      margin: EdgeInsets.only(left: 20),
-                      child: Icon(Icons.arrow_back_ios, color: Colors.white)),
-                ),
-                Container(
-                    margin: EdgeInsets.only(left: 15),
-                    child: Text('Order Details',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontFamily: "Lobster",
-                            letterSpacing: 1)))
-              ]),
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color.fromRGBO(18, 42, 76, 1),
-                  Color.fromRGBO(5, 150, 197, 1),
-                  Color.fromRGBO(18, 42, 76, 1),
-                ],
-              ))),
-          preferredSize: Size(width, 50)),
-      body: loading
-          ? Center(
-              child: Container(
-                  width: 50,
-                  height: 50,
-                  child: FlareActor(
-                    'assets/loading.flr',
-                    animation: 'Loading',
-                  )))
-          : SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Card(
-                    color: Color(0xFF232323),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        Card(
-                            color: Colors.transparent,
-                            margin: EdgeInsets.only(
-                                left: 10, top: 10, bottom: 10, right: 10),
-                            clipBehavior: Clip.antiAlias,
-                            child: CachedNetworkImage(
-                              imageUrl: widget.mainImg,
-                              fit: BoxFit.fill,
-                              height: 100,
-                              width: 100,
-                              progressIndicatorBuilder:
-                                  (context, url, progress) {
-                                return Shimmer.fromColors(
-                                  enabled: true,
-                                  child: Container(
-                                      height: 100,
-                                      width: 100,
-                                      color: Color(0xFF282828)),
-                                  baseColor: Color(0xFF282828),
-                                  highlightColor: Color(0xFF383838),
-                                );
-                              },
-                            )),
-                        Expanded(
-                          child: Container(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                    margin: EdgeInsets.only(bottom: 15),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(widget.giftName,
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontFamily: "Lobster",
-                                                letterSpacing: 2)),
-                                        widget.rate != null && widget.rate != 0
-                                            ? Container(
-                                                margin: EdgeInsets.only(top: 5),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    Container(
-                                                      child: SmoothStarRating(
-                                                        allowHalfRating: true,
-                                                        color:
-                                                            Colors.yellow[700],
-                                                        defaultIconData:
-                                                            Icons.star,
-                                                        borderColor:
-                                                            Color(0xFF484848),
-                                                        isReadOnly: true,
-                                                        size: 18,
-                                                        rating: widget.rate,
-                                                      ),
-                                                    ),
-                                                    widget.reviews != null &&
-                                                            widget.reviews != 0
-                                                        ? Text(
-                                                            ' (' +
-                                                                widget.reviews
-                                                                    .toString() +
-                                                                ')',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white))
-                                                        : Container(
-                                                            height: 0, width: 0)
-                                                  ],
-                                                ))
-                                            : Container(height: 0, width: 0),
-                                      ],
-                                    )),
-                                Container(
-                                  padding: EdgeInsets.only(left: 10, right: 10),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Container(
-                                            child: Text('Seller',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ),
-                                          Container(
-                                              child: Text(widget.giftShop,
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.white,
-                                                  )))
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Container(
-                                            child: Text('Price',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ),
-                                          Container(
-                                              child: Text(
-                                                  widget.price.toString() +
-                                                      ' LE',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.white,
-                                                  )))
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                // Row(
-                                //   mainAxisSize: MainAxisSize.max,
-                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //   children: <Widget>[
-                                //     Container(
-                                //       child: Text('Total ',
-                                //           style: TextStyle(
-                                //             fontSize: 16,
-                                //             color: Colors.white,
-                                //           )),
-                                //     ),
-                                //     Container(
-                                //         child: Text(total.toString() + ' LE',
-                                //             style: TextStyle(
-                                //               fontSize: 16,
-                                //               color: Colors.white,
-                                //             )))
-                                //   ],
-                                // ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+    return SafeArea(
+          child: Scaffold(
+        key: _scaffoldKey,
+        appBar: PreferredSize(
+            child: Container(
+                height: 50,
+                margin: EdgeInsets.only(top: 30),
+                child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                        margin: EdgeInsets.only(left: 20),
+                        child: Icon(Icons.arrow_back_ios, color: Colors.white)),
                   ),
-                  widget.selection!=null && widget.selection.isNotEmpty?Card(
+                  Container(
+                      margin: EdgeInsets.only(left: 15),
+                      child: Text('Order Details',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontFamily: "Lobster",
+                              letterSpacing: 1)))
+                ]),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color.fromRGBO(18, 42, 76, 1),
+                    Color.fromRGBO(5, 150, 197, 1),
+                    Color.fromRGBO(18, 42, 76, 1),
+                  ],
+                ))),
+            preferredSize: Size(width, 50)),
+        body: loading
+            ? Center(
+                child: Container(
+                    width: 50,
+                    height: 50,
+                    child: FlareActor(
+                      'assets/loading.flr',
+                      animation: 'Loading',
+                    )))
+            : SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Card(
                       color: Color(0xFF232323),
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                  child: Text('Select Gift',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold))),
-                              Container(
-                                  margin: EdgeInsets.only(top: 10),
-                                  
-                                  height: 100,
-                                  child: ListView.builder(scrollDirection: Axis.horizontal,
-                                      itemCount: widget.selection.length,
-                                      itemBuilder: (context, index) {
-                                        return InkWell(onTap:(){
-                                          setState((){selected=widget.selection[index];});
-                                        },
-                                                                                  child: Container(foregroundDecoration:selected==widget.selection[index] ?BoxDecoration(border: Border.all(color:Colors.white,width:2),borderRadius:BorderRadius.circular(4)):null,
-                                            width:100,
-                                            height: 100,
-                                            child: Card(clipBehavior: Clip.antiAlias,margin:EdgeInsets.all(1),
-                                              child: CachedNetworkImage(
-                                                      imageUrl:
-                                                          widget.selection[index],
-                                                      fit: BoxFit.cover),
-                                            ),
-                                          ),
-                                        );
-                                      }))
-                            ]),
-                      )):Container(),
-                  (widget.shopPackagingFree == null ||
-                              widget.shopPackagingFree == "") &&
-                          (widget.shopPackagingImg == null ||
-                              widget.shopPackagingImg == "") &&
-                          (widget.boxetPackaging == null ||
-                              widget.boxetPackaging == 0)
-                      ? Container()
-                      : Card(
-                          color: Color(0xFF232323),
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Card(
+                              color: Colors.transparent,
+                              margin: EdgeInsets.only(
+                                  left: 10, top: 10, bottom: 10, right: 10),
+                              clipBehavior: Clip.antiAlias,
+                              child: CachedNetworkImage(
+                                imageUrl: widget.mainImg,
+                                fit: BoxFit.fill,
+                                height: 100,
+                                width: 100,
+                                progressIndicatorBuilder:
+                                    (context, url, progress) {
+                                  return Shimmer.fromColors(
+                                    enabled: true,
+                                    child: Container(
+                                        height: 100,
+                                        width: 100,
+                                        color: Color(0xFF282828)),
+                                    baseColor: Color(0xFF282828),
+                                    highlightColor: Color(0xFF383838),
+                                  );
+                                },
+                              )),
+                          Expanded(
+                            child: Container(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Container(
-                                      child: Text('Wrapping',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold))),
+                                      margin: EdgeInsets.only(bottom: 15),
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(widget.giftName,
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: "Lobster",
+                                                  letterSpacing: 2)),
+                                          widget.rate != null && widget.rate != 0
+                                              ? Container(
+                                                  margin: EdgeInsets.only(top: 5),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      Container(
+                                                        child: SmoothStarRating(
+                                                          allowHalfRating: true,
+                                                          color:
+                                                              Colors.yellow[700],
+                                                          defaultIconData:
+                                                              Icons.star,
+                                                          borderColor:
+                                                              Color(0xFF484848),
+                                                          isReadOnly: true,
+                                                          size: 18,
+                                                          rating: widget.rate,
+                                                        ),
+                                                      ),
+                                                      widget.reviews != null &&
+                                                              widget.reviews != 0
+                                                          ? Text(
+                                                              ' (' +
+                                                                  widget.reviews
+                                                                      .toString() +
+                                                                  ')',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white))
+                                                          : Container(
+                                                              height: 0, width: 0)
+                                                    ],
+                                                  ))
+                                              : Container(height: 0, width: 0),
+                                        ],
+                                      )),
                                   Container(
-                                    margin: EdgeInsets.only(top: 10),
-                                    height: 25,
-                                    child: ListView(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.horizontal,
+                                    padding: EdgeInsets.only(left: 10, right: 10),
+                                    child: Column(
                                       children: <Widget>[
-                                        widget.shopPackagingFree != null &&
-                                                widget.shopPackagingFree != ""
-                                            ? InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    if (normalPackaging != 0) {
-                                                      normalPackaging = 0;
-                                                    }
-                                                  });
-                                                },
-                                                child: normalPackaging == 0
-                                                    ? Container(
-                                                        padding:
-                                                            EdgeInsets.all(2),
-                                                        child: Icon(
-                                                          Icons.check,
-                                                          color: Colors.white,
-                                                          size: 20,
-                                                        ),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: Color.fromRGBO(
-                                                              5, 150, 197, 1),
-                                                        ),
-                                                      )
-                                                    : Container(
-                                                        padding:
-                                                            EdgeInsets.all(2),
-                                                        child: Container(
-                                                            width: 18,
-                                                            height: 18),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(22),
-                                                          border: Border.all(
-                                                              width: 1,
-                                                              color: Colors
-                                                                  .white70),
-                                                        )),
-                                              )
-                                            : Container(),
-                                        widget.shopPackagingFree != null &&
-                                                widget.shopPackagingFree != ""
-                                            ? Container(
-                                                alignment: Alignment.center,
-                                                margin:
-                                                    EdgeInsets.only(left: 5),
-                                                child: Text('Normal Wrapping',
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Container(
+                                              child: Text('Seller',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                            ),
+                                            Container(
+                                                child: Text(widget.giftShop,
                                                     style: TextStyle(
-                                                        color:
-                                                            normalPackaging == 0
-                                                                ? Colors.white
-                                                                : Colors
-                                                                    .white70,
-                                                        fontSize: 14)))
-                                            : Container(),
-                                        widget.shopPackagingImg != null &&
-                                                widget.shopPackagingImg != ""
-                                            ? InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    if (normalPackaging != 1) {
-                                                      normalPackaging = 1;
-                                                    }
-                                                  });
-                                                },
-                                                child: normalPackaging == 1
-                                                    ? Container(
-                                                        margin: EdgeInsets.only(
-                                                            left: 10),
-                                                        padding:
-                                                            EdgeInsets.all(2),
-                                                        child: Icon(
-                                                          Icons.check,
-                                                          color: Colors.white,
-                                                          size: 20,
-                                                        ),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: Color.fromRGBO(
-                                                              5, 150, 197, 1),
-                                                        ),
-                                                      )
-                                                    : Container(
-                                                        padding:
-                                                            EdgeInsets.all(2),
-                                                        margin: EdgeInsets.only(
-                                                            left: 10),
-                                                        child: Container(
-                                                            width: 18,
-                                                            height: 18),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(22),
-                                                          border: Border.all(
-                                                              width: 1,
-                                                              color: Colors
-                                                                  .white70),
-                                                        )),
-                                              )
-                                            : Container(),
-                                        widget.shopPackagingImg != null &&
-                                                widget.shopPackagingImg != ""
-                                            ? Container(
-                                                alignment: Alignment.center,
-                                                child: Text('Shop Wrapping',
+                                                      fontSize: 16,
+                                                      color: Colors.white,
+                                                    )))
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Container(
+                                              child: Text('Price',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                            ),
+                                            Container(
+                                                child: Text(
+                                                    widget.price.toString() +
+                                                        ' LE',
                                                     style: TextStyle(
-                                                        color:
-                                                            normalPackaging == 1
-                                                                ? Colors.white70
-                                                                : Colors
-                                                                    .white)),
-                                                margin:
-                                                    EdgeInsets.only(left: 5))
-                                            : Container(),
-                                        widget.boxetPackaging != null &&
-                                                widget.boxetPackaging != 0
-                                            ? InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    if (normalPackaging != 2) {
-                                                      normalPackaging = 2;
-                                                    }
-                                                  });
-                                                },
-                                                child: normalPackaging == 2
-                                                    ? Container(
-                                                        margin: EdgeInsets.only(
-                                                            left: 10),
-                                                        padding:
-                                                            EdgeInsets.all(2),
-                                                        child: Icon(
-                                                          Icons.check,
-                                                          color: Colors.white,
-                                                          size: 20,
-                                                        ),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: Color.fromRGBO(
-                                                              5, 150, 197, 1),
-                                                        ),
-                                                      )
-                                                    : Container(
-                                                        padding:
-                                                            EdgeInsets.all(2),
-                                                        margin: EdgeInsets.only(
-                                                            left: 10),
-                                                        child: Container(
-                                                            width: 18,
-                                                            height: 18),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(22),
-                                                          border: Border.all(
-                                                              width: 1,
-                                                              color: Colors
-                                                                  .white70),
-                                                        )),
-                                              )
-                                            : Container(),
-                                        widget.boxetPackaging != null &&
-                                                widget.boxetPackaging != 0
-                                            ? Container(
-                                                alignment: Alignment.center,
-                                                child: Text('Boxet Wrapping',
+                                                      fontSize: 16,
+                                                      color: Colors.white,
+                                                    )))
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // Row(
+                                  //   mainAxisSize: MainAxisSize.max,
+                                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  //   children: <Widget>[
+                                  //     Container(
+                                  //       child: Text('Total ',
+                                  //           style: TextStyle(
+                                  //             fontSize: 16,
+                                  //             color: Colors.white,
+                                  //           )),
+                                  //     ),
+                                  //     Container(
+                                  //         child: Text(total.toString() + ' LE',
+                                  //             style: TextStyle(
+                                  //               fontSize: 16,
+                                  //               color: Colors.white,
+                                  //             )))
+                                  //   ],
+                                  // ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    widget.selection!=null && widget.selection.isNotEmpty?Card(
+                        color: Color(0xFF232323),
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                    child: Text('Select Gift',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold))),
+                                Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    
+                                    height: 100,
+                                    child: ListView.builder(scrollDirection: Axis.horizontal,
+                                        itemCount: widget.selection.length,
+                                        itemBuilder: (context, index) {
+                                          return InkWell(onTap:(){
+                                            setState((){selected=widget.selection[index];});
+                                          },
+                                                                                    child: Container(foregroundDecoration:selected==widget.selection[index] ?BoxDecoration(border: Border.all(color:Colors.white,width:2),borderRadius:BorderRadius.circular(4)):null,
+                                              width:100,
+                                              height: 100,
+                                              child: Card(clipBehavior: Clip.antiAlias,margin:EdgeInsets.all(1),
+                                                child: CachedNetworkImage(
+                                                        imageUrl:
+                                                            widget.selection[index],
+                                                        fit: BoxFit.cover),
+                                              ),
+                                            ),
+                                          );
+                                        }))
+                              ]),
+                        )):Container(),
+                    (widget.shopPackagingFree == null ||
+                                widget.shopPackagingFree == "") &&
+                            (widget.shopPackagingImg == null ||
+                                widget.shopPackagingImg == "") &&
+                            (widget.boxetPackaging == null ||
+                                widget.boxetPackaging == 0)
+                        ? Container()
+                        : Card(
+                            color: Color(0xFF232323),
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                        child: Text('Wrapping',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold))),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 10),
+                                      height: 25,
+                                      child: ListView(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        children: <Widget>[
+                                          widget.shopPackagingFree != null &&
+                                                  widget.shopPackagingFree != ""
+                                              ? InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (normalPackaging != 0) {
+                                                        normalPackaging = 0;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: normalPackaging == 0
+                                                      ? Container(
+                                                          padding:
+                                                              EdgeInsets.all(2),
+                                                          child: Icon(
+                                                            Icons.check,
+                                                            color: Colors.white,
+                                                            size: 20,
+                                                          ),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            color: Color.fromRGBO(
+                                                                5, 150, 197, 1),
+                                                          ),
+                                                        )
+                                                      : Container(
+                                                          padding:
+                                                              EdgeInsets.all(2),
+                                                          child: Container(
+                                                              width: 18,
+                                                              height: 18),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(22),
+                                                            border: Border.all(
+                                                                width: 1,
+                                                                color: Colors
+                                                                    .white70),
+                                                          )),
+                                                )
+                                              : Container(),
+                                          widget.shopPackagingFree != null &&
+                                                  widget.shopPackagingFree != ""
+                                              ? Container(
+                                                  alignment: Alignment.center,
+                                                  margin:
+                                                      EdgeInsets.only(left: 5),
+                                                  child: Text('Normal Wrapping',
+                                                      style: TextStyle(
+                                                          color:
+                                                              normalPackaging == 0
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .white70,
+                                                          fontSize: 14)))
+                                              : Container(),
+                                          widget.shopPackagingImg != null &&
+                                                  widget.shopPackagingImg != ""
+                                              ? InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (normalPackaging != 1) {
+                                                        normalPackaging = 1;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: normalPackaging == 1
+                                                      ? Container(
+                                                          margin: EdgeInsets.only(
+                                                              left: 10),
+                                                          padding:
+                                                              EdgeInsets.all(2),
+                                                          child: Icon(
+                                                            Icons.check,
+                                                            color: Colors.white,
+                                                            size: 20,
+                                                          ),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            color: Color.fromRGBO(
+                                                                5, 150, 197, 1),
+                                                          ),
+                                                        )
+                                                      : Container(
+                                                          padding:
+                                                              EdgeInsets.all(2),
+                                                          margin: EdgeInsets.only(
+                                                              left: 10),
+                                                          child: Container(
+                                                              width: 18,
+                                                              height: 18),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(22),
+                                                            border: Border.all(
+                                                                width: 1,
+                                                                color: Colors
+                                                                    .white70),
+                                                          )),
+                                                )
+                                              : Container(),
+                                          widget.shopPackagingImg != null &&
+                                                  widget.shopPackagingImg != ""
+                                              ? Container(
+                                                  alignment: Alignment.center,
+                                                  child: Text('Shop Wrapping',
+                                                      style: TextStyle(
+                                                          color:
+                                                              normalPackaging == 1
+                                                                  ? Colors.white70
+                                                                  : Colors
+                                                                      .white)),
+                                                  margin:
+                                                      EdgeInsets.only(left: 5))
+                                              : Container(),
+                                          widget.boxetPackaging != null &&
+                                                  widget.boxetPackaging != 0
+                                              ? InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (normalPackaging != 2) {
+                                                        normalPackaging = 2;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: normalPackaging == 2
+                                                      ? Container(
+                                                          margin: EdgeInsets.only(
+                                                              left: 10),
+                                                          padding:
+                                                              EdgeInsets.all(2),
+                                                          child: Icon(
+                                                            Icons.check,
+                                                            color: Colors.white,
+                                                            size: 20,
+                                                          ),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            color: Color.fromRGBO(
+                                                                5, 150, 197, 1),
+                                                          ),
+                                                        )
+                                                      : Container(
+                                                          padding:
+                                                              EdgeInsets.all(2),
+                                                          margin: EdgeInsets.only(
+                                                              left: 10),
+                                                          child: Container(
+                                                              width: 18,
+                                                              height: 18),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(22),
+                                                            border: Border.all(
+                                                                width: 1,
+                                                                color: Colors
+                                                                    .white70),
+                                                          )),
+                                                )
+                                              : Container(),
+                                          widget.boxetPackaging != null &&
+                                                  widget.boxetPackaging != 0
+                                              ? Container(
+                                                  alignment: Alignment.center,
+                                                  child: Text('Boxet Wrapping',
+                                                      style: TextStyle(
+                                                          color:
+                                                              normalPackaging == 2
+                                                                  ? Colors.white70
+                                                                  : Colors
+                                                                      .white)),
+                                                  margin:
+                                                      EdgeInsets.only(left: 5))
+                                              : Container()
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                        margin: EdgeInsets.only(top: 10),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.attach_money,
+                                              color: Colors.white,
+                                            ),
+                                            Container(
+                                                child: Text(
+                                                    normalPackaging == 0
+                                                        ? 'Free'
+                                                        : normalPackaging == 1
+                                                            ? widget.shopPackaging
+                                                                    .toString() +
+                                                                ' LE'
+                                                            : widget.boxetPackaging
+                                                                    .toString() +
+                                                                ' LE',
                                                     style: TextStyle(
-                                                        color:
-                                                            normalPackaging == 2
-                                                                ? Colors.white70
-                                                                : Colors
-                                                                    .white)),
-                                                margin:
-                                                    EdgeInsets.only(left: 5))
-                                            : Container()
+                                                      color: normalPackaging == 0
+                                                          ? Colors.green
+                                                          : Colors.white,
+                                                      fontSize: 16,
+                                                    )))
+                                          ],
+                                        )),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 5),
+                                      child: Card(
+                                          color: Color(0xFF232323),
+                                          clipBehavior: Clip.antiAlias,
+                                          child: normalPackaging == 0
+                                              ? Image.network(
+                                                  widget.shopPackagingFree,
+                                                  fit: BoxFit.cover,
+                                                  width: width - 20,
+                                                  height: height / 4,
+                                                )
+                                              : normalPackaging == 1
+                                                  ? Image.network(
+                                                      widget.shopPackagingImg,
+                                                      fit: BoxFit.cover,
+                                                      width: width - 20,
+                                                      height: height / 4,
+                                                    )
+                                                  : Image.asset(
+                                                      'assets/images/qqq.png',
+                                                      fit: BoxFit.contain,
+                                                      width: width - 20,
+                                                      height: height / 4,
+                                                    )),
+                                    )
+                                  ]),
+                            )),
+                    Card(
+                      color: Color(0xFF232323),
+                      child: address != ""
+                          ? Container(
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Container(
+                                            margin: EdgeInsets.only(left: 0),
+                                            child: Text('Delivery Details',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold))),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            new AddAddress()))
+                                                .then((val) => _refresh());
+                                          },
+                                          child: Container(
+                                              child: Text(
+                                            'Change',
+                                            style: TextStyle(
+                                                color: Color.fromRGBO(
+                                                    5, 150, 197, 1),
+                                                fontSize: 16,
+                                                
+                                                fontWeight: FontWeight.bold,
+                                                ),
+                                          )),
+                                        )
                                       ],
                                     ),
                                   ),
                                   Container(
-                                      margin: EdgeInsets.only(top: 10),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.attach_money,
-                                            color: Colors.white,
-                                          ),
-                                          Container(
-                                              child: Text(
-                                                  normalPackaging == 0
-                                                      ? 'Free'
-                                                      : normalPackaging == 1
-                                                          ? widget.shopPackaging
-                                                                  .toString() +
-                                                              ' LE'
-                                                          : widget.boxetPackaging
-                                                                  .toString() +
-                                                              ' LE',
-                                                  style: TextStyle(
-                                                    color: normalPackaging == 0
-                                                        ? Colors.green
-                                                        : Colors.white,
-                                                    fontSize: 16,
-                                                  )))
-                                        ],
-                                      )),
+                                    margin: EdgeInsets.only(top: 10),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Container(
+                                            child: Icon(
+                                          Icons.person,
+                                          color: Colors.white,
+                                          size: 20,
+                                        )),
+                                        Container(
+                                            margin: EdgeInsets.only(left: 10),
+                                            child: Text(customerName,
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                )))
+                                      ],
+                                    ),
+                                  ),
                                   Container(
                                     margin: EdgeInsets.only(top: 5),
-                                    child: Card(
-                                        color: Color(0xFF232323),
-                                        clipBehavior: Clip.antiAlias,
-                                        child: normalPackaging == 0
-                                            ? Image.network(
-                                                widget.shopPackagingFree,
-                                                fit: BoxFit.cover,
-                                                width: width - 20,
-                                                height: height / 4,
-                                              )
-                                            : normalPackaging == 1
-                                                ? Image.network(
-                                                    widget.shopPackagingImg,
-                                                    fit: BoxFit.cover,
-                                                    width: width - 20,
-                                                    height: height / 4,
-                                                  )
-                                                : Image.asset(
-                                                    'assets/images/qqq.png',
-                                                    fit: BoxFit.contain,
-                                                    width: width - 20,
-                                                    height: height / 4,
-                                                  )),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Container(
+                                            child: Icon(
+                                          Icons.home,
+                                          color: Colors.white,
+                                          size: 20,
+                                        )),
+                                        Container(
+                                            margin: EdgeInsets.only(left: 10),
+                                            child: Text(
+                                                region != "" && region != null
+                                                    ? region + ', ' + city
+                                                    : "",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                )))
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 5),
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: <Widget>[
+                                          Container(
+                                              child: Icon(
+                                            Icons.location_on,
+                                            color: Colors.white,
+                                            size: 20,
+                                          )),
+                                          Container(
+                                              margin: EdgeInsets.only(left: 10),
+                                              child: Text(address,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                  )))
+                                        ]),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 5),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Container(
+                                          child: Icon(
+                                            Icons.phone_android,
+                                            color: Colors.white,
+                                            size: 20,
+                                          ),
+                                        ),
+                                        Container(
+                                            margin: EdgeInsets.only(left: 10),
+                                            child: Text(mobile,
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                )))
+                                      ],
+                                    ),
                                   )
-                                ]),
-                          )),
-                  Card(
-                    color: Color(0xFF232323),
-                    child: address != ""
-                        ? Container(
-                            padding: EdgeInsets.all(10),
-                            child: Column(
-                              children: <Widget>[
+                                ],
+                              ),
+                            )
+                          : Container(
+                              decoration: addressMissed
+                                  ? BoxDecoration(
+                                      color: Color(0xFF232323),
+                                      boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.8),
+                                            spreadRadius: 3,
+                                            blurRadius: 4,
+                                            offset: Offset(0,
+                                                0), // changes position of shadow
+                                          ),
+                                        ])
+                                  : null,
+                              padding: EdgeInsets.all(10),
+                              child: Column(children: <Widget>[
                                 Container(
                                   child: Row(
                                     mainAxisAlignment:
@@ -722,8 +860,7 @@ selected=widget.selection[0];
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 18,
-                                                  fontWeight:
-                                                      FontWeight.bold))),
+                                                  fontWeight: FontWeight.bold))),
                                       InkWell(
                                         onTap: () {
                                           Navigator.push(
@@ -735,731 +872,596 @@ selected=widget.selection[0];
                                         },
                                         child: Container(
                                             child: Text(
-                                          'Change',
+                                          'Add Address',
                                           style: TextStyle(
-                                              color: Color.fromRGBO(
-                                                  5, 150, 197, 1),
+                                              color:
+                                                  Colors.green,
                                               fontSize: 16,
-                                              
                                               fontWeight: FontWeight.bold,
-                                              ),
+                                             ),
                                         )),
                                       )
                                     ],
                                   ),
                                 ),
+                              ])),
+                    ),
+                    Card(
+                        color: Color(0xFF232323),
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                    child: Text('Discount Voucher',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold))),
                                 Container(
                                   margin: EdgeInsets.only(top: 10),
                                   child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Container(
-                                          child: Icon(
-                                        Icons.person,
-                                        color: Colors.white,
-                                        size: 20,
-                                      )),
-                                      Container(
-                                          margin: EdgeInsets.only(left: 10),
-                                          child: Text(customerName,
+                                          width: 0.6 * width,
+                                          child: TextField(
+                                              autofocus: false,
+                                              controller: voucherController,
                                               style: TextStyle(
-                                                color: Colors.white,
-                                              )))
+                                                  color: Colors.white,
+                                                  fontSize: 16),
+                                              cursorColor: Colors.white70,
+                                              decoration: InputDecoration(
+                                                focusedErrorBorder:
+                                                    UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: correctVoucher ==
+                                                                    1
+                                                                ? Colors.green
+                                                                : correctVoucher ==
+                                                                        0
+                                                                    ? Colors.red
+                                                                    : Colors
+                                                                        .transparent)),
+                                                errorBorder: UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: correctVoucher == 1
+                                                            ? Colors.green
+                                                            : correctVoucher == 0
+                                                                ? Colors.red
+                                                                : Colors
+                                                                    .transparent)),
+                                                errorStyle: TextStyle(
+                                                    color: correctVoucher == 1
+                                                        ? Colors.green
+                                                        : correctVoucher == 0
+                                                            ? Colors.red
+                                                            : Colors.transparent),
+                                                errorText: voucherController
+                                                            .text.isNotEmpty &&
+                                                        correctVoucher == 1
+                                                    ? discount.toString() +
+                                                        ' LE Discount Applied'
+                                                    : voucherController.text
+                                                                .isNotEmpty &&
+                                                            correctVoucher == 0
+                                                        ? 'Incorrect Voucher'
+                                                        : null,
+                                                isDense: true,
+                                                hintText: 'Voucher Code',
+                                                focusedBorder:
+                                                    UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.white70)),
+                                                enabledBorder:
+                                                    UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.white70)),
+                                                hintStyle: TextStyle(
+                                                    color: Colors.white70),
+                                              ))),
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            correctVoucher = 2;
+                                            discount = 0;
+                                          });
+                                          if (voucherController.text.isNotEmpty) {
+                                            vouchersList.forEach((element) {
+                                              if (element.voucher ==
+                                                  voucherController.text) {
+                                                discount = element.discount;
+                                              }
+                                            });
+
+                                            if (discount != null &&
+                                                discount != 0) {
+                                              setState(() {
+                                                correctVoucher = 1;
+                                              });
+
+                                              Future.delayed(
+                                                  Duration(milliseconds: 300),
+                                                  () {
+                                                FocusScope.of(context).unfocus();
+                                              });
+                                            } else {
+                                              correctVoucher = 0;
+                                            }
+                                          }
+                                        },
+                                        child: Card(
+                                            margin: EdgeInsets.only(left: 10),
+                                            color: Color(0xFF232323),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text('REDEEM',
+                                                  style: TextStyle(
+                                                      color: Colors.white)),
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              side: BorderSide(
+                                                  color: Colors.white, width: 1),
+                                            )),
+                                      )
                                     ],
                                   ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 5),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(
-                                          child: Icon(
-                                        Icons.home,
-                                        color: Colors.white,
-                                        size: 20,
-                                      )),
-                                      Container(
-                                          margin: EdgeInsets.only(left: 10),
-                                          child: Text(
-                                              region != "" && region != null
-                                                  ? region + ', ' + city
-                                                  : "",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                              )))
-                                    ],
-                                  ),
-                                ),
+                                )
+                              ]),
+                        )),
+                    Card(
+                        color: Color(0xFF232323),
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
                                 Container(
                                   margin: EdgeInsets.only(top: 5),
                                   child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                          MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
                                         Container(
-                                            child: Icon(
-                                          Icons.location_on,
-                                          color: Colors.white,
-                                          size: 20,
-                                        )),
-                                        Container(
-                                            margin: EdgeInsets.only(left: 10),
-                                            child: Text(address,
+                                            child: Text('Subtotal',
                                                 style: TextStyle(
-                                                  color: Colors.white,
-                                                )))
+                                                    color: Colors.white70,
+                                                    fontSize: 16))),
+                                        Container(
+                                            child: Text(
+                                                widget.price.toString() + ' LE',
+                                                style: TextStyle(
+                                                    color: Colors.white70,
+                                                    fontSize: 16)))
                                       ]),
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(top: 5),
                                   child: Row(
-                                    children: <Widget>[
-                                      Container(
-                                        child: Icon(
-                                          Icons.phone_android,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                      ),
-                                      Container(
-                                          margin: EdgeInsets.only(left: 10),
-                                          child: Text(mobile,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                              )))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        : Container(
-                            decoration: addressMissed
-                                ? BoxDecoration(
-                                    color: Color(0xFF232323),
-                                    boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.8),
-                                          spreadRadius: 3,
-                                          blurRadius: 4,
-                                          offset: Offset(0,
-                                              0), // changes position of shadow
-                                        ),
-                                      ])
-                                : null,
-                            padding: EdgeInsets.all(10),
-                            child: Column(children: <Widget>[
-                              Container(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Container(
+                                            child: Text('Delivery',
+                                                style: TextStyle(
+                                                    color: Colors.white70,
+                                                    fontSize: 16))),
+                                        Container(
+                                            child: Text(
+                                                delivery.toString() + ' LE',
+                                                style: TextStyle(
+                                                    color: Colors.white70,
+                                                    fontSize: 16)))
+                                      ]),
+                                ),
+                                normalPackaging == 1 && widget.shopPackaging != 0
+                                    ? Container(
+                                        margin: EdgeInsets.only(top: 5),
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Container(
+                                                  child: Text('Shop Wrapping',
+                                                      style: TextStyle(
+                                                          color: Colors.white70,
+                                                          fontSize: 16))),
+                                              Container(
+                                                  child: Text(
+                                                      widget.shopPackaging
+                                                              .toString() +
+                                                          ' LE',
+                                                      style: TextStyle(
+                                                          color: Colors.white70,
+                                                          fontSize: 16)))
+                                            ]),
+                                      )
+                                    : normalPackaging == 2 &&
+                                            widget.boxetPackaging != 0
+                                        ? Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  Container(
+                                                      child: Text(
+                                                          'Boxet Wrapping',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white70,
+                                                              fontSize: 16))),
+                                                  Container(
+                                                      child: Text(
+                                                          widget.boxetPackaging
+                                                                  .toString() +
+                                                              ' LE',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white70,
+                                                              fontSize: 16)))
+                                                ]),
+                                          )
+                                        : Container(height: 0, width: 0),
+                                correctVoucher == 1
+                                    ? Container(
+                                        margin: EdgeInsets.only(top: 5),
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Container(
+                                                  child: Text('Discount',
+                                                      style: TextStyle(
+                                                          color: Colors.green,
+                                                          fontSize: 16))),
+                                              Container(
+                                                  child: Text(
+                                                      '- ' +
+                                                          discount.toString() +
+                                                          ' LE',
+                                                      style: TextStyle(
+                                                          color: Colors.green,
+                                                          fontSize: 16)))
+                                            ]),
+                                      )
+                                    : Container(height: 0, width: 0),
+                                Container(
+                                    margin: EdgeInsets.only(top: 5),
+                                    child: Row(children: <Widget>[
+                                      Expanded(
+                                          child: Divider(
+                                        color: Colors.grey,
+                                        height: 10,
+                                      ))
+                                    ])),
+                                Container(
+                                  margin: EdgeInsets.only(top: 10),
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Container(
+                                            child: Text('Total',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                   
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18))),
+                                        Container(
+                                            child: Text(total.toString() + ' LE',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold)))
+                                      ]),
+                                ),
+                              ]),
+                        )),
+                    Card(
+                        color: Color(0xFF232323),
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
                                   children: <Widget>[
                                     Container(
-                                        margin: EdgeInsets.only(left: 0),
-                                        child: Text('Delivery Details',
+                                        child: Text('Special Requests ',
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold))),
-                                    InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        new AddAddress()))
-                                            .then((val) => _refresh());
-                                      },
-                                      child: Container(
-                                          child: Text(
-                                        'Add Address',
-                                        style: TextStyle(
-                                            color:
-                                                Colors.green,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                           ),
-                                      )),
-                                    )
+                                    Container(
+                                        child: Text('(optional)',
+                                            style: TextStyle(
+                                                color: Colors.white70,
+                                                fontSize: 18)))
                                   ],
                                 ),
-                              ),
-                            ])),
-                  ),
-                  Card(
-                      color: Color(0xFF232323),
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                  child: Text('Discount Voucher',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold))),
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                Container(
+                                    child: TextField(
+                                        autofocus: false,
+                                        cursorColor: Colors.white70,
+                                        controller: specialController,
+                                        style: TextStyle(color: Colors.white),
+                                        decoration: InputDecoration(
+                                          hintText: 'Type Your Request Here',
+                                          focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.white70)),
+                                          enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.white70)),
+                                          hintStyle:
+                                              TextStyle(color: Colors.white70),
+                                        )))
+                              ]),
+                        )),
+                    Card(
+                        color: Color(0xFF232323),
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
                                   children: <Widget>[
                                     Container(
-                                        width: 0.6 * width,
-                                        child: TextField(
-                                            autofocus: false,
-                                            controller: voucherController,
+                                        child: Text('Delivery Time',
                                             style: TextStyle(
                                                 color: Colors.white,
-                                                fontSize: 16),
-                                            cursorColor: Colors.white70,
-                                            decoration: InputDecoration(
-                                              focusedErrorBorder:
-                                                  UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: correctVoucher ==
-                                                                  1
-                                                              ? Colors.green
-                                                              : correctVoucher ==
-                                                                      0
-                                                                  ? Colors.red
-                                                                  : Colors
-                                                                      .transparent)),
-                                              errorBorder: UnderlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: correctVoucher == 1
-                                                          ? Colors.green
-                                                          : correctVoucher == 0
-                                                              ? Colors.red
-                                                              : Colors
-                                                                  .transparent)),
-                                              errorStyle: TextStyle(
-                                                  color: correctVoucher == 1
-                                                      ? Colors.green
-                                                      : correctVoucher == 0
-                                                          ? Colors.red
-                                                          : Colors.transparent),
-                                              errorText: voucherController
-                                                          .text.isNotEmpty &&
-                                                      correctVoucher == 1
-                                                  ? discount.toString() +
-                                                      ' LE Discount Applied'
-                                                  : voucherController.text
-                                                              .isNotEmpty &&
-                                                          correctVoucher == 0
-                                                      ? 'Incorrect Voucher'
-                                                      : null,
-                                              isDense: true,
-                                              hintText: 'Voucher Code',
-                                              focusedBorder:
-                                                  UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color:
-                                                              Colors.white70)),
-                                              enabledBorder:
-                                                  UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color:
-                                                              Colors.white70)),
-                                              hintStyle: TextStyle(
-                                                  color: Colors.white70),
-                                            ))),
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          correctVoucher = 2;
-                                          discount = 0;
-                                        });
-                                        if (voucherController.text.isNotEmpty) {
-                                          vouchersList.forEach((element) {
-                                            if (element.voucher ==
-                                                voucherController.text) {
-                                              discount = element.discount;
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold))),
+                                  ],
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(top: 10),
+                                  child: Row(
+                                    children: <Widget>[
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            if (delNow == false) {
+                                              delNow = true;
+                                              deliveryTimeLast = DateTime.now()
+                                                  .add(Duration(
+                                                      days: widget.deliveryTime));
                                             }
                                           });
-
-                                          if (discount != null &&
-                                              discount != 0) {
-                                            setState(() {
-                                              correctVoucher = 1;
-                                            });
-
-                                            Future.delayed(
-                                                Duration(milliseconds: 300),
-                                                () {
-                                              FocusScope.of(context).unfocus();
-                                            });
-                                          } else {
-                                            correctVoucher = 0;
-                                          }
-                                        }
-                                      },
-                                      child: Card(
-                                          margin: EdgeInsets.only(left: 10),
-                                          color: Color(0xFF232323),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text('REDEEM',
-                                                style: TextStyle(
-                                                    color: Colors.white)),
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            side: BorderSide(
-                                                color: Colors.white, width: 1),
-                                          )),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ]),
-                      )),
-                  Card(
-                      color: Color(0xFF232323),
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(top: 5),
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Container(
-                                          child: Text('Subtotal',
-                                              style: TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: 16))),
-                                      Container(
-                                          child: Text(
-                                              widget.price.toString() + ' LE',
-                                              style: TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: 16)))
-                                    ]),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 5),
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Container(
-                                          child: Text('Delivery',
-                                              style: TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: 16))),
-                                      Container(
-                                          child: Text(
-                                              delivery.toString() + ' LE',
-                                              style: TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: 16)))
-                                    ]),
-                              ),
-                              normalPackaging == 1 && widget.shopPackaging != 0
-                                  ? Container(
-                                      margin: EdgeInsets.only(top: 5),
-                                      child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                                child: Text('Shop Wrapping',
-                                                    style: TextStyle(
-                                                        color: Colors.white70,
-                                                        fontSize: 16))),
-                                            Container(
-                                                child: Text(
-                                                    widget.shopPackaging
-                                                            .toString() +
-                                                        ' LE',
-                                                    style: TextStyle(
-                                                        color: Colors.white70,
-                                                        fontSize: 16)))
-                                          ]),
-                                    )
-                                  : normalPackaging == 2 &&
-                                          widget.boxetPackaging != 0
-                                      ? Container(
-                                          margin: EdgeInsets.only(top: 5),
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Container(
-                                                    child: Text(
-                                                        'Boxet Wrapping',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white70,
-                                                            fontSize: 16))),
-                                                Container(
-                                                    child: Text(
-                                                        widget.boxetPackaging
-                                                                .toString() +
-                                                            ' LE',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white70,
-                                                            fontSize: 16)))
-                                              ]),
-                                        )
-                                      : Container(height: 0, width: 0),
-                              correctVoucher == 1
-                                  ? Container(
-                                      margin: EdgeInsets.only(top: 5),
-                                      child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                                child: Text('Discount',
-                                                    style: TextStyle(
-                                                        color: Colors.green,
-                                                        fontSize: 16))),
-                                            Container(
-                                                child: Text(
-                                                    '- ' +
-                                                        discount.toString() +
-                                                        ' LE',
-                                                    style: TextStyle(
-                                                        color: Colors.green,
-                                                        fontSize: 16)))
-                                          ]),
-                                    )
-                                  : Container(height: 0, width: 0),
-                              Container(
-                                  margin: EdgeInsets.only(top: 5),
-                                  child: Row(children: <Widget>[
-                                    Expanded(
-                                        child: Divider(
-                                      color: Colors.grey,
-                                      height: 10,
-                                    ))
-                                  ])),
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Container(
-                                          child: Text('Total',
-                                              style: TextStyle(
+                                        },
+                                        child: delNow
+                                            ? Container(
+                                                padding: EdgeInsets.all(2),
+                                                child: Icon(
+                                                  Icons.check,
                                                   color: Colors.white,
-                                                 
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 18))),
+                                                  size: 20,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Color.fromRGBO(
+                                                        5, 150, 197, 1)),
+                                              )
+                                            : Container(
+                                                padding: EdgeInsets.all(2),
+                                                child: Container(
+                                                    width: 18, height: 18),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(22),
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: Colors.white70),
+                                                )),
+                                      ),
                                       Container(
-                                          child: Text(total.toString() + ' LE',
-                                              style: TextStyle(
+                                          margin: EdgeInsets.only(left: 5),
+                                          child: widget.deliveryTime == 1
+                                              ? Text('Tomorrow',
+                                                  style: TextStyle(
+                                                      color: delNow
+                                                          ? Colors.white
+                                                          : Colors.white70,
+                                                      fontSize: 14))
+                                              : widget.deliveryTime == 2
+                                                  ? Text('After Tomorrow',
+                                                      style: TextStyle(
+                                                          color: delNow
+                                                              ? Colors.white
+                                                              : Colors.white70,
+                                                          fontSize: 14))
+                                                  : Text(
+                                                      'After ' +
+                                                          widget.deliveryTime
+                                                              .toString() +
+                                                          ' Days',
+                                                      style: TextStyle(
+                                                          color: delNow
+                                                              ? Colors.white
+                                                              : Colors.white70,
+                                                          fontSize: 14))),
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            if (delNow == true) {
+                                              delNow = false;
+                                            }
+                                          });
+                                        },
+                                        child: delNow
+                                            ? Container(
+                                                padding: EdgeInsets.all(2),
+                                                margin: EdgeInsets.only(left: 10),
+                                                child: Container(
+                                                    width: 18, height: 18),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(22),
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: Colors.white70),
+                                                ))
+                                            : Container(
+                                                margin: EdgeInsets.only(left: 10),
+                                                padding: EdgeInsets.all(2),
+                                                child: Icon(
+                                                  Icons.check,
                                                   color: Colors.white,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold)))
-                                    ]),
-                              ),
-                            ]),
-                      )),
-                  Card(
-                      color: Color(0xFF232323),
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Container(
-                                      child: Text('Special Requests ',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold))),
-                                  Container(
-                                      child: Text('(optional)',
-                                          style: TextStyle(
-                                              color: Colors.white70,
-                                              fontSize: 18)))
-                                ],
-                              ),
-                              Container(
-                                  child: TextField(
-                                      autofocus: false,
-                                      cursorColor: Colors.white70,
-                                      controller: specialController,
-                                      style: TextStyle(color: Colors.white),
-                                      decoration: InputDecoration(
-                                        hintText: 'Type Your Request Here',
-                                        focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.white70)),
-                                        enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.white70)),
-                                        hintStyle:
-                                            TextStyle(color: Colors.white70),
-                                      )))
-                            ]),
-                      )),
-                  Card(
-                      color: Color(0xFF232323),
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Container(
-                                      child: Text('Delivery Time',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold))),
-                                ],
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                child: Row(
-                                  children: <Widget>[
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          if (delNow == false) {
-                                            delNow = true;
-                                            deliveryTimeLast = DateTime.now()
-                                                .add(Duration(
-                                                    days: widget.deliveryTime));
-                                          }
-                                        });
-                                      },
-                                      child: delNow
-                                          ? Container(
-                                              padding: EdgeInsets.all(2),
-                                              child: Icon(
-                                                Icons.check,
-                                                color: Colors.white,
-                                                size: 20,
-                                              ),
-                                              decoration: BoxDecoration(
+                                                  size: 20,
+                                                ),
+                                                decoration: BoxDecoration(
                                                   shape: BoxShape.circle,
                                                   color: Color.fromRGBO(
-                                                      5, 150, 197, 1)),
-                                            )
-                                          : Container(
-                                              padding: EdgeInsets.all(2),
-                                              child: Container(
-                                                  width: 18, height: 18),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(22),
-                                                border: Border.all(
-                                                    width: 1,
-                                                    color: Colors.white70),
-                                              )),
-                                    ),
-                                    Container(
-                                        margin: EdgeInsets.only(left: 5),
-                                        child: widget.deliveryTime == 1
-                                            ? Text('Tomorrow',
-                                                style: TextStyle(
-                                                    color: delNow
-                                                        ? Colors.white
-                                                        : Colors.white70,
-                                                    fontSize: 14))
-                                            : widget.deliveryTime == 2
-                                                ? Text('After Tomorrow',
-                                                    style: TextStyle(
-                                                        color: delNow
-                                                            ? Colors.white
-                                                            : Colors.white70,
-                                                        fontSize: 14))
-                                                : Text(
-                                                    'After ' +
-                                                        widget.deliveryTime
-                                                            .toString() +
-                                                        ' Days',
-                                                    style: TextStyle(
-                                                        color: delNow
-                                                            ? Colors.white
-                                                            : Colors.white70,
-                                                        fontSize: 14))),
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          if (delNow == true) {
-                                            delNow = false;
-                                          }
-                                        });
-                                      },
-                                      child: delNow
-                                          ? Container(
-                                              padding: EdgeInsets.all(2),
-                                              margin: EdgeInsets.only(left: 10),
-                                              child: Container(
-                                                  width: 18, height: 18),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(22),
-                                                border: Border.all(
-                                                    width: 1,
-                                                    color: Colors.white70),
-                                              ))
-                                          : Container(
-                                              margin: EdgeInsets.only(left: 10),
-                                              padding: EdgeInsets.all(2),
-                                              child: Icon(
-                                                Icons.check,
-                                                color: Colors.white,
-                                                size: 20,
+                                                      5, 150, 197, 1),
+                                                ),
                                               ),
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Color.fromRGBO(
-                                                    5, 150, 197, 1),
-                                              ),
-                                            ),
-                                    ),
-                                    Container(
-                                        child: Text('Later',
-                                            style: TextStyle(
-                                                color: delNow
-                                                    ? Colors.white70
-                                                    : Colors.white)),
-                                        margin: EdgeInsets.only(left: 5))
-                                  ],
+                                      ),
+                                      Container(
+                                          child: Text('Later',
+                                              style: TextStyle(
+                                                  color: delNow
+                                                      ? Colors.white70
+                                                      : Colors.white)),
+                                          margin: EdgeInsets.only(left: 5))
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              delNow && pickerTime != null
-                                  ? Container(
-                                      margin: EdgeInsets.only(top: 10),
-                                      height: 100,
-                                      child: CupertinoTheme(
-                                        key: UniqueKey(),
-                                        data: CupertinoThemeData(
-                                            textTheme: CupertinoTextThemeData(
-                                                dateTimePickerTextStyle:
-                                                    TextStyle(
-                                                        color: Colors.white))),
-                                        child: pickerTime,
-                                      ),
-                                    )
-                                  : delNow
-                                      ? Container(height: 0, width: 0)
-                                      : Container(
-                                          margin: EdgeInsets.only(top: 10),
-                                          height: 100,
-                                          child: CupertinoTheme(
-                                            key: UniqueKey(),
-                                            data: CupertinoThemeData(
-                                                textTheme:
-                                                    CupertinoTextThemeData(
-                                                        dateTimePickerTextStyle:
-                                                            TextStyle(
-                                                                color: Colors
-                                                                    .white))),
-                                            child: picker,
-                                          ),
+                                delNow && pickerTime != null
+                                    ? Container(
+                                        margin: EdgeInsets.only(top: 10),
+                                        height: 100,
+                                        child: CupertinoTheme(
+                                          key: UniqueKey(),
+                                          data: CupertinoThemeData(
+                                              textTheme: CupertinoTextThemeData(
+                                                  dateTimePickerTextStyle:
+                                                      TextStyle(
+                                                          color: Colors.white))),
+                                          child: pickerTime,
                                         ),
-                            ]),
-                      )),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(bottom: 20, top: 20),
-                        width: width * 0.4,
-                        height: 40,
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: LinearGradient(
-                              colors: [
-                                Color.fromRGBO(18, 42, 76, 1),
-                                Color.fromRGBO(5, 150, 197, 1),
-                                Color.fromRGBO(18, 42, 76, 1),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            )),
-                        child: Material(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(10),
+                                      )
+                                    : delNow
+                                        ? Container(height: 0, width: 0)
+                                        : Container(
+                                            margin: EdgeInsets.only(top: 10),
+                                            height: 100,
+                                            child: CupertinoTheme(
+                                              key: UniqueKey(),
+                                              data: CupertinoThemeData(
+                                                  textTheme:
+                                                      CupertinoTextThemeData(
+                                                          dateTimePickerTextStyle:
+                                                              TextStyle(
+                                                                  color: Colors
+                                                                      .white))),
+                                              child: picker,
+                                            ),
+                                          ),
+                              ]),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20, top: 20),
+                          width: width * 0.4,
+                          height: 40,
                           clipBehavior: Clip.antiAlias,
-                          child: InkWell(
-                            onTap: () {
-                              String special;
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: LinearGradient(
+                                colors: [
+                                  Color.fromRGBO(18, 42, 76, 1),
+                                  Color.fromRGBO(5, 150, 197, 1),
+                                  Color.fromRGBO(18, 42, 76, 1),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              )),
+                          child: Material(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                            clipBehavior: Clip.antiAlias,
+                            child: InkWell(
+                              onTap: () {
+                                String special;
 
-                              if (specialController.text.isNotEmpty) {
-                                special = specialController.text;
-                              } else {
-                                special = "";
-                              }
+                                if (specialController.text.isNotEmpty) {
+                                  special = specialController.text;
+                                } else {
+                                  special = "";
+                                }
 
-                              if (address.isNotEmpty) {
-                                setState(() {
-                                  uploading = true;
-                                });
-                                _uploadOrder(
-                                        widget.id,
-                                        total,
-                                        delivery,
-                                        normalPackaging == 0
-                                            ? 0
-                                            : normalPackaging == 1
-                                                ? widget.shopPackaging
-                                                : widget.boxetPackaging,
-                                        correctVoucher == 1 ? discount : 0,
-                                        customerName,
-                                        city,
-                                        region,
-                                        address,
-                                        mobile,
-                                        special,
-                                        deliveryTimeLast,selected)
-                                    .then((onValue) {
-                                  Navigator.pushNamed(context, '/orderPlaced');
-                                });
-                              } else {
-                                setState(() {
-                                  addressMissed = true;
-                                });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    new SnackBar(
-                                        content: new Text(
-                                            'Please add your address')));
-                              }
-                            },
-                            child: Center(
-                              child: uploading
-                                  ? Container(
-                                      height: 15,
-                                      width: 15,
-                                      child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation(
-                                            Colors.white),
-                                        strokeWidth: 1,
-                                      ),
-                                    )
-                                  : Text('Submit',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold)),
+                                if (address.isNotEmpty) {
+                                  setState(() {
+                                    uploading = true;
+                                  });
+                                  _uploadOrder(
+                                          widget.id,
+                                          total,
+                                          delivery,
+                                          normalPackaging == 0
+                                              ? 0
+                                              : normalPackaging == 1
+                                                  ? widget.shopPackaging
+                                                  : widget.boxetPackaging,
+                                          correctVoucher == 1 ? discount : 0,
+                                          customerName,
+                                          city,
+                                          region,
+                                          address,
+                                          mobile,
+                                          special,
+                                          deliveryTimeLast,selected)
+                                      .then((onValue) {
+                                    Navigator.pushNamed(context, '/orderPlaced');
+                                  });
+                                } else {
+                                  setState(() {
+                                    addressMissed = true;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      new SnackBar(
+                                          content: new Text(
+                                              'Please add your address')));
+                                }
+                              },
+                              child: Center(
+                                child: uploading
+                                    ? Container(
+                                        height: 15,
+                                        width: 15,
+                                        child: CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation(
+                                              Colors.white),
+                                          strokeWidth: 1,
+                                        ),
+                                      )
+                                    : Text('Submit',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold)),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  )
-                ],
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 
