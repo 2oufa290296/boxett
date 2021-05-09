@@ -240,7 +240,7 @@ class _ChatState extends State<Chat> {
         appBar: PreferredSize(
             child: Container(
                 height: 50,
-                margin: EdgeInsets.only(top: 30),
+                
                 child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   InkWell(
                     onTap: () {
