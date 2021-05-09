@@ -119,7 +119,7 @@ class _NotificationActivityState extends State<NotificationActivity> {
           appBar: PreferredSize(
               child: Container(
                   height: 50,
-                  margin: EdgeInsets.only(top: 30),
+                  
                   child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                     InkWell(
                       onTap: () {
