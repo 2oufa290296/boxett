@@ -114,189 +114,191 @@ class _NotificationActivityState extends State<NotificationActivity> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-        appBar: PreferredSize(
-            child: Container(
-                height: 50,
-                margin: EdgeInsets.only(top: 30),
-                child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 20),
-                        child: Icon(Icons.arrow_back_ios, color: Colors.white)),
-                  ),
-                  Container(
-                      margin: EdgeInsets.only(left: 15),
-                      child: Text('Notifications',
-                          style: TextStyle(color: Colors.white, fontSize: 20,fontFamily:"Lobster",letterSpacing:1)))
-                ]),
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color.fromRGBO(18,42,76,1),
-                    Color.fromRGBO(5,150,197,1),
-                    Color.fromRGBO(18,42,76,1)
-                  ],
-                ))),
-            preferredSize: Size(width, 50)),
-        body: Container(
-            child: showProgressBar
-                ? Center(child:  Container(
-                    width: 50,
-                    height: 50,
-                    child: FlareActor(
-                      'assets/loading.flr',
-                      animation: 'Loading',
-                    )))
-                :emptyNot?Container(alignment:Alignment.center,height:height-100,
-                  child: Text("You haven't got any notification yet",textAlign: TextAlign.center,style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 18,
-                                    ),),
-                ): ListView.builder(
-                    itemCount: notificationList.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        elevation: 8,
-                        margin: EdgeInsets.only(top: 5, right: 4, left: 4),
-                        color: Color(0xff232323),
-                        child: InkWell(
-                          onTap: () {
-                            if (notificationList[index].notType == "gift") {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => new GiftPage(
-                                          notificationList[index].notId)));
-                            } else if (notificationList[index].notType ==
-                                "order") {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          new ProfileOrderState(
-                                              notificationList[index].notId,
-                                              '',
-                                              '',
-                                              0,
-                                              0,
-                                              0,
-                                              0,
-                                              '',
-                                              '',
-                                              '',
-                                              '',
-                                              '',
-                                              null,
-                                              '')));
-                            } else if (notificationList[index].notType ==
-                                "list") {
-                                  Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => new AssistantView(
-                                          notificationList[index].notId)));
-                                }
-                          },
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          top: 10,
-                                          bottom: 10,
-                                          left: 10,
-                                          right: 10),
-                                      padding: EdgeInsets.all(0.5),
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.white),
-                                      child: Card(
-                                        margin: EdgeInsets.all(0),
-                                        clipBehavior: Clip.antiAlias,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                0.8 * width)),
-                                        child: notificationList[index].notPP == ""?Image.asset('assets/images/qqq.png',height: 0.15 * width,
-                                          width: 0.15 * width,
-                                          fit: BoxFit.cover,):CachedNetworkImage(
-                                          imageUrl:
-                                              notificationList[index].notPP,
-                                          height: 0.15 * width,
-                                          width: 0.15 * width,
-                                          fit: BoxFit.cover,
-                                          progressIndicatorBuilder:
-                                              (context, url, progress) {
-                                            return Shimmer.fromColors(
-                                              enabled: true,
-                                              child: Container(
-                                                  height: 0.15 * width,
-                                                  width: 0.15 * width,
-                                                  color: Color.fromRGBO(
-                                                      55, 57, 56, 1.0)),
-                                              baseColor: Color(0xFF282828),
-                                              highlightColor: Color(0xFF383838),
-                                            );
-                                          },
+    return SafeArea(
+          child: Scaffold(
+          appBar: PreferredSize(
+              child: Container(
+                  height: 50,
+                  margin: EdgeInsets.only(top: 30),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                          margin: EdgeInsets.only(left: 20),
+                          child: Icon(Icons.arrow_back_ios, color: Colors.white)),
+                    ),
+                    Container(
+                        margin: EdgeInsets.only(left: 15),
+                        child: Text('Notifications',
+                            style: TextStyle(color: Colors.white, fontSize: 20,fontFamily:"Lobster",letterSpacing:1)))
+                  ]),
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color.fromRGBO(18,42,76,1),
+                      Color.fromRGBO(5,150,197,1),
+                      Color.fromRGBO(18,42,76,1)
+                    ],
+                  ))),
+              preferredSize: Size(width, 50)),
+          body: Container(
+              child: showProgressBar
+                  ? Center(child:  Container(
+                      width: 50,
+                      height: 50,
+                      child: FlareActor(
+                        'assets/loading.flr',
+                        animation: 'Loading',
+                      )))
+                  :emptyNot?Container(alignment:Alignment.center,height:height-100,
+                    child: Text("You haven't got any notification yet",textAlign: TextAlign.center,style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 18,
+                                      ),),
+                  ): ListView.builder(
+                      itemCount: notificationList.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          elevation: 8,
+                          margin: EdgeInsets.only(top: 5, right: 4, left: 4),
+                          color: Color(0xff232323),
+                          child: InkWell(
+                            onTap: () {
+                              if (notificationList[index].notType == "gift") {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => new GiftPage(
+                                            notificationList[index].notId)));
+                              } else if (notificationList[index].notType ==
+                                  "order") {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            new ProfileOrderState(
+                                                notificationList[index].notId,
+                                                '',
+                                                '',
+                                                0,
+                                                0,
+                                                0,
+                                                0,
+                                                '',
+                                                '',
+                                                '',
+                                                '',
+                                                '',
+                                                null,
+                                                '')));
+                              } else if (notificationList[index].notType ==
+                                  "list") {
+                                    Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => new AssistantView(
+                                            notificationList[index].notId)));
+                                  }
+                            },
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: 10,
+                                            bottom: 10,
+                                            left: 10,
+                                            right: 10),
+                                        padding: EdgeInsets.all(0.5),
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white),
+                                        child: Card(
+                                          margin: EdgeInsets.all(0),
+                                          clipBehavior: Clip.antiAlias,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  0.8 * width)),
+                                          child: notificationList[index].notPP == ""?Image.asset('assets/images/qqq.png',height: 0.15 * width,
+                                            width: 0.15 * width,
+                                            fit: BoxFit.cover,):CachedNetworkImage(
+                                            imageUrl:
+                                                notificationList[index].notPP,
+                                            height: 0.15 * width,
+                                            width: 0.15 * width,
+                                            fit: BoxFit.cover,
+                                            progressIndicatorBuilder:
+                                                (context, url, progress) {
+                                              return Shimmer.fromColors(
+                                                enabled: true,
+                                                child: Container(
+                                                    height: 0.15 * width,
+                                                    width: 0.15 * width,
+                                                    color: Color.fromRGBO(
+                                                        55, 57, 56, 1.0)),
+                                                baseColor: Color(0xFF282828),
+                                                highlightColor: Color(0xFF383838),
+                                              );
+                                            },
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Container(
-                                            width: 0.7 * width,
-                                            child: RichText(
-                                                text: new TextSpan(children: <
-                                                    TextSpan>[
-                                              new TextSpan(
-                                                  text: notificationList[index]
-                                                              .notName ==
-                                                          ""
-                                                      ? ""
-                                                      : notificationList[index]
-                                                              .notName +
-                                                          " ",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 16,
-                                                      color: Colors.white)),
-                                              new TextSpan(
-                                                  text: notificationList[index]
-                                                      .notText,
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.white))
-                                            ]))),
-                                        Container(
-                                            margin: EdgeInsets.only(top: 3),
-                                            child: Text(
-                                              notificationList[index].notDate,
-                                              style:
-                                                  TextStyle(color: Colors.grey),
-                                            ))
-                                      ],
-                                    )
-                                  ],
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Container(
+                                              width: 0.7 * width,
+                                              child: RichText(
+                                                  text: new TextSpan(children: <
+                                                      TextSpan>[
+                                                new TextSpan(
+                                                    text: notificationList[index]
+                                                                .notName ==
+                                                            ""
+                                                        ? ""
+                                                        : notificationList[index]
+                                                                .notName +
+                                                            " ",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16,
+                                                        color: Colors.white)),
+                                                new TextSpan(
+                                                    text: notificationList[index]
+                                                        .notText,
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.white))
+                                              ]))),
+                                          Container(
+                                              margin: EdgeInsets.only(top: 3),
+                                              child: Text(
+                                                notificationList[index].notDate,
+                                                style:
+                                                    TextStyle(color: Colors.grey),
+                                              ))
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  )));
+                        );
+                      },
+                    ))),
+    );
   }
 }
