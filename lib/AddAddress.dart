@@ -88,7 +88,7 @@ class _AddAddressState extends State<AddAddress>
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
-    return widget(
+    return SafeArea(
           child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(children: <Widget>[
