@@ -88,14 +88,14 @@ class _AddAddressState extends State<AddAddress>
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
-    return SafeArea(
+    return widget(
           child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(children: <Widget>[
           Positioned(
-            top: 0,
+            top: 50,
             left: 0,
-            height: height ,
+            height: height - 50,
             width: width,
             child: showProgressBar
                 ? Center(child:  Container(
@@ -517,7 +517,7 @@ class _AddAddressState extends State<AddAddress>
                   ]),
           ),
           Positioned(
-            top: 30,
+            top: 0,
             left: 0,
             child: Container(
               height: 50,
