@@ -1,3 +1,4 @@
+
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -112,17 +113,19 @@ class SigningOutState extends State<SigningOut>
                                     : Container(
                                         child: Column(
                                         children: [
-                                          Text(
-                                              'Are you sure you want to Sign Out?',
-                                              style: TextStyle(
-                                                color: Colors.white70,
-                                                fontSize: 18,
-                                              )),
+                                          Container(margin:EdgeInsets.only(top:10,),
+                                            child: Text(
+                                                'Are you sure you want to Sign Out?',
+                                                style: TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: 18,
+                                                )),
+                                          ),
                                           Row(mainAxisAlignment: MainAxisAlignment.center,mainAxisSize:MainAxisSize.max,
                                             children: [
                                               Container(
                                                   margin: EdgeInsets.only(
-                                                      right: 15,top:10),
+                                                      right: 15,top:15),
                                                   height: 40,
                                                   width:100,
                                                   alignment:Alignment.center,
@@ -153,6 +156,7 @@ class SigningOutState extends State<SigningOut>
                                                                       2000),
                                                               () {
                                                             sharedPref.clear();
+                                                             signingOut = false;
                                                             Navigator.pushNamed(
                                                                 context,
                                                                 '/login');
@@ -160,7 +164,7 @@ class SigningOutState extends State<SigningOut>
                                                         },
                                                         child:Text('YES',style:TextStyle(color:Colors.white,fontSize:16))
                                                       ))),
-                                              Container(margin:EdgeInsets.only(top:10),
+                                              Container(margin:EdgeInsets.only(top:15),
                                                   height: 40,
                                                   width:100,
                                                   alignment:Alignment.center,
