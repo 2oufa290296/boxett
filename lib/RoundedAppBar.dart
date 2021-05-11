@@ -1,5 +1,5 @@
+import 'package:boxet/SigningOut.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:boxet/AddAddress.dart';
 import 'package:boxet/Chat.dart';
@@ -93,97 +93,8 @@ class _RoundedAppBarState extends State<RoundedAppBar> {
                       onTap: () {
                         showDialog(
                             context: context,
-                            builder: (context) => CustomDialog(
-                                key: profileCustomKey,
-                                title: Text('Signing Out',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 22,
-                                    )),
-                                content: signingOut
-                                    ? Container(
-                                        height: 60,
-                                        width: 60,
-                                        child: FlareActor('assets/loading.flr',
-                                            animation: 'Loading'))
-                                    : Container(
-                                        child: Column(
-                                        children: [
-                                          Text(
-                                              'Are you sure you want to sign out?',
-                                              style: TextStyle(
-                                                color: Colors.white70,
-                                                fontSize: 22,
-                                              )),
-                                          Row(
-                                            children: [
-                                              Container(
-                                                  margin: EdgeInsets.only(
-                                                      right: 15),
-                                                  height: 40,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      color: Colors.green),
-                                                  child: Material(
-                                                      color: Colors.transparent,
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                      ),
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            signingOut = true;
-                                                          });
-
-                                                          Future.delayed(
-                                                              Duration(
-                                                                  milliseconds:
-                                                                      2000),
-                                                              () {
-                                                            sharedPref.clear();
-                                                            Navigator.pushNamed(
-                                                                context,
-                                                                '/login');
-                                                          });
-                                                        },
-                                                        child:Text('YES',style:TextStyle(color:Colors.white))
-                                                      ))),
-                                              Container(
-                                                  height: 40,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      color: Colors.green),
-                                                  child: Material(
-                                                      color: Colors.transparent,
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                      ),
-                                                      child: InkWell(
-                                                        onTap:(){
-                                                          Navigator.of(context).pop();
-                                                        },
-                                                         child:Text('NO',style:TextStyle(color:Colors.white))
-                                                      )))
-                                            ],
-                                          ),
-                                        ],
-                                      )),
-                                iconData: MdiIcons.logout));
+                            builder: (context) =>SigningOut(
+                                key: profileCustomKey));
                       },
                       child: Icon(MdiIcons.logout,
                           color: Colors.white, size: 25))),
