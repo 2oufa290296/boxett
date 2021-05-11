@@ -133,6 +133,7 @@ class _MapsPageState extends State<MapsPage>
       if (Platform.isIOS) {
         setState(() {
             showIosError = true;
+            showLocError=true;
           });
           return;
       } else {
