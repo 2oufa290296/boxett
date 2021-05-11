@@ -682,11 +682,11 @@ class _MapsPageState extends State<MapsPage>
                                   color: Colors.white70,
                                   fontSize: 18,
                                 )),
-                            showIosError?Container(margin:EdgeInsets.only(top:15),
-                              child: Text('Please enable location from your mobile settings',
+                            showIosError?Container(margin:EdgeInsets.only(top:10),width:width,alignment:Alignment.center,
+                              child: Text('Please enable location in device settings',textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Colors.white70,
-                                    fontSize: 18,
+                                    fontSize: 16,
                                   )),
                             ):Row(
                               mainAxisSize: MainAxisSize.min,
