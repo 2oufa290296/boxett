@@ -1150,36 +1150,41 @@ class _LoginActivityState extends State<LoginActivity> {
                     Platform.isIOS
                         ? Container(child: SignInWithAppleButton(
                             onPressed: () async {
-                              final credential =
+                              final appleIdCredential =
                                   await SignInWithApple.getAppleIDCredential(
                                 scopes: [
                                   AppleIDAuthorizationScopes.email,
                                   AppleIDAuthorizationScopes.fullName,
                                 ],
+                                
                               );
 
-                              if (credential.userIdentifier.isNotEmpty) {
+                              final oAuthProvider=OAuthProvider('apple.com');
+                              final credential=oAuthProvider.credential(idToken:appleIdCredential.identityToken,accessToken:appleIdCredential.authorizationCode);
+                              await FirebaseAuth.instance.signInWithCredential(credential);
+
+                              if (appleIdCredential!=null) {
                                 await FirebaseFirestore.instance
                                     .collection('Users')
-                                    .doc(credential.userIdentifier)
+                                    .doc(appleIdCredential.userIdentifier)
                                     .set({
-                                  'username': credential.givenName,
-                                  'uid': credential.userIdentifier,
+                                  'username': appleIdCredential.givenName,
+                                  'uid': appleIdCredential.userIdentifier,
                                   'provider': 'appleid',
-                                  'userToken': credential.userIdentifier
+                                  'userToken': appleIdCredential.userIdentifier
                                 }, SetOptions(merge: true)).then((value) async {
                                   sharedPref.setString(
-                                      'username', credential.givenName);
+                                      'username', appleIdCredential.givenName);
                                   sharedPref.setString(
-                                      'uid', credential.userIdentifier);
+                                      'uid', appleIdCredential.userIdentifier);
 
                                   sharedPref.setString('provider', 'appleid');
                                   sharedPref.setString(
-                                      'userToken', credential.userIdentifier);
+                                      'userToken', appleIdCredential.userIdentifier);
 
                                   await FirebaseFirestore.instance
                                       .collection('Users')
-                                      .doc(credential.userIdentifier)
+                                      .doc(appleIdCredential.userIdentifier)
                                       .get()
                                       .then((data) async {
                                     if (data.exists) {
