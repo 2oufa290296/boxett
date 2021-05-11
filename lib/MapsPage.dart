@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -13,10 +14,15 @@ import 'package:location/location.dart';
 import 'package:connectivity/connectivity.dart';
 
 class MapsPage extends StatefulWidget {
-  final String pageId,pageName,pageImg,pageAddress;
+  final String pageId, pageName, pageImg, pageAddress;
   final GeoPoint mapLoc;
 
-  MapsPage({this.pageId,this.pageName,this.pageImg,this.pageAddress,this.mapLoc});
+  MapsPage(
+      {this.pageId,
+      this.pageName,
+      this.pageImg,
+      this.pageAddress,
+      this.mapLoc});
   @override
   _MapsPageState createState() => _MapsPageState();
 }
@@ -50,6 +56,7 @@ class _MapsPageState extends State<MapsPage>
   double profileLng;
   bool showMap = false;
   bool retrying = false;
+  bool showIosError=false;
   GeoPoint mapLoc;
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -69,29 +76,31 @@ class _MapsPageState extends State<MapsPage>
   }
 
   _getMarkers() async {
-    await FirebaseFirestore.instance.collection('pages').where('online',isEqualTo: false).get().then((value) {
+    await FirebaseFirestore.instance
+        .collection('pages')
+        .where('online', isEqualTo: false)
+        .get()
+        .then((value) {
       if (value.docs.isNotEmpty) {
         value.docs.forEach((element) {
           if (pageProfile != "" && element.id == pageProfile) {
-          
-           
-          }else {
-
-          GeoPoint geoPoint=element.data()['maploc'];
-          markers.add(Marker(
-              icon: myIcon,
-              markerId: MarkerId(element.id),
-              position: LatLng(geoPoint.latitude, geoPoint.longitude),
-              onTap: () {
-                markerImage = element.data()['pageimg'];
-                markerTitle = element.data()['pagename'];
-                markerPageAddress = element.data()['location'];
-                markerPageId = element.id;
-                setState(() {
-                  showInfoWindow = true;
-                });
-                infoAnimCont.forward();
-              }));}
+          } else {
+            GeoPoint geoPoint = element.data()['maploc'];
+            markers.add(Marker(
+                icon: myIcon,
+                markerId: MarkerId(element.id),
+                position: LatLng(geoPoint.latitude, geoPoint.longitude),
+                onTap: () {
+                  markerImage = element.data()['pageimg'];
+                  markerTitle = element.data()['pagename'];
+                  markerPageAddress = element.data()['location'];
+                  markerPageId = element.id;
+                  setState(() {
+                    showInfoWindow = true;
+                  });
+                  infoAnimCont.forward();
+                }));
+          }
         });
       }
     }).then((value) {
@@ -120,16 +129,22 @@ class _MapsPageState extends State<MapsPage>
     }
 
     _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied ||
-     _permissionGranted == PermissionStatus.deniedForever){
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
+    if (_permissionGranted == PermissionStatus.denied) {
+      if (Platform.isIOS) {
         setState(() {
-          showLocError = true;
-        });
-        return;
+            showIosError = true;
+          });
+          return;
       } else {
-        showLocError = false;
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          setState(() {
+            showLocError = true;
+          });
+          return;
+        } else {
+          showLocError = false;
+        }
       }
     } else {
       if (showLocError == true) {
@@ -152,11 +167,6 @@ class _MapsPageState extends State<MapsPage>
     _locationData = await location.getLocation();
     controllerr = await _controller.future;
     _getMarkerIcon();
-    
-
-    
-
-    
   }
 
   Future _checkLocationEnabled() async {
@@ -201,7 +211,7 @@ class _MapsPageState extends State<MapsPage>
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
       if (internetError) internetError = false;
-      if (retrying) retrying=false;
+      if (retrying) retrying = false;
       _checkLocation();
     } else {
       setState(() {
@@ -215,35 +225,36 @@ class _MapsPageState extends State<MapsPage>
   _getMarkerIcon() async {
     myIcon =
         await getBitmapDescriptorFromAssetBytes("assets/images/zzz.png", 150);
-    
+
     if (pageProfile == "") {
       controllerr.animateCamera(CameraUpdate.newLatLngZoom(
           LatLng(_locationData.latitude, _locationData.longitude), 16));
-          
-    }else {
-      
-      controllerr.animateCamera(CameraUpdate.newLatLngZoom(LatLng(widget.mapLoc.latitude,widget.mapLoc.longitude),16));
-       markerImage = widget.pageImg;
-                markerTitle = widget.pageName;
-                markerPageAddress = widget.pageAddress;
-                markerPageId = widget.pageId;
+    } else {
+      controllerr.animateCamera(CameraUpdate.newLatLngZoom(
+          LatLng(widget.mapLoc.latitude, widget.mapLoc.longitude), 16));
+      markerImage = widget.pageImg;
+      markerTitle = widget.pageName;
+      markerPageAddress = widget.pageAddress;
+      markerPageId = widget.pageId;
 
-     Future.delayed(Duration(milliseconds:1000),(){  showInfoWindow = true;
-      infoAnimCont.forward();});
+      Future.delayed(Duration(milliseconds: 1000), () {
+        showInfoWindow = true;
+        infoAnimCont.forward();
+      });
       markers.add(Marker(
-              icon: myIcon,
-              markerId: MarkerId(widget.pageId),
-              position: LatLng(widget.mapLoc.latitude, widget.mapLoc.longitude),
-              onTap: () {
-                markerImage = widget.pageImg;
-                markerTitle = widget.pageName;
-                markerPageAddress = widget.pageAddress;
-                markerPageId = widget.pageId;
-                setState(() {
-                  showInfoWindow = true;
-                });
-                infoAnimCont.forward();
-              }));
+          icon: myIcon,
+          markerId: MarkerId(widget.pageId),
+          position: LatLng(widget.mapLoc.latitude, widget.mapLoc.longitude),
+          onTap: () {
+            markerImage = widget.pageImg;
+            markerTitle = widget.pageName;
+            markerPageAddress = widget.pageAddress;
+            markerPageId = widget.pageId;
+            setState(() {
+              showInfoWindow = true;
+            });
+            infoAnimCont.forward();
+          }));
     }
 
     _getMarkers();
@@ -255,22 +266,22 @@ class _MapsPageState extends State<MapsPage>
     width = MediaQuery.of(context).size.width;
 
     return SafeArea(
-      bottom:false,
-          child: Scaffold(
+      bottom: false,
+      child: Scaffold(
           body: internetError
               ? Container(
                   height: height - 50,
                   alignment: Alignment.center,
-                  child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                  child:
+                      Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
                     Container(
-                        
                         child: Text(
-                          'No Internet Connection',
-                          style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 18,
-                              ),
-                        )),
+                      'No Internet Connection',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 18,
+                      ),
+                    )),
                     Container(
                       margin: EdgeInsets.only(top: 20),
                       width: width / 3,
@@ -296,7 +307,8 @@ class _MapsPageState extends State<MapsPage>
                             setState(() {
                               retrying = true;
                             });
-                            Future.delayed(Duration(milliseconds: 500), () async {
+                            Future.delayed(Duration(milliseconds: 500),
+                                () async {
                               _checkConnection();
                             });
                           },
@@ -306,8 +318,8 @@ class _MapsPageState extends State<MapsPage>
                                       height: 15,
                                       width: 15,
                                       child: CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation(Colors.white),
+                                        valueColor: AlwaysStoppedAnimation(
+                                            Colors.white),
                                         strokeWidth: 1,
                                       ),
                                     )
@@ -324,7 +336,6 @@ class _MapsPageState extends State<MapsPage>
                   ? Container(
                       width: width,
                       height: height,
-                      
                       child: Stack(
                         children: <Widget>[
                           GestureDetector(
@@ -352,7 +363,9 @@ class _MapsPageState extends State<MapsPage>
                                       mapToolbarEnabled: false,
                                       initialCameraPosition: _kGooglePlex,
                                       padding: EdgeInsets.only(
-                                          bottom: pageProfile!=""?5:45, top: 50, left: 5),
+                                          bottom: pageProfile != "" ? 5 : 45,
+                                          top: 50,
+                                          left: 5),
                                       markers: markers.toSet(),
                                       onMapCreated:
                                           (GoogleMapController controller) {
@@ -406,7 +419,10 @@ class _MapsPageState extends State<MapsPage>
                                     color: Color.fromRGBO(55, 57, 56, 1.0),
                                     child: Container(
                                       padding: const EdgeInsets.only(
-                                          bottom: 8.0, top: 8, left: 8, right: 8),
+                                          bottom: 8.0,
+                                          top: 8,
+                                          left: 8,
+                                          right: 8),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
@@ -422,15 +438,18 @@ class _MapsPageState extends State<MapsPage>
                                                     child: markerImage == ""
                                                         ? null
                                                         : CachedNetworkImage(
-                                                            imageUrl: markerImage,
+                                                            imageUrl:
+                                                                markerImage,
                                                             fit: BoxFit.fill),
                                                     width: width * 0.25,
                                                     height: width * 0.25),
                                               ),
                                               Container(
-                                                margin: EdgeInsets.only(left: 8),
+                                                margin:
+                                                    EdgeInsets.only(left: 8),
                                                 child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
                                                   children: <Widget>[
@@ -438,22 +457,27 @@ class _MapsPageState extends State<MapsPage>
                                                         child: Text(markerTitle,
                                                             style: TextStyle(
                                                                 fontSize: 16,
-                                                                color: Colors.white,
+                                                                color: Colors
+                                                                    .white,
                                                                 fontWeight:
-                                                                    FontWeight.bold,
+                                                                    FontWeight
+                                                                        .bold,
                                                                 fontFamily:
                                                                     "Lobster",
-                                                                letterSpacing: 2))),
+                                                                letterSpacing:
+                                                                    2))),
                                                     Container(
-                                                      margin:
-                                                          EdgeInsets.only(top: 5),
+                                                      margin: EdgeInsets.only(
+                                                          top: 5),
                                                       child: Row(
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: <Widget>[
-                                                          Icon(Icons.location_on,
-                                                              color: Colors.green,
+                                                          Icon(
+                                                              Icons.location_on,
+                                                              color:
+                                                                  Colors.green,
                                                               size: 15),
                                                           Container(
                                                               constraints:
@@ -461,75 +485,94 @@ class _MapsPageState extends State<MapsPage>
                                                                       maxWidth:
                                                                           width *
                                                                               0.5),
-                                                              margin:
-                                                                  EdgeInsets.only(
+                                                              margin: EdgeInsets
+                                                                  .only(
                                                                       left: 3),
                                                               child: Text(
                                                                   markerPageAddress,
-                                                                  style: TextStyle(
-                                                                    fontSize: 12,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        12,
                                                                     color: Colors
                                                                         .white70,
                                                                   ))),
                                                         ],
                                                       ),
                                                     ),
-                                                    pageProfile != ""?Container():Container(
-                                                      margin:
-                                                          EdgeInsets.only(top: 10),
-                                                      clipBehavior: Clip.antiAlias,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  4),
-                                                          gradient: LinearGradient(
-                                                            colors: [
-                                                              Color.fromRGBO(
-                                                                  18, 42, 76, 1),
-                                                              Color.fromRGBO(
-                                                                  5, 150, 197, 1),
-                                                              Color.fromRGBO(
-                                                                  18, 42, 76, 1),
-                                                            ],
-                                                            begin:
-                                                                Alignment.topLeft,
-                                                            end: Alignment
-                                                                .bottomRight,
-                                                          )),
-                                                      child: Material(
-                                                        color: Colors.transparent,
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                4),
-                                                        clipBehavior:
-                                                            Clip.antiAlias,
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        PageActivity(
-                                                                            markerPageId,
-                                                                            'maps')));
-                                                          },
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Center(
-                                                              child: Text(
-                                                                  'Visit Page',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize:
-                                                                          12)),
+                                                    pageProfile != ""
+                                                        ? Container()
+                                                        : Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    top: 10),
+                                                            clipBehavior:
+                                                                Clip.antiAlias,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                4),
+                                                                    gradient:
+                                                                        LinearGradient(
+                                                                      colors: [
+                                                                        Color.fromRGBO(
+                                                                            18,
+                                                                            42,
+                                                                            76,
+                                                                            1),
+                                                                        Color.fromRGBO(
+                                                                            5,
+                                                                            150,
+                                                                            197,
+                                                                            1),
+                                                                        Color.fromRGBO(
+                                                                            18,
+                                                                            42,
+                                                                            76,
+                                                                            1),
+                                                                      ],
+                                                                      begin: Alignment
+                                                                          .topLeft,
+                                                                      end: Alignment
+                                                                          .bottomRight,
+                                                                    )),
+                                                            child: Material(
+                                                              color: Colors
+                                                                  .transparent,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          4),
+                                                              clipBehavior: Clip
+                                                                  .antiAlias,
+                                                              child: InkWell(
+                                                                onTap: () {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => PageActivity(
+                                                                              markerPageId,
+                                                                              'maps')));
+                                                                },
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                              .all(
+                                                                          8.0),
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                        'Visit Page',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            fontSize: 12)),
+                                                                  ),
+                                                                ),
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
-                                                      ),
-                                                    ),
                                                   ],
                                                 ),
                                               )
@@ -559,17 +602,19 @@ class _MapsPageState extends State<MapsPage>
                                   }
                                 },
                                 backgroundColor: Color(0xFF282828),
-                                child: Icon(Icons.my_location, color: Colors.white),
+                                child: Icon(Icons.my_location,
+                                    color: Colors.white),
                               )),
                           Positioned(
-                              bottom: pageProfile!=""?20:70,
+                              bottom: pageProfile != "" ? 20 : 70,
                               right: 5,
                               child: Column(
                                 children: <Widget>[
                                   FloatingActionButton(
                                       heroTag: 'zoomBtn',
                                       shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(5)),
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
                                       mini: true,
                                       onPressed: () async {
                                         double zoomLevel =
@@ -582,11 +627,13 @@ class _MapsPageState extends State<MapsPage>
                                                     zoom: zoomLevel)));
                                       },
                                       backgroundColor: Color(0xFF282828),
-                                      child: Icon(Icons.add, color: Colors.white)),
+                                      child:
+                                          Icon(Icons.add, color: Colors.white)),
                                   FloatingActionButton(
                                       heroTag: 'zoomOutBtn',
                                       shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(5)),
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
                                       mini: true,
                                       onPressed: () async {
                                         double zoomLevel =
@@ -599,8 +646,8 @@ class _MapsPageState extends State<MapsPage>
                                                     zoom: zoomLevel)));
                                       },
                                       backgroundColor: Color(0xFF282828),
-                                      child:
-                                          Icon(Icons.remove, color: Colors.white)),
+                                      child: Icon(Icons.remove,
+                                          color: Colors.white)),
                                 ],
                               )),
                           Positioned(
@@ -608,7 +655,7 @@ class _MapsPageState extends State<MapsPage>
                               left: 0,
                               child: showProgress
                                   ? Container(
-                                      color:Colors.black,
+                                      color: Colors.black,
                                       height: height - 50,
                                       width: width,
                                       child: Center(
@@ -623,53 +670,67 @@ class _MapsPageState extends State<MapsPage>
                         ],
                       ),
                     )
-                  : Container(height:height-50,alignment:Alignment.center,
-                      child:
-                          Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                      Text('Location Service is disabled',
-                          style: TextStyle( color: Colors.white70,
-                              fontSize: 18,
-                              )),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(top: 20),
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4),
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Color.fromRGBO(18, 42, 76, 1),
-                                    Color.fromRGBO(5, 150, 197, 1),
-                                    Color.fromRGBO(18, 42, 76, 1),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
+                  : Container(
+                      height: height - 50,
+                      alignment: Alignment.center,
+                      child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text('Location Service is disabled',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 18,
                                 )),
-                            child: Material(
-                              color: Colors.transparent,
-                              borderRadius: BorderRadius.circular(4),
-                              clipBehavior: Clip.antiAlias,
-                              child: InkWell(
-                                onTap: () {
-                                  _checkLocation();
-                                },
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 12, right: 12, top: 8, bottom: 8),
-                                  child: Center(
-                                    child: Text('Enable',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 16)),
+                            showIosError?Container(margin:EdgeInsets.only(top:15),
+                              child: Text('Please enable location from your mobile settings',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 18,
+                                  )),
+                            ):Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(top: 20),
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color.fromRGBO(18, 42, 76, 1),
+                                          Color.fromRGBO(5, 150, 197, 1),
+                                          Color.fromRGBO(18, 42, 76, 1),
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      )),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    borderRadius: BorderRadius.circular(4),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: InkWell(
+                                      onTap: () {
+                                        _checkLocation();
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 12,
+                                            right: 12,
+                                            top: 8,
+                                            bottom: 8),
+                                        child: Center(
+                                          child: Text('Enable',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16)),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ]))),
+                          ]))),
     );
   }
 }
