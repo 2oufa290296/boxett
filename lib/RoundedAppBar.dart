@@ -31,10 +31,10 @@ class _RoundedAppBarState extends State<RoundedAppBar> {
 
   SharedPreferences sharedPref;
   bool firsttime = true;
+  bool signingOut = false;
 
   @override
   void initState() {
-    
     super.initState();
     getSharedPref();
   }
@@ -98,19 +98,92 @@ class _RoundedAppBarState extends State<RoundedAppBar> {
                                 title: Text('Signing Out',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 22,
-                                       )),
-                                content: Container(
-                                    height: 60,
-                                    width: 60,
-                                    child: FlareActor('assets/loading.flr',
-                                        animation: 'Loading')),
+                                      color: Colors.white70,
+                                      fontSize: 22,
+                                    )),
+                                content: signingOut
+                                    ? Container(
+                                        height: 60,
+                                        width: 60,
+                                        child: FlareActor('assets/loading.flr',
+                                            animation: 'Loading'))
+                                    : Container(
+                                        child: Column(
+                                        children: [
+                                          Text(
+                                              'Are you sure you want to sign out?',
+                                              style: TextStyle(
+                                                color: Colors.white70,
+                                                fontSize: 22,
+                                              )),
+                                          Row(
+                                            children: [
+                                              Container(
+                                                  margin: EdgeInsets.only(
+                                                      right: 15),
+                                                  height: 40,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      color: Colors.green),
+                                                  child: Material(
+                                                      color: Colors.transparent,
+                                                      clipBehavior:
+                                                          Clip.antiAlias,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            signingOut = true;
+                                                          });
+
+                                                          Future.delayed(
+                                                              Duration(
+                                                                  milliseconds:
+                                                                      2000),
+                                                              () {
+                                                            sharedPref.clear();
+                                                            Navigator.pushNamed(
+                                                                context,
+                                                                '/login');
+                                                          });
+                                                        },
+                                                        child:Text('YES',style:TextStyle(color:Colors.white))
+                                                      ))),
+                                              Container(
+                                                  height: 40,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      color: Colors.green),
+                                                  child: Material(
+                                                      color: Colors.transparent,
+                                                      clipBehavior:
+                                                          Clip.antiAlias,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      child: InkWell(
+                                                        onTap:(){
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                         child:Text('NO',style:TextStyle(color:Colors.white))
+                                                      )))
+                                            ],
+                                          ),
+                                        ],
+                                      )),
                                 iconData: MdiIcons.logout));
-                        Future.delayed(Duration(milliseconds: 2000), () {
-                          sharedPref.clear();
-                          Navigator.pushNamed(context, '/login');
-                        });
                       },
                       child: Icon(MdiIcons.logout,
                           color: Colors.white, size: 25))),
@@ -126,7 +199,8 @@ class _RoundedAppBarState extends State<RoundedAppBar> {
                         clipBehavior: Clip.antiAlias,
                         child: Container(
                           clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(shape: BoxShape.circle,color: Color(0xFF282828)),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Color(0xFF282828)),
                           height: height * 0.08,
                           width: height * 0.08,
                           child: widget.provider == "phone" &&
@@ -198,7 +272,8 @@ class _RoundedAppBarState extends State<RoundedAppBar> {
                                 height: height * 0.09,
                                 child: Column(
                                   children: <Widget>[
-                                    Card(clipBehavior: Clip.antiAlias,
+                                    Card(
+                                      clipBehavior: Clip.antiAlias,
                                       shape: CircleBorder(),
                                       elevation: 3,
                                       color: Color.fromRGBO(3, 99, 130, 1),
@@ -211,10 +286,10 @@ class _RoundedAppBarState extends State<RoundedAppBar> {
                                                       new Chat(widget.uid)));
                                         },
                                         child: Container(
-                                            margin: EdgeInsets.all(7),
-                                            child: Icon(Icons.chat_bubble,
-                                                color: Colors.white),
-                                          ),
+                                          margin: EdgeInsets.all(7),
+                                          child: Icon(Icons.chat_bubble,
+                                              color: Colors.white),
+                                        ),
                                       ),
                                     ),
                                     Container(
@@ -313,16 +388,16 @@ class _RoundedAppBarState extends State<RoundedAppBar> {
                                         color: Color.fromRGBO(3, 99, 130, 1),
                                         child: InkWell(
                                           onTap: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          new NotificationActivity()));
-                                            },
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        new NotificationActivity()));
+                                          },
                                           child: Container(
                                             margin: EdgeInsets.all(7),
                                             child: Icon(Icons.notifications,
-                                                  color: Colors.white),
+                                                color: Colors.white),
                                           ),
                                         )),
                                     Container(
