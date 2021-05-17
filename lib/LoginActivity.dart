@@ -1038,7 +1038,7 @@ class _LoginActivityState extends State<LoginActivity> {
               ])),
           Positioned(
               width: width,
-              bottom: 40,
+              bottom: 10,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
@@ -1273,7 +1273,6 @@ class _LoginActivityState extends State<LoginActivity> {
                          Center(
               child: SizedBox(
                   width: 280,
-                  height:50,
                   child: FutureBuilder<bool>(
                     future: _isAvailableFuture,
                     builder: (context, isAvailableSnapshot) {
@@ -1287,16 +1286,16 @@ class _LoginActivityState extends State<LoginActivity> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                   SizedBox(
-                                    height: 50,
+                                    height: 100,
                                   ),
                                   appleSignIn.AppleSignInButton(
                                     onPressed: logIn,
                                   ),
                                   if (errorMessage != null) Text(errorMessage),
                                   SizedBox(
-                                    height: 50,
+                                    height: 200,
                                   ),
-                                 
+                                  
                                 ])
                           : Text(
                               'Sign in With Apple not available. Must be run on iOS 13+');
