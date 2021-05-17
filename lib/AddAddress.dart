@@ -31,7 +31,7 @@ class _AddAddressState extends State<AddAddress>
   String address = "";
   String mobile = "";
   bool showProgressBar = true;
-  bool changed = false;
+  bool changed = true;
   double width, height;
   FocusNode cityNode = FocusNode();
   FocusNode regionNode = FocusNode();
