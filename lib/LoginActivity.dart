@@ -164,7 +164,7 @@ class _LoginActivityState extends State<LoginActivity> {
        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: Color(0xFF232323),
               content: Container(
-                height: 20,
+                
                 width: width,
                 alignment: Alignment.center,
                 child:
@@ -1273,6 +1273,7 @@ class _LoginActivityState extends State<LoginActivity> {
                          Center(
               child: SizedBox(
                   width: 280,
+                  height:50,
                   child: FutureBuilder<bool>(
                     future: _isAvailableFuture,
                     builder: (context, isAvailableSnapshot) {
@@ -1286,14 +1287,14 @@ class _LoginActivityState extends State<LoginActivity> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                   SizedBox(
-                                    height: 100,
+                                    height: 50,
                                   ),
                                   appleSignIn.AppleSignInButton(
                                     onPressed: logIn,
                                   ),
                                   if (errorMessage != null) Text(errorMessage),
                                   SizedBox(
-                                    height: 200,
+                                    height: 50,
                                   ),
                                  
                                 ])
