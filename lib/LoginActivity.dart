@@ -1,9 +1,9 @@
 import 'dart:io';
-
+import 'package:flutter/material.dart';
+import 'package:the_apple_sign_in/the_apple_sign_in.dart' as appleSignIn ;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,7 +12,6 @@ import 'package:boxet/main.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boxet/Signup.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginActivity extends StatefulWidget {
   @override
@@ -20,6 +19,7 @@ class LoginActivity extends StatefulWidget {
 }
 
 class _LoginActivityState extends State<LoginActivity> {
+  final Future<bool> _isAvailableFuture = appleSignIn.TheAppleSignIn.isAvailable();
   double height, width;
   TextEditingController userController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
@@ -49,6 +49,7 @@ class _LoginActivityState extends State<LoginActivity> {
   GlobalKey<CustomDialogState> customKey = GlobalKey();
   String uid = '';
   String forgotErrorText = '';
+  String errorMessage;
 
   Future<bool> checkUser() async {
     bool exists;
@@ -67,6 +68,126 @@ class _LoginActivityState extends State<LoginActivity> {
     });
 
     return exists;
+  }
+
+
+  void logIn() async {
+    final appleSignIn.AuthorizationResult result = await appleSignIn.TheAppleSignIn.performRequests([
+      appleSignIn.AppleIdRequest(requestedScopes: [appleSignIn.Scope.email, appleSignIn.Scope.fullName])
+    ]);
+
+    switch (result.status) {
+      case appleSignIn.AuthorizationStatus.authorized:
+
+        // Store user ID
+                               await FirebaseFirestore.instance
+                                    .collection('Users')
+                                    .doc(result.credential.email)
+                                    .set({
+                                  'username': result.credential.fullName.toString(),
+                                  'uid': result.credential.email,
+                                  'provider': 'appleid',
+                                  'userToken': ""
+                                }, SetOptions(merge: true)).then((value) async {
+                                  sharedPref.setString(
+                                      'username', result.credential.fullName.toString());
+                                  sharedPref.setString(
+                                      'uid', result.credential.email);
+
+                                  sharedPref.setString('provider', 'appleid');
+                                  sharedPref.setString(
+                                      'userToken', "");
+
+                                  await FirebaseFirestore.instance
+                                      .collection('Users')
+                                      .doc(result.credential.email)
+                                      .get()
+                                      .then((data) async {
+                                    if (data.exists) {
+                                      sharedPref.setString(
+                                          'username', data.data()['username']);
+                                      sharedPref.setString('uid', data.id);
+                                      sharedPref.setString(
+                                          'imgURL', data.data()['imgURL']);
+                                      sharedPref.setString(
+                                          'provider', 'appleid');
+
+                                      if (data.data()['address'] != null) {
+                                        Map<String, dynamic> addressMap =
+                                            data.data()['address'];
+                                        if (addressMap['customername'] !=
+                                                null &&
+                                            addressMap['city'] != null &&
+                                            addressMap['region'] != null &&
+                                            addressMap['address'] != null &&
+                                            addressMap['mobile'] != null) {
+                                          sharedPref.setString('customername',
+                                              addressMap['customername']);
+                                          sharedPref.setString(
+                                              'city', addressMap['city']);
+                                          sharedPref.setString(
+                                              'region', addressMap['region']);
+                                          sharedPref.setString(
+                                              'address', addressMap['address']);
+                                          sharedPref.setString(
+                                              'mobile', addressMap['mobile']);
+                                        }
+                                      }
+
+                                      await data.reference
+                                          .collection('favorites')
+                                          .orderBy('date', descending: true)
+                                          .get()
+                                          .then((value) {
+                                        List<String> favList = [];
+                                        if (value.docs.isNotEmpty) {
+                                          value.docs.forEach((val) {
+                                            favList.add(val.id);
+                                          });
+                                        }
+                                        sharedPref.setStringList(
+                                            'favorite', favList);
+                                      });
+                                    }
+                                  });
+
+                                 
+                                });
+                              
+
+
+        
+         Navigator.push(context,MaterialPageRoute(builder: (context) =>new MyHomePage()));
+        break;
+
+      case appleSignIn.AuthorizationStatus.error:
+       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xFF232323),
+              content: Container(
+                height: 20,
+                width: width,
+                alignment: Alignment.center,
+                child:
+                    Text("Sign in failed: ${result.error.localizedDescription}", style: TextStyle(fontSize: 16)),
+              )));
+        
+        setState(() {
+          errorMessage = "Sign in failed";
+        });
+        break;
+
+      case appleSignIn.AuthorizationStatus.cancelled:
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xFF232323),
+              content: Container(
+                height: 20,
+                width: width,
+                alignment: Alignment.center,
+                child:
+                    Text("User Canceled", style: TextStyle(fontSize: 16)),
+              )));
+        break;
+    }
   }
 
   usernamePasswordSign(String username, String password) async {
@@ -1148,105 +1269,138 @@ class _LoginActivityState extends State<LoginActivity> {
                       ),
                     ),
                     Platform.isIOS
-                        ? Container(child: SignInWithAppleButton(
-                            onPressed: () async {
-                              final appleIdCredential =
-                                  await SignInWithApple.getAppleIDCredential(
-                                scopes: [
-                                  AppleIDAuthorizationScopes.email,
-                                  AppleIDAuthorizationScopes.fullName,
-                                ],
+                        ? 
+                         Center(
+              child: SizedBox(
+                  width: 280,
+                  child: FutureBuilder<bool>(
+                    future: _isAvailableFuture,
+                    builder: (context, isAvailableSnapshot) {
+                      if (!isAvailableSnapshot.hasData) {
+                        return Container(child: Text('Loading...'));
+                      }
+
+                      return isAvailableSnapshot.data
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                  SizedBox(
+                                    height: 100,
+                                  ),
+                                  appleSignIn.AppleSignInButton(
+                                    onPressed: logIn,
+                                  ),
+                                  if (errorMessage != null) Text(errorMessage),
+                                  SizedBox(
+                                    height: 200,
+                                  ),
+                                 
+                                ])
+                          : Text(
+                              'Sign in With Apple not available. Must be run on iOS 13+');
+                    },
+                  )))
+                        // Container(child: SignInWithAppleButton(
+                        //     onPressed: () 
+                        //async {
+                        //       final appleIdCredential =
+                        //           await SignInWithApple.getAppleIDCredential(
+                        //         scopes: [
+                        //           AppleIDAuthorizationScopes.email,
+                        //           AppleIDAuthorizationScopes.fullName,
+                        //         ],
                                 
-                              );
+                        //       );
 
-                              final oAuthProvider=OAuthProvider('apple.com');
-                              final credential=oAuthProvider.credential(idToken:appleIdCredential.identityToken,accessToken:appleIdCredential.authorizationCode);
-                              await FirebaseAuth.instance.signInWithCredential(credential);
+                        //       final oAuthProvider=OAuthProvider('apple.com');
+                        //       final credential=oAuthProvider.credential(idToken:appleIdCredential.identityToken,accessToken:appleIdCredential.authorizationCode);
+                        //       await FirebaseAuth.instance.signInWithCredential(credential);
 
-                              if (appleIdCredential!=null) {
-                                await FirebaseFirestore.instance
-                                    .collection('Users')
-                                    .doc(appleIdCredential.userIdentifier)
-                                    .set({
-                                  'username': appleIdCredential.givenName,
-                                  'uid': appleIdCredential.userIdentifier,
-                                  'provider': 'appleid',
-                                  'userToken': appleIdCredential.userIdentifier
-                                }, SetOptions(merge: true)).then((value) async {
-                                  sharedPref.setString(
-                                      'username', appleIdCredential.givenName);
-                                  sharedPref.setString(
-                                      'uid', appleIdCredential.userIdentifier);
+                        //       if (appleIdCredential!=null) {
+                        //         await FirebaseFirestore.instance
+                        //             .collection('Users')
+                        //             .doc(appleIdCredential.userIdentifier)
+                        //             .set({
+                        //           'username': appleIdCredential.givenName,
+                        //           'uid': appleIdCredential.userIdentifier,
+                        //           'provider': 'appleid',
+                        //           'userToken': appleIdCredential.userIdentifier
+                        //         }, SetOptions(merge: true)).then((value) async {
+                        //           sharedPref.setString(
+                        //               'username', appleIdCredential.givenName);
+                        //           sharedPref.setString(
+                        //               'uid', appleIdCredential.userIdentifier);
 
-                                  sharedPref.setString('provider', 'appleid');
-                                  sharedPref.setString(
-                                      'userToken', appleIdCredential.userIdentifier);
+                        //           sharedPref.setString('provider', 'appleid');
+                        //           sharedPref.setString(
+                        //               'userToken', appleIdCredential.userIdentifier);
 
-                                  await FirebaseFirestore.instance
-                                      .collection('Users')
-                                      .doc(appleIdCredential.userIdentifier)
-                                      .get()
-                                      .then((data) async {
-                                    if (data.exists) {
-                                      sharedPref.setString(
-                                          'username', data.data()['username']);
-                                      sharedPref.setString('uid', data.id);
-                                      sharedPref.setString(
-                                          'imgURL', data.data()['imgURL']);
-                                      sharedPref.setString(
-                                          'provider', 'appleid');
+                        //           await FirebaseFirestore.instance
+                        //               .collection('Users')
+                        //               .doc(appleIdCredential.userIdentifier)
+                        //               .get()
+                        //               .then((data) async {
+                        //             if (data.exists) {
+                        //               sharedPref.setString(
+                        //                   'username', data.data()['username']);
+                        //               sharedPref.setString('uid', data.id);
+                        //               sharedPref.setString(
+                        //                   'imgURL', data.data()['imgURL']);
+                        //               sharedPref.setString(
+                        //                   'provider', 'appleid');
 
-                                      if (data.data()['address'] != null) {
-                                        Map<String, dynamic> addressMap =
-                                            data.data()['address'];
-                                        if (addressMap['customername'] !=
-                                                null &&
-                                            addressMap['city'] != null &&
-                                            addressMap['region'] != null &&
-                                            addressMap['address'] != null &&
-                                            addressMap['mobile'] != null) {
-                                          sharedPref.setString('customername',
-                                              addressMap['customername']);
-                                          sharedPref.setString(
-                                              'city', addressMap['city']);
-                                          sharedPref.setString(
-                                              'region', addressMap['region']);
-                                          sharedPref.setString(
-                                              'address', addressMap['address']);
-                                          sharedPref.setString(
-                                              'mobile', addressMap['mobile']);
-                                        }
-                                      }
+                        //               if (data.data()['address'] != null) {
+                        //                 Map<String, dynamic> addressMap =
+                        //                     data.data()['address'];
+                        //                 if (addressMap['customername'] !=
+                        //                         null &&
+                        //                     addressMap['city'] != null &&
+                        //                     addressMap['region'] != null &&
+                        //                     addressMap['address'] != null &&
+                        //                     addressMap['mobile'] != null) {
+                        //                   sharedPref.setString('customername',
+                        //                       addressMap['customername']);
+                        //                   sharedPref.setString(
+                        //                       'city', addressMap['city']);
+                        //                   sharedPref.setString(
+                        //                       'region', addressMap['region']);
+                        //                   sharedPref.setString(
+                        //                       'address', addressMap['address']);
+                        //                   sharedPref.setString(
+                        //                       'mobile', addressMap['mobile']);
+                        //                 }
+                        //               }
 
-                                      await data.reference
-                                          .collection('favorites')
-                                          .orderBy('date', descending: true)
-                                          .get()
-                                          .then((value) {
-                                        List<String> favList = [];
-                                        if (value.docs.isNotEmpty) {
-                                          value.docs.forEach((val) {
-                                            favList.add(val.id);
-                                          });
-                                        }
-                                        sharedPref.setStringList(
-                                            'favorite', favList);
-                                      });
-                                    }
-                                  });
+                        //               await data.reference
+                        //                   .collection('favorites')
+                        //                   .orderBy('date', descending: true)
+                        //                   .get()
+                        //                   .then((value) {
+                        //                 List<String> favList = [];
+                        //                 if (value.docs.isNotEmpty) {
+                        //                   value.docs.forEach((val) {
+                        //                     favList.add(val.id);
+                        //                   });
+                        //                 }
+                        //                 sharedPref.setStringList(
+                        //                     'favorite', favList);
+                        //               });
+                        //             }
+                        //           });
 
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              new MyHomePage()));
-                                });
-                              }
+                        //           Navigator.push(
+                        //               context,
+                        //               MaterialPageRoute(
+                        //                   builder: (context) =>
+                        //                       new MyHomePage()));
+                        //         });
+                        //       }
 
-                              // Now send the credential (especially `credential.authorizationCode`) to your server to create a session
-                              // after they have been validated with Apple (see `Integration` section for more information on how to do this)
-                            },
-                          ))
+                        //       // Now send the credential (especially `credential.authorizationCode`) to your server to create a session
+                        //       // after they have been validated with Apple (see `Integration` section for more information on how to do this)
+                        //     },
+                        //   ))
                         : Container()
                   ]))
         ]),
