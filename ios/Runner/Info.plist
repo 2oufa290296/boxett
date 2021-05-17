@@ -97,6 +97,19 @@
 		<string>fbauth2</string>
 		<string>fbshareextension</string>
 	</array>
+
+	
+	 <key>aps-environment</key>
+    <string>production</string>
+    <key>com.apple.developer.applesignin</key>
+    <array>
+        <string>Default</string>
+    </array>
+    <key>com.apple.developer.associated-domains</key>
+    <array>
+        <string>applinks:N/A</string>
+    </array>
+
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<key>NSLocationUsageDescription</key>
