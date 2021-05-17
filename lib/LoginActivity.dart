@@ -1038,7 +1038,7 @@ class _LoginActivityState extends State<LoginActivity> {
               ])),
           Positioned(
               width: width,
-              bottom: 10,
+              bottom: 40,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
