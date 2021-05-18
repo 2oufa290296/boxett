@@ -123,72 +123,55 @@ class SigningOutState extends State<SigningOut>
                                           ),
                                           Row(mainAxisAlignment: MainAxisAlignment.center,mainAxisSize:MainAxisSize.max,
                                             children: [
-                                              Container(
-                                                  margin: EdgeInsets.only(
-                                                      right: 15,top:15),
-                                                  height: 40,
-                                                  width:100,
-                                                  alignment:Alignment.center,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      color: Colors.green),
-                                                  child: Material(
-                                                      color: Colors.transparent,
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                      ),
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            signingOut = true;
-                                                          });
+                                              InkWell(
+                                                onTap: () {
+                                                    setState(() {
+                                                      signingOut = true;
+                                                    });
 
-                                                          Future.delayed(
-                                                              Duration(
-                                                                  milliseconds:
-                                                                      2000),
-                                                              () {
-                                                            sharedPref.clear();
-                                                             signingOut = false;
-                                                            Navigator.pushNamed(
-                                                                context,
-                                                                '/login');
-                                                          });
-                                                        },
-                                                        child:Text('YES',style:TextStyle(color:Colors.white,fontSize:16))
-                                                      ))),
-                                              Container(margin:EdgeInsets.only(top:15),
+                                                    Future.delayed(
+                                                        Duration(
+                                                            milliseconds:
+                                                                2000),
+                                                        () {
+                                                      sharedPref.clear();
+                                                       signingOut = false;
+                                                      Navigator.pushNamed(
+                                                          context,
+                                                          '/login');
+                                                    });
+                                                  },
+                                                child: Container(
+                                                  margin: EdgeInsets.only(
+                                                        right: 15,top:15),
                                                   height: 40,
                                                   width:100,
                                                   alignment:Alignment.center,
                                                   decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      color: Colors.grey),
-                                                  child: Material(
-                                                      color: Colors.transparent,
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      shape:
-                                                          RoundedRectangleBorder(
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                      ),
-                                                      child: InkWell(
-                                                        onTap:(){
-                                                          Navigator.of(context).pop();
-                                                        },
-                                                         child:Text('NO',style:TextStyle(color:Colors.white,fontSize:16))
-                                                      )))
+                                                            BorderRadius.circular(
+                                                                10),
+                                                        color: Colors.green),
+                                                  child:Text('YES',style:TextStyle(color:Colors.white,fontSize:16)),
+                                                ),
+                                              ),
+                                              InkWell(
+                                                onTap:(){
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                child: Container(
+                                                  margin:EdgeInsets.only(top:15),
+                                                  height: 40,
+                                                  width:100,
+                                                  alignment:Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                10),
+                                                        color: Colors.grey),
+                                                  child:Text('NO',style:TextStyle(color:Colors.white,fontSize:16)),
+                                                ),
+                                              )
                                             ],
                                           ),
                                         ],
