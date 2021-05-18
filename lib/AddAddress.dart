@@ -32,7 +32,7 @@ class _AddAddressState extends State<AddAddress>
   String mobile = "";
   bool showProgressBar = true;
   bool changed = false;
-  double width, height,safeAreaTop,safeAreaBottom;
+  double width, height, safeAreaTop, safeAreaBottom;
   FocusNode cityNode = FocusNode();
   FocusNode regionNode = FocusNode();
   FocusNode addressNode = FocusNode();
@@ -87,8 +87,8 @@ class _AddAddressState extends State<AddAddress>
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
-    safeAreaTop=MediaQuery.of(context).padding.top;
-    safeAreaBottom=MediaQuery.of(context).padding.bottom;
+    safeAreaTop = MediaQuery.of(context).padding.top;
+    safeAreaBottom = MediaQuery.of(context).padding.bottom;
     return SafeArea(
       child: Scaffold(
           resizeToAvoidBottomInset: false,
@@ -146,7 +146,7 @@ class _AddAddressState extends State<AddAddress>
               : Column(
                   children: [
                     Container(
-                      height: height - (110+safeAreaTop+safeAreaBottom),
+                      height: height - (110 + safeAreaTop + safeAreaBottom),
                       child: SingleChildScrollView(
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -478,7 +478,7 @@ class _AddAddressState extends State<AddAddress>
                     Container(
                       height: 60,
                       width: width,
-                     padding:EdgeInsets.only(bottom:20),
+                      padding: EdgeInsets.only(bottom: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -569,7 +569,7 @@ class _AddAddressState extends State<AddAddress>
                                               }
                                             }, SetOptions(merge: true));
                                             ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
+                                                .showSnackBar(SnackBar(duration:Duration(milliseconds:2000),
                                                     backgroundColor:
                                                         Color(0xFF232323),
                                                     content: Row(
@@ -610,7 +610,7 @@ class _AddAddressState extends State<AddAddress>
                                                     )));
                                             _controller.forward();
                                             Future.delayed(
-                                                Duration(milliseconds: 1000),
+                                                Duration(milliseconds: 2200),
                                                 () {
                                               Navigator.pop(context, true);
                                             });
