@@ -393,7 +393,11 @@ class _LoginActivityState extends State<LoginActivity> {
 
         break;
 
+     
       default:
+        setState(() {
+          loadingFacebook = false;
+        });
         break;
     }
   }
