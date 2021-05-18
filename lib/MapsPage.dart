@@ -133,16 +133,19 @@ class _MapsPageState extends State<MapsPage>
         _permissionGranted == PermissionStatus.deniedForever) {
       _permissionGranted = await location.requestPermission();
       if (Platform.isIOS) {
-        showLocError = true;
-
-        if (_permissionGranted == PermissionStatus.deniedForever) {
+        if (_permissionGranted == PermissionStatus.denied) {
+          showLocError = true;
+        } else if (_permissionGranted == PermissionStatus.deniedForever) {
+          showLocError = true;
           showIosError = true;
+        } else {
+          showLocError = false;
         }
 
         setState(() {});
         return;
       } else {
-        if (_permissionGranted != PermissionStatus.granted) {
+        if (_permissionGranted ==  PermissionStatus.deniedForever || _permissionGranted ==  PermissionStatus.denied) {
           setState(() {
             showLocError = true;
           });
