@@ -116,7 +116,7 @@ class _MapsPageState extends State<MapsPage>
   );
 
   Future _checkLocation() async {
-    // Future.delayed(Duration(milliseconds: 1000));
+    Future.delayed(Duration(milliseconds: 1000));
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
       _serviceEnabled = await location.requestService();
