@@ -48,18 +48,9 @@
     ... Some other CFBundleURLTypes definition.
     </dict>
     -->	
-	<dict>
-	<key>aps-environment</key>
-        <string>production</string>
-        <key>com.apple.developer.applesignin</key>
-        <array>
-         <string>Default</string>
-        </array>
-        <key>com.apple.developer.associated-domains</key>
-        <array>
-         <string>applinks:N/A</string>
-        </array>
-	</dict>
+	
+	
+	
 		
 	<dict>
 		<key>CFBundleTypeRole</key>
@@ -112,11 +103,7 @@
 
 	
 
-	<key>UIBackgroundModes</key>
-	<array>
-    	<string>fetch</string>
-    	<string>remote-notification</string>
-	</array>
+	
 
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
