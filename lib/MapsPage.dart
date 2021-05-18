@@ -56,7 +56,7 @@ class _MapsPageState extends State<MapsPage>
   double profileLng;
   bool showMap = false;
   bool retrying = false;
-  bool showIosError=false;
+  bool showIosError = false;
   GeoPoint mapLoc;
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -129,15 +129,19 @@ class _MapsPageState extends State<MapsPage>
     }
 
     _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
+    if (_permissionGranted == PermissionStatus.denied ||
+        _permissionGranted == PermissionStatus.deniedForever) {
+      _permissionGranted = await location.requestPermission();
       if (Platform.isIOS) {
-        setState(() {
-            showIosError = true;
-            showLocError=true;
-          });
-          return;
+        showLocError = true;
+
+        if (_permissionGranted == PermissionStatus.deniedForever) {
+          showIosError = true;
+        }
+
+        setState(() {});
+        return;
       } else {
-        _permissionGranted = await location.requestPermission();
         if (_permissionGranted != PermissionStatus.granted) {
           setState(() {
             showLocError = true;
@@ -674,64 +678,70 @@ class _MapsPageState extends State<MapsPage>
                   : Container(
                       height: height - 50,
                       alignment: Alignment.center,
-                      child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Text('Location Service is disabled',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 18,
-                                )),
-                            showIosError?Container(margin:EdgeInsets.only(top:10),width:width,alignment:Alignment.center,
-                              child: Text('Please enable location in device settings',textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 16,
-                                  )),
-                            ):Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(top: 20),
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4),
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Color.fromRGBO(18, 42, 76, 1),
-                                          Color.fromRGBO(5, 150, 197, 1),
-                                          Color.fromRGBO(18, 42, 76, 1),
-                                        ],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      )),
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.circular(4),
+                      child: Column(mainAxisSize: MainAxisSize.min, children: <
+                          Widget>[
+                        Text('Location Service is disabled',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 18,
+                            )),
+                        showIosError
+                            ? Container(
+                                margin: EdgeInsets.only(top: 10),
+                                width: width,
+                                alignment: Alignment.center,
+                                child: Text(
+                                    'Please enable location in device settings',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 16,
+                                    )),
+                              )
+                            : Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(top: 20),
                                     clipBehavior: Clip.antiAlias,
-                                    child: InkWell(
-                                      onTap: () {
-                                        _checkLocation();
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 12,
-                                            right: 12,
-                                            top: 8,
-                                            bottom: 8),
-                                        child: Center(
-                                          child: Text('Enable',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16)),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(4),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Color.fromRGBO(18, 42, 76, 1),
+                                            Color.fromRGBO(5, 150, 197, 1),
+                                            Color.fromRGBO(18, 42, 76, 1),
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        )),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      borderRadius: BorderRadius.circular(4),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: InkWell(
+                                        onTap: () {
+                                          _checkLocation();
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 12,
+                                              right: 12,
+                                              top: 8,
+                                              bottom: 8),
+                                          child: Center(
+                                            child: Text('Enable',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16)),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ]))),
+                                ],
+                              ),
+                      ]))),
     );
   }
 }
