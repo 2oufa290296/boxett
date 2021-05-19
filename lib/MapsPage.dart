@@ -45,7 +45,6 @@ class _MapsPageState extends State<MapsPage>
   String markerTitle = '';
   String markerPageId = '';
   String markerPageAddress = '';
-  bool showMaps = false;
   bool showInfoWindow = false;
   bool showLocError = false;
   bool internetError = false;
@@ -160,13 +159,11 @@ class _MapsPageState extends State<MapsPage>
       }
     }
 
-    Future.delayed(Duration(milliseconds: 500), () {
-      if (mounted) {
+   if (mounted) {
         setState(() {
           showMap = true;
         });
       }
-    });
 
     // controllerr = await _controller.future;
   }
