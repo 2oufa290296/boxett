@@ -20,6 +20,11 @@ import 'package:flutter/services.dart';
 import 'package:boxet/Welcome.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:boxet/apple_sign_in_available.dart';
+import 'package:boxet/auth_service.dart';
+import 'package:boxet/sign_in_page.dart';
+import 'package:provider/provider.dart';
+
 
 import 'AppLocalizations.dart';
 
@@ -41,6 +46,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final appleSignInAvailable = await AppleSignInAvailable.check();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
@@ -52,7 +58,10 @@ void main() async {
     sound: true,
   );
 
-  runApp(MyApp());
+  runApp(Provider<AppleSignInAvailable>.value(
+    value: appleSignInAvailable,
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -69,51 +78,63 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    return new MaterialApp(
-      routes: <String, WidgetBuilder>{
-        '/myApp': (BuildContext context) => MyApp(),
-        '/homePage': (BuildContext context) => MyHomePage(),
-        '/giftPage': (BuildContext context) =>
-            GiftPage(ModalRoute.of(context).settings.arguments),
-        '/orderPlaced': (BuildContext context) => OrderPlaced(),
-        '/login': (BuildContext context) => LoginActivity(),
-        '/assistantdone': (BuildContext context) => AssistantDone()
-      },
-      supportedLocales: [
-        Locale('en', 'US'),
-        Locale('ar'),
-      ],
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      localeResolutionCallback: (locale, supportedLocales) {
-        for (var supportedLocale in supportedLocales) {
-          if (supportedLocale.languageCode == locale.languageCode &&
-              supportedLocale.countryCode == locale.countryCode) {
-            return supportedLocale;
-          }
-        }
-        return supportedLocales.first;
-      },
-      title: 'Boxet',
-      theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          iconTheme: IconThemeData(color: Color.fromRGBO(5, 150, 197, 1)),
-          accentIconTheme: IconThemeData(color: Color.fromRGBO(5, 150, 197, 1)),
-          scaffoldBackgroundColor: Colors.black,
-          accentColor: Color.fromRGBO(5, 150, 197, 1)),
-      home: new Welcome(),
+
+    return Provider<AuthService>(
+      create: (_) => AuthService(),
+      child: MaterialApp(
+        title: 'Apple Sign In with Firebase',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.indigo,
+        ),
+        home: SignInPage(),
+      ),
     );
+    // return new MaterialApp(
+    //   routes: <String, WidgetBuilder>{
+    //     '/myApp': (BuildContext context) => MyApp(),
+    //     '/homePage': (BuildContext context) => MyHomePage(),
+    //     '/giftPage': (BuildContext context) =>
+    //         GiftPage(ModalRoute.of(context).settings.arguments),
+    //     '/orderPlaced': (BuildContext context) => OrderPlaced(),
+    //     '/login': (BuildContext context) => LoginActivity(),
+    //     '/assistantdone': (BuildContext context) => AssistantDone()
+    //   },
+    //   supportedLocales: [
+    //     Locale('en', 'US'),
+    //     Locale('ar'),
+    //   ],
+    //   localizationsDelegates: [
+    //     AppLocalizations.delegate,
+    //     GlobalMaterialLocalizations.delegate,
+    //     GlobalWidgetsLocalizations.delegate,
+    //   ],
+    //   localeResolutionCallback: (locale, supportedLocales) {
+    //     for (var supportedLocale in supportedLocales) {
+    //       if (supportedLocale.languageCode == locale.languageCode &&
+    //           supportedLocale.countryCode == locale.countryCode) {
+    //         return supportedLocale;
+    //       }
+    //     }
+    //     return supportedLocales.first;
+    //   },
+    //   title: 'Boxet',
+    //   theme: ThemeData(
+    //       // This is the theme of your application.
+    //       //
+    //       // Try running your application with "flutter run". You'll see the
+    //       // application has a blue toolbar. Then, without quitting the app, try
+    //       // changing the primarySwatch below to Colors.green and then invoke
+    //       // "hot reload" (press "r" in the console where you ran "flutter run",
+    //       // or simply save your changes to "hot reload" in a Flutter IDE).
+    //       // Notice that the counter didn't reset back to zero; the application
+    //       // is not restarted.
+    //       iconTheme: IconThemeData(color: Color.fromRGBO(5, 150, 197, 1)),
+    //       accentIconTheme: IconThemeData(color: Color.fromRGBO(5, 150, 197, 1)),
+    //       scaffoldBackgroundColor: Colors.black,
+    //       accentColor: Color.fromRGBO(5, 150, 197, 1)),
+    //   home: new Welcome(),
+    // );
   }
 }
 
