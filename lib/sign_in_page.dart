@@ -14,7 +14,9 @@ class _SignInPageState extends State<SignInPage> {
   Future<void> _signInWithApple(BuildContext context) async {
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
-      final user = await authService.signInWithApple();
+      final user = await authService.signInWithApple(scopes: [Scope.email, Scope.fullName]);
+      
+      
       
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           duration: Duration(milliseconds: 2000),
