@@ -3,21 +3,21 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:boxet/AssistantDone.dart';
+// import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'package:boxet/AssistantDone.dart';
 import 'package:boxet/ChatPage.dart';
 import 'package:boxet/CustomNavBar.dart';
 import 'package:boxet/FavPage.dart';
-import 'package:boxet/GiftPage.dart';
+// import 'package:boxet/GiftPage.dart';
 import 'package:boxet/classes/HeaderGifts.dart';
 import 'package:boxet/HomePage.dart';
-import 'package:boxet/LoginActivity.dart';
-import 'package:boxet/OrderPlaced.dart';
+// import 'package:boxet/LoginActivity.dart';
+// import 'package:boxet/OrderPlaced.dart';
 import 'package:boxet/Profile.dart';
 import 'package:boxet/MapsPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
-import 'package:boxet/Welcome.dart';
+// import 'package:boxet/Welcome.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boxet/apple_sign_in_available.dart';
@@ -26,7 +26,7 @@ import 'package:boxet/sign_in_page.dart';
 import 'package:provider/provider.dart';
 
 
-import 'AppLocalizations.dart';
+// import 'AppLocalizations.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
