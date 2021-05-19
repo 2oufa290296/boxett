@@ -4,7 +4,13 @@ import 'package:boxet/auth_service.dart';
 import 'package:flutter/material.dart' hide ButtonStyle;
 import 'package:provider/provider.dart';
 
-class SignInPage extends StatelessWidget {
+class sign_in_page extends StatefulWidget {
+  @override
+  _sign_in_pageState createState() => _sign_in_pageState();
+}
+
+class _sign_in_pageState extends State<sign_in_page> {
+
   Future<void> _signInWithApple(BuildContext context) async {
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
@@ -37,7 +43,6 @@ class SignInPage extends StatelessWidget {
           )));
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final appleSignInAvailable =
@@ -63,3 +68,5 @@ class SignInPage extends StatelessWidget {
     );
   }
 }
+
+
