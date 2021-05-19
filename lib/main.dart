@@ -80,7 +80,7 @@ class MyApp extends StatelessWidget {
     ]);
 
     return Provider<AuthService>(
-      create: (_) => AuthService(),
+      create: (_) => AuthService(context),
       child: MaterialApp(
         title: 'Apple Sign In with Firebase',
         debugShowCheckedModeBanner: false,
