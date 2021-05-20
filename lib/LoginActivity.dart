@@ -1157,13 +1157,11 @@ class _LoginActivityState extends State<LoginActivity> {
                     ),
                     Platform.isIOS
                         ? SizedBox(
-                            width: 200,
+                            width: 280,
                             child: FutureBuilder<bool>(
                               future: _isAvailableFuture,
                               builder: (context, isAvailableSnapshot) {
-                                if (!isAvailableSnapshot.hasData) {
-                                  return Container(child: Text('Loading...'));
-                                }
+                                
 
                                 return isAvailableSnapshot.data
                                     ? Column(
@@ -1179,8 +1177,7 @@ class _LoginActivityState extends State<LoginActivity> {
                                               onPressed: logIn,
                                               style: apple.ButtonStyle.black,
                                             ),
-                                            if (errorMessage != null)
-                                              Text(errorMessage),
+                                            
                                             SizedBox(
                                               height: 20,
                                             ),
@@ -1310,15 +1307,15 @@ class _LoginActivityState extends State<LoginActivity> {
       case apple.AuthorizationStatus.authorized:
         final oAuthProvider = OAuthProvider('apple.com');
         final credential = oAuthProvider.credential(
-            idToken: result.credential.identityToken.toString(),
-            accessToken: result.credential.authorizationCode.toString());
+            idToken:String.fromCharCodes(result.credential.identityToken) ,
+            accessToken:String.fromCharCodes( result.credential.authorizationCode) );
         await FirebaseAuth.instance
             .signInWithCredential(credential)
             .then((value){
                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: Color(0xFF232323),
               content: Container(
-                height: 20,
+                
                 width: width,
                 alignment: Alignment.center,
                 child: Text(value.toString(), style: TextStyle(fontSize: 16)),
@@ -1327,7 +1324,7 @@ class _LoginActivityState extends State<LoginActivity> {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: Color(0xFF232323),
               content: Container(
-                height: 20,
+                
                 width: width,
                 alignment: Alignment.center,
                 child: Text(error.toString(), style: TextStyle(fontSize: 16)),
