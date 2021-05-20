@@ -286,7 +286,6 @@ class _LoginActivityState extends State<LoginActivity> {
     super.initState();
     getSharedPref();
     getUserToken();
-    
 
     apple.TheAppleSignIn.onCredentialRevoked.listen((_) {
       print("Credentials revoked");
@@ -1178,7 +1177,7 @@ class _LoginActivityState extends State<LoginActivity> {
                                             ),
                                             apple.AppleSignInButton(
                                               onPressed: logIn,
-                                              style: apple.ButtonStyle.white,
+                                              style: apple.ButtonStyle.black,
                                             ),
                                             if (errorMessage != null)
                                               Text(errorMessage),
@@ -1313,7 +1312,27 @@ class _LoginActivityState extends State<LoginActivity> {
         final credential = oAuthProvider.credential(
             idToken: result.credential.identityToken.toString(),
             accessToken: result.credential.authorizationCode.toString());
-        await FirebaseAuth.instance.signInWithCredential(credential);
+        await FirebaseAuth.instance
+            .signInWithCredential(credential)
+            .then((value){
+               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xFF232323),
+              content: Container(
+                height: 20,
+                width: width,
+                alignment: Alignment.center,
+                child: Text(value.toString(), style: TextStyle(fontSize: 16)),
+              )));
+            }, onError: ((error, stackTrace) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xFF232323),
+              content: Container(
+                height: 20,
+                width: width,
+                alignment: Alignment.center,
+                child: Text(error.toString(), style: TextStyle(fontSize: 16)),
+              )));
+        }));
 
         if (result.credential != null) {
           await FirebaseFirestore.instance
@@ -1325,11 +1344,14 @@ class _LoginActivityState extends State<LoginActivity> {
             'provider': 'appleid',
             'userToken': result.credential.identityToken.toString()
           }, SetOptions(merge: true)).then((value) async {
-            sharedPref.setString('username', result.credential.fullName.toString());
-            sharedPref.setString('uid', result.credential.identityToken.toString());
+            sharedPref.setString(
+                'username', result.credential.fullName.toString());
+            sharedPref.setString(
+                'uid', result.credential.identityToken.toString());
 
             sharedPref.setString('provider', 'appleid');
-            sharedPref.setString('userToken', result.credential.identityToken.toString());
+            sharedPref.setString(
+                'userToken', result.credential.identityToken.toString());
 
             await FirebaseFirestore.instance
                 .collection('Users')
@@ -1384,29 +1406,27 @@ class _LoginActivityState extends State<LoginActivity> {
         break;
 
       case apple.AuthorizationStatus.error:
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              backgroundColor: Color(0xFF232323),
-                              content: Container(
-                                height: 20,
-                                width: width,
-                                alignment: Alignment.center,
-                                child: Text(
-                                    'SignUp failed, please try again',
-                                    style: TextStyle(fontSize: 16)),
-                              )));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xFF232323),
+            content: Container(
+              height: 20,
+              width: width,
+              alignment: Alignment.center,
+              child: Text('Sign In failed, please try again',
+                  style: TextStyle(fontSize: 16)),
+            )));
         break;
 
       case apple.AuthorizationStatus.cancelled:
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              backgroundColor: Color(0xFF232323),
-                              content: Container(
-                                height: 20,
-                                width: width,
-                                alignment: Alignment.center,
-                                child: Text(
-                                    'SignUp canceled, please SignIn to continue',
-                                    style: TextStyle(fontSize: 16)),
-                              )));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xFF232323),
+            content: Container(
+              height: 20,
+              width: width,
+              alignment: Alignment.center,
+              child: Text('Sign in canceled, please Sign in to continue',
+                  style: TextStyle(fontSize: 16)),
+            )));
         break;
     }
   }
