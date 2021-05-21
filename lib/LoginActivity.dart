@@ -1315,70 +1315,84 @@ class _LoginActivityState extends State<LoginActivity> {
             await FirebaseFirestore.instance
                 .collection('Users')
                 .doc(value.user.uid)
-                .set({
-              'username': result.credential.fullName != null
-                  ? result.credential.fullName.toString()
-                  : result.credential.email,
-              'uid': value.user.uid,
-              'provider': 'appleid',
-              'userToken': userToken!=null?userToken:"",
-            }, SetOptions(merge: true)).then((valuue) async {
-              sharedPref.setString(
-                  'username',
-                  result.credential.fullName != null
-                      ? result.credential.fullName.toString()
-                      : result.credential.email);
-              sharedPref.setString('uid', value.user.uid);
+                .get()
+                .then((data) async {
+              if (data.exists) {
+                sharedPref.setString('username', data.data()['username']);
+                sharedPref.setString('uid', data.id);
+                sharedPref.setString('imgURL', data.data()['imgURL']);
+                sharedPref.setString('provider', 'appleid');
 
-              sharedPref.setString('provider', 'appleid');
-              sharedPref.setString('userToken', userToken!=null?userToken:"");
-
-              await FirebaseFirestore.instance
-                  .collection('Users')
-                  .doc(value.user.uid)
-                  .get()
-                  .then((data) async {
-                if (data.exists) {
-                  sharedPref.setString('username', data.data()['username']);
-                  sharedPref.setString('uid', data.id);
-                  sharedPref.setString('imgURL', data.data()['imgURL']);
-                  sharedPref.setString('provider', 'appleid');
-
-                  if (data.data()['address'] != null) {
-                    Map<String, dynamic> addressMap = data.data()['address'];
-                    if (addressMap['customername'] != null &&
-                        addressMap['city'] != null &&
-                        addressMap['region'] != null &&
-                        addressMap['address'] != null &&
-                        addressMap['mobile'] != null) {
-                      sharedPref.setString(
-                          'customername', addressMap['customername']);
-                      sharedPref.setString('city', addressMap['city']);
-                      sharedPref.setString('region', addressMap['region']);
-                      sharedPref.setString('address', addressMap['address']);
-                      sharedPref.setString('mobile', addressMap['mobile']);
-                    }
+                if (data.data()['address'] != null) {
+                  Map<String, dynamic> addressMap = data.data()['address'];
+                  if (addressMap['customername'] != null &&
+                      addressMap['city'] != null &&
+                      addressMap['region'] != null &&
+                      addressMap['address'] != null &&
+                      addressMap['mobile'] != null) {
+                    sharedPref.setString(
+                        'customername', addressMap['customername']);
+                    sharedPref.setString('city', addressMap['city']);
+                    sharedPref.setString('region', addressMap['region']);
+                    sharedPref.setString('address', addressMap['address']);
+                    sharedPref.setString('mobile', addressMap['mobile']);
                   }
-
-                  await data.reference
-                      .collection('favorites')
-                      .orderBy('date', descending: true)
-                      .get()
-                      .then((val) {
-                    List<String> favList = [];
-                    if (val.docs.isNotEmpty) {
-                      val.docs.forEach((val) {
-                        favList.add(val.id);
-                      });
-                    }
-                    sharedPref.setStringList('favorite', favList);
-                  });
                 }
-              });
 
-              Navigator.push(context,
+                await data.reference
+                    .collection('favorites')
+                    .orderBy('date', descending: true)
+                    .get()
+                    .then((val) {
+                  List<String> favList = [];
+                  if (val.docs.isNotEmpty) {
+                    val.docs.forEach((val) {
+                      favList.add(val.id);
+                    });
+                  }
+                  sharedPref.setStringList('favorite', favList);
+                });
+
+                Navigator.push(context,
                   MaterialPageRoute(builder: (context) => new MyHomePage()));
+              } else {
+                await FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(value.user.uid)
+                    .set({
+                  'username': result.credential.fullName != null
+                      ? result.credential.fullName.toString()
+                      : result.credential.email,
+                  'uid': value.user.uid,
+                  'provider': 'appleid',
+                  'userToken': userToken != null ? userToken : "",
+                }, SetOptions(merge: true)).then((valuue) async {
+                  sharedPref.setString(
+                      'username',
+                      result.credential.fullName != null
+                          ? result.credential.fullName.toString()
+                          : result.credential.email);
+                  sharedPref.setString('uid', value.user.uid);
+
+                  sharedPref.setString('provider', 'appleid');
+                  sharedPref.setString(
+                      'userToken', userToken != null ? userToken : "");
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => new MyHomePage()));
+                });
+              }
             });
+          }else {
+             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xFF232323),
+              content: Container(
+                width: width,
+                alignment: Alignment.center,
+                child: Text('Signing in failed, please try again', style: TextStyle(fontSize: 16)),
+              )));
           }
         }, onError: ((error, stackTrace) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
