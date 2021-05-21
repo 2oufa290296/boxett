@@ -1353,30 +1353,47 @@ class _LoginActivityState extends State<LoginActivity> {
                   sharedPref.setStringList('favorite', favList);
                 });
 
-                Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => new MyHomePage()));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xFF232323),
+              content: Container(
+                width: width,
+                alignment: Alignment.center,
+                child: Text('Welcome Back '+result.credential.fullName.givenName+' '+result.credential.fullName.familyName, style: TextStyle(fontSize: 16)),
+              )));
+
+
+                Navigator.push(context,MaterialPageRoute(builder: (context) => new MyHomePage()));
               } else {
                 await FirebaseFirestore.instance
                     .collection('Users')
                     .doc(value.user.uid)
                     .set({
                   'username': result.credential.fullName != null
-                      ? result.credential.fullName.toString()
+                      ? result.credential.fullName.givenName+' '+result.credential.fullName.familyName
                       : result.credential.email,
                   'uid': value.user.uid,
                   'provider': 'appleid',
+                  'imgURL': '',
                   'userToken': userToken != null ? userToken : "",
                 }, SetOptions(merge: true)).then((valuue) async {
                   sharedPref.setString(
                       'username',
                       result.credential.fullName != null
-                          ? result.credential.fullName.toString()
+                          ? result.credential.fullName.givenName+' '+result.credential.fullName.familyName
                           : result.credential.email);
                   sharedPref.setString('uid', value.user.uid);
-
+                  sharedPref.setString('imgURL', '');
                   sharedPref.setString('provider', 'appleid');
                   sharedPref.setString(
                       'userToken', userToken != null ? userToken : "");
+
+                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xFF232323),
+              content: Container(
+                width: width,
+                alignment: Alignment.center,
+                child: Text('Welcome New User '+result.credential.fullName.givenName+' '+result.credential.fullName.familyName, style: TextStyle(fontSize: 16)),
+              )));
 
                   Navigator.push(
                       context,
