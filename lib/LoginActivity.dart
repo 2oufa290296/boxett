@@ -1161,8 +1161,6 @@ class _LoginActivityState extends State<LoginActivity> {
                             child: FutureBuilder<bool>(
                               future: _isAvailableFuture,
                               builder: (context, isAvailableSnapshot) {
-                                
-
                                 return isAvailableSnapshot.data
                                     ? Column(
                                         mainAxisAlignment:
@@ -1177,7 +1175,6 @@ class _LoginActivityState extends State<LoginActivity> {
                                               onPressed: logIn,
                                               style: apple.ButtonStyle.black,
                                             ),
-                                            
                                             SizedBox(
                                               height: 20,
                                             ),
@@ -1299,104 +1296,99 @@ class _LoginActivityState extends State<LoginActivity> {
   void logIn() async {
     final apple.AuthorizationResult result =
         await apple.TheAppleSignIn.performRequests([
-      apple.AppleIdRequest(
-          requestedScopes: [apple.Scope.email, apple.Scope.fullName])
+      apple.AppleIdRequest(requestedScopes: [
+        apple.Scope.email,
+        apple.Scope.fullName,
+      ])
     ]);
 
     switch (result.status) {
       case apple.AuthorizationStatus.authorized:
         final oAuthProvider = OAuthProvider('apple.com');
         final credential = oAuthProvider.credential(
-            idToken:String.fromCharCodes(result.credential.identityToken) ,
-            accessToken:String.fromCharCodes( result.credential.authorizationCode) );
-        await FirebaseAuth.instance
-            .signInWithCredential(credential)
-            .then((value){
-               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Color(0xFF232323),
-              content: Container(
-                
-                width: width,
-                alignment: Alignment.center,
-                child: Text(value.toString(), style: TextStyle(fontSize: 16)),
-              )));
-            }, onError: ((error, stackTrace) {
+            idToken: String.fromCharCodes(result.credential.identityToken),
+            accessToken:
+                String.fromCharCodes(result.credential.authorizationCode));
+        await FirebaseAuth.instance.signInWithCredential(credential).then(
+            (value) async {
+          if (value.user != null) {
+            await FirebaseFirestore.instance
+                .collection('Users')
+                .doc(value.user.uid)
+                .set({
+              'username': result.credential.fullName != null
+                  ? result.credential.fullName.toString()
+                  : result.credential.email,
+              'uid': value.user.uid,
+              'provider': 'appleid',
+              'userToken': userToken!=null?userToken:"",
+            }, SetOptions(merge: true)).then((valuue) async {
+              sharedPref.setString(
+                  'username',
+                  result.credential.fullName != null
+                      ? result.credential.fullName.toString()
+                      : result.credential.email);
+              sharedPref.setString('uid', value.user.uid);
+
+              sharedPref.setString('provider', 'appleid');
+              sharedPref.setString('userToken', userToken!=null?userToken:"");
+
+              await FirebaseFirestore.instance
+                  .collection('Users')
+                  .doc(value.user.uid)
+                  .get()
+                  .then((data) async {
+                if (data.exists) {
+                  sharedPref.setString('username', data.data()['username']);
+                  sharedPref.setString('uid', data.id);
+                  sharedPref.setString('imgURL', data.data()['imgURL']);
+                  sharedPref.setString('provider', 'appleid');
+
+                  if (data.data()['address'] != null) {
+                    Map<String, dynamic> addressMap = data.data()['address'];
+                    if (addressMap['customername'] != null &&
+                        addressMap['city'] != null &&
+                        addressMap['region'] != null &&
+                        addressMap['address'] != null &&
+                        addressMap['mobile'] != null) {
+                      sharedPref.setString(
+                          'customername', addressMap['customername']);
+                      sharedPref.setString('city', addressMap['city']);
+                      sharedPref.setString('region', addressMap['region']);
+                      sharedPref.setString('address', addressMap['address']);
+                      sharedPref.setString('mobile', addressMap['mobile']);
+                    }
+                  }
+
+                  await data.reference
+                      .collection('favorites')
+                      .orderBy('date', descending: true)
+                      .get()
+                      .then((val) {
+                    List<String> favList = [];
+                    if (val.docs.isNotEmpty) {
+                      val.docs.forEach((val) {
+                        favList.add(val.id);
+                      });
+                    }
+                    sharedPref.setStringList('favorite', favList);
+                  });
+                }
+              });
+
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => new MyHomePage()));
+            });
+          }
+        }, onError: ((error, stackTrace) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: Color(0xFF232323),
               content: Container(
-                
                 width: width,
                 alignment: Alignment.center,
                 child: Text(error.toString(), style: TextStyle(fontSize: 16)),
               )));
         }));
-
-        if (result.credential != null) {
-          await FirebaseFirestore.instance
-              .collection('Users')
-              .doc(result.credential.identityToken.toString())
-              .set({
-            'username': result.credential.fullName.toString(),
-            'uid': result.credential.identityToken.toString(),
-            'provider': 'appleid',
-            'userToken': result.credential.identityToken.toString()
-          }, SetOptions(merge: true)).then((value) async {
-            sharedPref.setString(
-                'username', result.credential.fullName.toString());
-            sharedPref.setString(
-                'uid', result.credential.identityToken.toString());
-
-            sharedPref.setString('provider', 'appleid');
-            sharedPref.setString(
-                'userToken', result.credential.identityToken.toString());
-
-            await FirebaseFirestore.instance
-                .collection('Users')
-                .doc(result.credential.identityToken.toString())
-                .get()
-                .then((data) async {
-              if (data.exists) {
-                sharedPref.setString('username', data.data()['username']);
-                sharedPref.setString('uid', data.id);
-                sharedPref.setString('imgURL', data.data()['imgURL']);
-                sharedPref.setString('provider', 'appleid');
-
-                if (data.data()['address'] != null) {
-                  Map<String, dynamic> addressMap = data.data()['address'];
-                  if (addressMap['customername'] != null &&
-                      addressMap['city'] != null &&
-                      addressMap['region'] != null &&
-                      addressMap['address'] != null &&
-                      addressMap['mobile'] != null) {
-                    sharedPref.setString(
-                        'customername', addressMap['customername']);
-                    sharedPref.setString('city', addressMap['city']);
-                    sharedPref.setString('region', addressMap['region']);
-                    sharedPref.setString('address', addressMap['address']);
-                    sharedPref.setString('mobile', addressMap['mobile']);
-                  }
-                }
-
-                await data.reference
-                    .collection('favorites')
-                    .orderBy('date', descending: true)
-                    .get()
-                    .then((value) {
-                  List<String> favList = [];
-                  if (value.docs.isNotEmpty) {
-                    value.docs.forEach((val) {
-                      favList.add(val.id);
-                    });
-                  }
-                  sharedPref.setStringList('favorite', favList);
-                });
-              }
-            });
-
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => new MyHomePage()));
-          });
-        }
 
         // Store user ID
 
