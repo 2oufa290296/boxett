@@ -1302,6 +1302,7 @@ class _LoginActivityState extends State<LoginActivity> {
       ])
     ]);
 
+    
     switch (result.status) {
       case apple.AuthorizationStatus.authorized:
         final oAuthProvider = OAuthProvider('apple.com');
@@ -1311,11 +1312,21 @@ class _LoginActivityState extends State<LoginActivity> {
                 String.fromCharCodes(result.credential.authorizationCode));
         await FirebaseAuth.instance.signInWithCredential(credential).then(
             (value) async {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    backgroundColor: Color(0xFF232323),
+                    content: Container(
+                      width: width,
+                      alignment: Alignment.center,
+                      child: Text(
+                          value.user.uid,
+                          style: TextStyle(fontSize: 16)),
+                    )));
+
           if (value.user != null) {
             await FirebaseFirestore.instance
                 .collection('Users')
                 .doc(value.user.uid)
-                .get()
+                .get(GetOptions(source:Source.server))
                 .then((data) async {
               if (data.exists) {
                 sharedPref.setString('username', data.data()['username']);
@@ -1353,23 +1364,30 @@ class _LoginActivityState extends State<LoginActivity> {
                   sharedPref.setStringList('favorite', favList);
                 });
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Color(0xFF232323),
-              content: Container(
-                width: width,
-                alignment: Alignment.center,
-                child: Text('Welcome Back '+result.credential.fullName.givenName+' '+result.credential.fullName.familyName, style: TextStyle(fontSize: 16)),
-              )));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    backgroundColor: Color(0xFF232323),
+                    content: Container(
+                      width: width,
+                      alignment: Alignment.center,
+                      child: Text(
+                          'Welcome Back ' +
+                              result.credential.fullName.givenName +
+                              ' ' +
+                              result.credential.fullName.familyName,
+                          style: TextStyle(fontSize: 16)),
+                    )));
 
-
-                Navigator.push(context,MaterialPageRoute(builder: (context) => new MyHomePage()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => new MyHomePage()));
               } else {
                 await FirebaseFirestore.instance
                     .collection('Users')
                     .doc(value.user.uid)
                     .set({
                   'username': result.credential.fullName != null
-                      ? result.credential.fullName.givenName+' '+result.credential.fullName.familyName
+                      ? result.credential.fullName.givenName +
+                          ' ' +
+                          result.credential.fullName.familyName
                       : result.credential.email,
                   'uid': value.user.uid,
                   'provider': 'appleid',
@@ -1379,7 +1397,9 @@ class _LoginActivityState extends State<LoginActivity> {
                   sharedPref.setString(
                       'username',
                       result.credential.fullName != null
-                          ? result.credential.fullName.givenName+' '+result.credential.fullName.familyName
+                          ? result.credential.fullName.givenName +
+                              ' ' +
+                              result.credential.fullName.familyName
                           : result.credential.email);
                   sharedPref.setString('uid', value.user.uid);
                   sharedPref.setString('imgURL', '');
@@ -1387,13 +1407,18 @@ class _LoginActivityState extends State<LoginActivity> {
                   sharedPref.setString(
                       'userToken', userToken != null ? userToken : "");
 
-                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Color(0xFF232323),
-              content: Container(
-                width: width,
-                alignment: Alignment.center,
-                child: Text('Welcome New User '+result.credential.fullName.givenName+' '+result.credential.fullName.familyName, style: TextStyle(fontSize: 16)),
-              )));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Color(0xFF232323),
+                      content: Container(
+                        width: width,
+                        alignment: Alignment.center,
+                        child: Text(
+                            'Welcome New User ' +
+                                result.credential.fullName.givenName +
+                                ' ' +
+                                result.credential.fullName.familyName,
+                            style: TextStyle(fontSize: 16)),
+                      )));
 
                   Navigator.push(
                       context,
@@ -1402,14 +1427,15 @@ class _LoginActivityState extends State<LoginActivity> {
                 });
               }
             });
-          }else {
-             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Color(0xFF232323),
-              content: Container(
-                width: width,
-                alignment: Alignment.center,
-                child: Text('Signing in failed, please try again', style: TextStyle(fontSize: 16)),
-              )));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Color(0xFF232323),
+                content: Container(
+                  width: width,
+                  alignment: Alignment.center,
+                  child: Text('Signing in failed, please try again',
+                      style: TextStyle(fontSize: 16)),
+                )));
           }
         }, onError: ((error, stackTrace) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
