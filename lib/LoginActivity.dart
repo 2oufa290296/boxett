@@ -1311,7 +1311,7 @@ class _LoginActivityState extends State<LoginActivity> {
                 String.fromCharCodes(result.credential.authorizationCode));
         UserCredential cred =
             await FirebaseAuth.instance.signInWithCredential(credential);
-        if (cred.user != null) {
+        
           DocumentSnapshot snap = await FirebaseFirestore.instance
               .collection('Users')
               .doc(cred.user.uid)
@@ -1413,22 +1413,14 @@ class _LoginActivityState extends State<LoginActivity> {
                   MaterialPageRoute(builder: (context) => new MyHomePage()));
             });
           }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Color(0xFF232323),
-              content: Container(
-                width: width,
-                alignment: Alignment.center,
-                child: Text('Signing in failed, please try again',
-                    style: TextStyle(fontSize: 16)),
-              )));
-        }
+        
 
         // Store user ID
 
         break;
 
       case apple.AuthorizationStatus.error:
+      
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Color(0xFF232323),
             content: Container(
