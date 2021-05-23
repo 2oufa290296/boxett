@@ -27,7 +27,7 @@ class _LoginActivityState extends State<LoginActivity> {
   double height, width;
   TextEditingController userController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
-  final FirebaseAuth _fAuth = FirebaseAuth.instance;
+  
   final GoogleSignIn _googleSignIn = new GoogleSignIn();
   final FacebookLogin facebooklogin = FacebookLogin();
   bool showLoginProgress = false;
