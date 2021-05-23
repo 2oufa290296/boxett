@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:boxet/LoginState.dart';
+import 'package:boxet/Redirecting.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,6 +11,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:boxet/CustomDialog.dart';
 import 'package:boxet/main.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boxet/Signup.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart' as apple;
@@ -177,12 +180,15 @@ class _LoginActivityState extends State<LoginActivity> {
       return null;
     } else {
       GoogleSignInAuthentication authentication = await account.authentication;
+      final auth = Provider.of<LoginState>(context, listen: false);
+
       AuthCredential credential = GoogleAuthProvider.credential(
           accessToken: authentication.accessToken,
           idToken: authentication.idToken);
 
-      UserCredential userCred = await _fAuth.signInWithCredential(credential);
-      return (userCred.user);
+      await auth.loginUser(credential);
+      User user = await auth.getCurrentUser();
+      return (user);
     }
   }
 
@@ -193,35 +199,35 @@ class _LoginActivityState extends State<LoginActivity> {
         await facebooklogin.logIn(['email', 'public_profile']);
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
+        final auth = Provider.of<LoginState>(context, listen: false);
+
         AuthCredential credential =
             FacebookAuthProvider.credential(result.accessToken.token);
-        UserCredential userCred = await _fAuth.signInWithCredential(credential);
+        await auth.loginUser(credential);
+        User user = await auth.getCurrentUser();
 
-        await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(userCred.user.uid)
-            .set({
-          'username': userCred.user.displayName,
-          'uid': userCred.user.uid,
-          'imgURL': userCred.user.photoURL +
+        await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
+          'username': user.displayName,
+          'uid': user.uid,
+          'imgURL': user.photoURL +
               "?type=large&access_token=" +
               result.accessToken.token,
           'provider': 'facebook',
           'userToken': userToken != null && userToken != "" ? userToken : ""
         }, SetOptions(merge: true));
 
-        sharedPref.setString('username', userCred.user.displayName);
-        sharedPref.setString('uid', userCred.user.uid);
+        sharedPref.setString('username', user.displayName);
+        sharedPref.setString('uid', user.uid);
         sharedPref.setString(
             'imgURL',
-            userCred.user.photoURL +
+            user.photoURL +
                 "?type=large&access_token=" +
                 result.accessToken.token);
         sharedPref.setString('provider', 'facebook');
         sharedPref.setString('userToken', userToken);
         await FirebaseFirestore.instance
             .collection('Users')
-            .doc(userCred.user.uid)
+            .doc(user.uid)
             .get()
             .then((data) async {
           if (data.exists) {
@@ -257,7 +263,9 @@ class _LoginActivityState extends State<LoginActivity> {
             });
           }
 
-          Navigator.pushNamed(context, '/homePage');
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => Redirecting()));
+        
         });
 
         break;
@@ -1142,11 +1150,11 @@ class _LoginActivityState extends State<LoginActivity> {
                                           }
                                         });
 
-                                        Navigator.push(
+                                        Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) =>
-                                                    new MyHomePage()));
+                                                builder: (_) => Redirecting()));
+                                       
                                       });
                                     }
                                   });
@@ -1309,19 +1317,24 @@ class _LoginActivityState extends State<LoginActivity> {
             idToken: String.fromCharCodes(result.credential.identityToken),
             accessToken:
                 String.fromCharCodes(result.credential.authorizationCode));
-        UserCredential cred =
-            await FirebaseAuth.instance.signInWithCredential(credential);
+       
+
+            final auth = Provider.of<LoginState>(context, listen: false);
+
+        
+        await auth.loginUser(credential);
+        User user = await auth.getCurrentUser();
 
         await FirebaseFirestore.instance
             .collection('Users')
-            .doc(cred.user.uid)
+            .doc(user.uid)
             .set({
           'username': result.credential.fullName != null
               ? result.credential.fullName.givenName +
                   ' ' +
                   result.credential.fullName.familyName
               : result.credential.email,
-          'uid': cred.user.uid,
+          'uid': user.uid,
           'provider': 'appleid',
           'imgURL': '',
           'userToken': userToken != null ? userToken : "",
@@ -1333,14 +1346,14 @@ class _LoginActivityState extends State<LoginActivity> {
                       ' ' +
                       result.credential.fullName.familyName
                   : result.credential.email);
-          sharedPref.setString('uid', cred.user.uid);
+          sharedPref.setString('uid', user.uid);
           sharedPref.setString('imgURL', '');
           sharedPref.setString('provider', 'appleid');
           sharedPref.setString('userToken', userToken != null ? userToken : "");
 
           DocumentSnapshot snap = await FirebaseFirestore.instance
               .collection('Users')
-              .doc(cred.user.uid)
+              .doc(user.uid)
               .get(GetOptions(source: Source.server));
 
           if (snap.exists) {
@@ -1388,8 +1401,9 @@ class _LoginActivityState extends State<LoginActivity> {
                     style: TextStyle(fontSize: 16)),
               )));
 
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => new MyHomePage()));
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => Redirecting()));
+         
         });
 
         // Store user ID

@@ -1,4 +1,5 @@
 
+import 'package:boxet/Redirecting.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/cupertino.dart';
@@ -73,6 +74,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/myApp': (BuildContext context) => MyApp(),
         '/homePage': (BuildContext context) => MyHomePage(),
+        '/redirect': (BuildContext context) => Redirecting(),
         '/giftPage': (BuildContext context) =>
             GiftPage(ModalRoute.of(context).settings.arguments),
         '/orderPlaced': (BuildContext context) => OrderPlaced(),

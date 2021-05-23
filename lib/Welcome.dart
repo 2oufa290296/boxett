@@ -27,7 +27,8 @@ class _WelcomeState extends State<Welcome> {
   //   });
   // }
 
-  checkUserState() async {
+
+  redirecting() async {
     await Future.delayed(Duration(milliseconds: 2000));
     SharedPreferences sharedPref = await SharedPreferences.getInstance();
     String userToken = sharedPref.getString('userToken');
@@ -46,17 +47,14 @@ class _WelcomeState extends State<Welcome> {
         print(newToken);
       }
     });
-    if (uid != null && uid != "") {
-      Navigator.pushNamed(context, '/homePage');
-    } else {
-      Navigator.pushNamed(context, '/login');
-    }
+    
+     Navigator.pushNamed(context, '/redirect');
   }
 
   @override
   void initState() {
     super.initState();
-    checkUserState();
+    redirecting();
     // handleUser();
   }
 
