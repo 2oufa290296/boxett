@@ -1311,18 +1311,39 @@ class _LoginActivityState extends State<LoginActivity> {
                 String.fromCharCodes(result.credential.authorizationCode));
         UserCredential cred =
             await FirebaseAuth.instance.signInWithCredential(credential);
-        
+
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(cred.user.uid)
+            .set({
+          'username': result.credential.fullName != null
+              ? result.credential.fullName.givenName +
+                  ' ' +
+                  result.credential.fullName.familyName
+              : result.credential.email,
+          'uid': cred.user.uid,
+          'provider': 'appleid',
+          'imgURL': '',
+          'userToken': userToken != null ? userToken : "",
+        }, SetOptions(merge: true)).then((valuue) async {
+          sharedPref.setString(
+              'username',
+              result.credential.fullName != null
+                  ? result.credential.fullName.givenName +
+                      ' ' +
+                      result.credential.fullName.familyName
+                  : result.credential.email);
+          sharedPref.setString('uid', cred.user.uid);
+          sharedPref.setString('imgURL', '');
+          sharedPref.setString('provider', 'appleid');
+          sharedPref.setString('userToken', userToken != null ? userToken : "");
+
           DocumentSnapshot snap = await FirebaseFirestore.instance
               .collection('Users')
               .doc(cred.user.uid)
               .get(GetOptions(source: Source.server));
 
           if (snap.exists) {
-            sharedPref.setString('username', snap.data()['username']);
-            sharedPref.setString('uid', snap.id);
-            sharedPref.setString('imgURL', snap.data()['imgURL']);
-            sharedPref.setString('provider', 'appleid');
-
             if (snap.data()['address'] != null) {
               Map<String, dynamic> addressMap = snap.data()['address'];
               if (addressMap['customername'] != null &&
@@ -1352,75 +1373,30 @@ class _LoginActivityState extends State<LoginActivity> {
               }
               sharedPref.setStringList('favorite', favList);
             });
-
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                backgroundColor: Color(0xFF232323),
-                content: Container(
-                  width: width,
-                  alignment: Alignment.center,
-                  child: Text(
-                      'Welcome Back ' +
-                          result.credential.fullName.givenName +
-                          ' ' +
-                          result.credential.fullName.familyName,
-                      style: TextStyle(fontSize: 16)),
-                )));
-
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => new MyHomePage()));
-          } else {
-            await FirebaseFirestore.instance
-                .collection('Users')
-                .doc(cred.user.uid)
-                .set({
-              'username': result.credential.fullName != null
-                  ? result.credential.fullName.givenName +
-                      ' ' +
-                      result.credential.fullName.familyName
-                  : result.credential.email,
-              'uid': cred.user.uid,
-              'provider': 'appleid',
-              'imgURL': '',
-              'userToken': userToken != null ? userToken : "",
-            }, SetOptions(merge: true)).then((valuue) async {
-              sharedPref.setString(
-                  'username',
-                  result.credential.fullName != null
-                      ? result.credential.fullName.givenName +
-                          ' ' +
-                          result.credential.fullName.familyName
-                      : result.credential.email);
-              sharedPref.setString('uid', cred.user.uid);
-              sharedPref.setString('imgURL', '');
-              sharedPref.setString('provider', 'appleid');
-              sharedPref.setString(
-                  'userToken', userToken != null ? userToken : "");
-
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Color(0xFF232323),
-                  content: Container(
-                    width: width,
-                    alignment: Alignment.center,
-                    child: Text(
-                        'Welcome New User ' +
-                            result.credential.fullName.givenName +
-                            ' ' +
-                            result.credential.fullName.familyName,
-                        style: TextStyle(fontSize: 16)),
-                  )));
-
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => new MyHomePage()));
-            });
           }
-        
+
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xFF232323),
+              content: Container(
+                width: width,
+                alignment: Alignment.center,
+                child: Text(
+                    'Welcome New User ' +
+                        result.credential.fullName.givenName +
+                        ' ' +
+                        result.credential.fullName.familyName,
+                    style: TextStyle(fontSize: 16)),
+              )));
+
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => new MyHomePage()));
+        });
 
         // Store user ID
 
         break;
 
       case apple.AuthorizationStatus.error:
-      
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Color(0xFF232323),
             content: Container(
