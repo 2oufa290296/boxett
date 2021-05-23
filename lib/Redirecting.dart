@@ -1,6 +1,7 @@
-import 'package:boxet/HomePage.dart';
+
 import 'package:boxet/LoginActivity.dart';
 import 'package:boxet/LoginState.dart';
+import 'package:boxet/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +15,7 @@ class _RedirectingState extends State<Redirecting> {
   Widget build(BuildContext context) {
       return Consumer<LoginState>(
       builder: (_, auth, __) {
-        if (auth.loggedIn) return HomePage();
+        if (auth.loggedIn) return MyHomePage();
         return LoginActivity();
       },
     );
