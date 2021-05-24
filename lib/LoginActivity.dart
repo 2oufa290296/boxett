@@ -1319,37 +1319,18 @@ class _LoginActivityState extends State<LoginActivity> {
         await auth.loginUser(credential);
         User user = await auth.getCurrentUser();
 
-        await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
-          'username': result.credential.fullName != null
-              ? result.credential.fullName.givenName +
-                  ' ' +
-                  result.credential.fullName.familyName
-              : result.credential.email,
-          'uid': user.uid,
-          'provider': 'appleid',
-          'imgURL': '',
-          'userToken': userToken != null ? userToken : "",
-        }, SetOptions(merge: true)).then((valuue) async {
-          sharedPref.setString(
-              'username',
-              result.credential.fullName != null
-                  ? result.credential.fullName.givenName +
-                      ' ' +
-                      result.credential.fullName.familyName
-                  : result.credential.email);
-          sharedPref.setString('uid', user.uid);
-          sharedPref.setString('imgURL', '');
-          sharedPref.setString('provider', 'appleid');
-          sharedPref.setString('userToken', userToken != null ? userToken : "");
+        DocumentReference docR =
+            FirebaseFirestore.instance.collection('Users').doc(user.uid);
+        docR.get().then((data) async {
+          if (data.exists) {
+            sharedPref.setString('username', data.data()['username']);
+            sharedPref.setString('uid', data.data()['uid']);
+            sharedPref.setString('imgURL', data.data()['imgURL']);
+            sharedPref.setString('provider', data.data()['provider']);
+            sharedPref.setString('userToken', data.data()['userToken']);
 
-          DocumentSnapshot snap = await FirebaseFirestore.instance
-              .collection('Users')
-              .doc(user.uid)
-              .get(GetOptions(source: Source.server));
-
-          if (snap.exists) {
-            if (snap.data()['address'] != null) {
-              Map<String, dynamic> addressMap = snap.data()['address'];
+            if (data.data()['address'] != null) {
+              Map<String, dynamic> addressMap = data.data()['address'];
               if (addressMap['customername'] != null &&
                   addressMap['city'] != null &&
                   addressMap['region'] != null &&
@@ -1364,7 +1345,7 @@ class _LoginActivityState extends State<LoginActivity> {
               }
             }
 
-            await snap.reference
+            await data.reference
                 .collection('favorites')
                 .orderBy('date', descending: true)
                 .get()
@@ -1377,21 +1358,44 @@ class _LoginActivityState extends State<LoginActivity> {
               }
               sharedPref.setStringList('favorite', favList);
             });
-          }
-
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Color(0xFF232323),
-              content: Container(
-                width: width,
-                alignment: Alignment.center,
-                child: Text(
-                    'Welcome New User ' +
-                        result.credential.fullName.givenName +
+          } else {
+            sharedPref.setString(
+                'username',
+                result.credential.fullName != null
+                    ? result.credential.fullName.givenName +
                         ' ' +
-                        result.credential.fullName.familyName,
-                    style: TextStyle(fontSize: 16)),
-              )));
+                        result.credential.fullName.familyName
+                    : result.credential.email);
+            sharedPref.setString('uid', user.uid);
+            sharedPref.setString('imgURL', '');
+            sharedPref.setString('provider', 'appleid');
+            sharedPref.setString(
+                'userToken', userToken != null ? userToken : "");
+            await docR.set({
+              'username': result.credential.fullName != null
+                  ? result.credential.fullName.givenName +
+                      ' ' +
+                      result.credential.fullName.familyName
+                  : result.credential.email,
+              'uid': user.uid,
+              'provider': 'appleid',
+              'imgURL': '',
+              'userToken': userToken != null ? userToken : "",
+            }, SetOptions(merge: true));
 
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Color(0xFF232323),
+                content: Container(
+                  width: width,
+                  alignment: Alignment.center,
+                  child: Text(
+                      'Welcome New User ' +
+                          result.credential.fullName.givenName +
+                          ' ' +
+                          result.credential.fullName.familyName,
+                      style: TextStyle(fontSize: 16)),
+                )));
+          }
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (_) => Redirecting()));
         });
