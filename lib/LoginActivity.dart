@@ -27,7 +27,6 @@ class _LoginActivityState extends State<LoginActivity> {
   double height, width;
   TextEditingController userController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
-  
   final GoogleSignIn _googleSignIn = new GoogleSignIn();
   final FacebookLogin facebooklogin = FacebookLogin();
   bool showLoginProgress = false;
@@ -206,33 +205,12 @@ class _LoginActivityState extends State<LoginActivity> {
         await auth.loginUser(credential);
         User user = await auth.getCurrentUser();
 
-        await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
-          'username': user.displayName,
-          'uid': user.uid,
-          'imgURL': user.photoURL +
-              "?type=large&access_token=" +
-              result.accessToken.token,
-          'provider': 'facebook',
-          'userToken': userToken != null && userToken != "" ? userToken : ""
-        }, SetOptions(merge: true));
-
-        sharedPref.setString('username', user.displayName);
-        sharedPref.setString('uid', user.uid);
-        sharedPref.setString(
-            'imgURL',
-            user.photoURL +
-                "?type=large&access_token=" +
-                result.accessToken.token);
-        sharedPref.setString('provider', 'facebook');
-        sharedPref.setString('userToken', userToken);
-        await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(user.uid)
-            .get()
-            .then((data) async {
-          if (data.exists) {
-            if (data.data()['address'] != null) {
-              Map<String, dynamic> addressMap = data.data()['address'];
+        DocumentReference docRef =
+            FirebaseFirestore.instance.collection('Users').doc(user.uid);
+        docRef.get().then((value) async {
+          if (value.exists) {
+            if (value.data()['address'] != null) {
+              Map<String, dynamic> addressMap = value.data()['address'];
               if (addressMap['customername'] != null &&
                   addressMap['city'] != null &&
                   addressMap['region'] != null &&
@@ -247,7 +225,7 @@ class _LoginActivityState extends State<LoginActivity> {
               }
             }
 
-            await data.reference
+            await value.reference
                 .collection('favorites')
                 .orderBy('date', descending: true)
                 .get()
@@ -261,12 +239,31 @@ class _LoginActivityState extends State<LoginActivity> {
               print(value.docs);
               sharedPref.setStringList('favorite', favList);
             });
-          }
+          } else {
+            await docRef.set({
+              'username': user.displayName,
+              'uid': user.uid,
+              'imgURL': user.photoURL +
+                  "?type=large&access_token=" +
+                  result.accessToken.token,
+              'provider': 'facebook',
+              'userToken': userToken != null && userToken != "" ? userToken : ""
+            }, SetOptions(merge: true));
 
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => Redirecting()));
-        
+            sharedPref.setString('username', user.displayName);
+            sharedPref.setString('uid', user.uid);
+            sharedPref.setString(
+                'imgURL',
+                user.photoURL +
+                    "?type=large&access_token=" +
+                    result.accessToken.token);
+            sharedPref.setString('provider', 'facebook');
+            sharedPref.setString('userToken', userToken);
+          }
         });
+
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => Redirecting()));
 
         break;
       case FacebookLoginStatus.cancelledByUser:
@@ -1154,7 +1151,6 @@ class _LoginActivityState extends State<LoginActivity> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (_) => Redirecting()));
-                                       
                                       });
                                     }
                                   });
@@ -1317,18 +1313,13 @@ class _LoginActivityState extends State<LoginActivity> {
             idToken: String.fromCharCodes(result.credential.identityToken),
             accessToken:
                 String.fromCharCodes(result.credential.authorizationCode));
-       
 
-            final auth = Provider.of<LoginState>(context, listen: false);
+        final auth = Provider.of<LoginState>(context, listen: false);
 
-        
         await auth.loginUser(credential);
         User user = await auth.getCurrentUser();
 
-        await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(user.uid)
-            .set({
+        await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
           'username': result.credential.fullName != null
               ? result.credential.fullName.givenName +
                   ' ' +
@@ -1403,7 +1394,6 @@ class _LoginActivityState extends State<LoginActivity> {
 
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (_) => Redirecting()));
-         
         });
 
         // Store user ID
