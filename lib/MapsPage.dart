@@ -141,12 +141,13 @@ class _MapsPageState extends State<MapsPage>
           showLocError = false;
         }
 
-        setState(() {});
+        setState(() {if(showProgress) showProgress=false;});
         return;
       } else {
         if (_permissionGranted ==  PermissionStatus.deniedForever || _permissionGranted ==  PermissionStatus.denied) {
           setState(() {
             showLocError = true;
+            
           });
           return;
         } else {
