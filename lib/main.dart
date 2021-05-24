@@ -1,4 +1,5 @@
 
+import 'package:boxet/LoginState.dart';
 import 'package:boxet/Redirecting.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -20,6 +21,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:boxet/Welcome.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'AppLocalizations.dart';
@@ -53,7 +55,13 @@ void main() async {
     sound: true,
   );
 
-  runApp(MyApp());
+  
+  runApp(
+    ChangeNotifierProvider<LoginState>(
+      create: (_) => LoginState(),
+      child:MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
