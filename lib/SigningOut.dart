@@ -130,8 +130,9 @@ class SigningOutState extends State<SigningOut> with TickerProviderStateMixin {
                                     final auth = Provider.of<LoginState>(
                                         context,
                                         listen: false);
+                                        Navigator.pop(context);
                                     await auth.logout();
-                                    signingOut = false;
+                                    
                                   });
                                 },
                                 child: Container(
