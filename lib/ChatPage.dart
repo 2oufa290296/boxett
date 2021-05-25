@@ -470,7 +470,7 @@ class ChatPageState extends State<ChatPage> {
                               }
 
                               if (snap.data[index].data()['uid'] ==
-                                  widget.uid) {
+                                  widget.uid&& snap.data[index].data()['uid']!="") {
                                     if (snap.data[index].data()['message'] !=
                                         null &&
                                     snap.data[index].data()['message'] != "") {
