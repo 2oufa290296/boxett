@@ -133,21 +133,26 @@ class _MapsPageState extends State<MapsPage>
       _permissionGranted = await location.requestPermission();
       if (Platform.isIOS) {
         if (_permissionGranted == PermissionStatus.denied) {
+
           showLocError = true;
         } else if (_permissionGranted == PermissionStatus.deniedForever) {
           showLocError = true;
           showIosError = true;
         } else {
           showLocError = false;
+          showMap = true;
         }
 
-        setState(() {if(showProgress) showProgress=false;});
+        setState(() {
+          if (showProgress) showProgress = false;  
+        });
         return;
+
       } else {
-        if (_permissionGranted ==  PermissionStatus.deniedForever || _permissionGranted ==  PermissionStatus.denied) {
+        if (_permissionGranted == PermissionStatus.deniedForever ||
+            _permissionGranted == PermissionStatus.denied) {
           setState(() {
             showLocError = true;
-            
           });
           return;
         } else {
@@ -160,11 +165,9 @@ class _MapsPageState extends State<MapsPage>
       }
     }
 
-   if (mounted) {
-        setState(() {
-          showMap = true;
-        });
-      }
+    if (mounted) {
+      setState(() {showMap = true;});
+    }
 
     // controllerr = await _controller.future;
   }
