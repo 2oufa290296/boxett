@@ -200,7 +200,7 @@ class _LoginActivityState extends State<LoginActivity> {
       case FacebookLoginStatus.loggedIn:
         final auth = Provider.of<LoginState>(context, listen: false);
 
-        AuthCredential credential =
+        OAuthCredential credential =
             FacebookAuthProvider.credential(result.accessToken.token);
         await auth.loginUser(credential);
         User user = await auth.getCurrentUser();
@@ -209,6 +209,14 @@ class _LoginActivityState extends State<LoginActivity> {
             FirebaseFirestore.instance.collection('Users').doc(user.uid);
         docRef.get().then((value) async {
           if (value.exists) {
+
+             sharedPref.setString('username', value.data()['username']);
+            sharedPref.setString('uid', value.data()['uid']);
+            sharedPref.setString(
+                'imgURL',
+                value.data()['imgURL']);
+            sharedPref.setString('provider', value.data()['provider']);
+            sharedPref.setString('userToken', value.data()['userToken']);
             if (value.data()['address'] != null) {
               Map<String, dynamic> addressMap = value.data()['address'];
               if (addressMap['customername'] != null &&
@@ -236,7 +244,7 @@ class _LoginActivityState extends State<LoginActivity> {
                   favList.add(val.id);
                 });
               }
-              print(value.docs);
+              
               sharedPref.setStringList('favorite', favList);
             });
           } else {
@@ -1318,11 +1326,31 @@ class _LoginActivityState extends State<LoginActivity> {
 
         await auth.loginUser(credential);
         User user = await auth.getCurrentUser();
-
+        
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Color(0xFF232323),
+                content: Container(
+                  width: width,
+                  alignment: Alignment.center,
+                  child: Text('-----' +user.uid+'-----' ,
+                      style: TextStyle(fontSize: 16)),
+                )));
         DocumentReference docR =
             FirebaseFirestore.instance.collection('Users').doc(user.uid);
         docR.get().then((data) async {
           if (data.exists) {
+
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Color(0xFF232323),
+                content: Container(
+                  width: width,
+                  alignment: Alignment.center,
+                  child: Text('-----' +user.uid+'-----'+data.data()['username'] +'-----'+data.data()['uid']
+                  +'-----'+data.data()['imgURL']+'-----'+data.data()['provider']+'-----'+data.data()['userToken'],
+
+                      style: TextStyle(fontSize: 16)),
+                )));
+
             sharedPref.setString('username', data.data()['username']);
             sharedPref.setString('uid', data.data()['uid']);
             sharedPref.setString('imgURL', data.data()['imgURL']);
@@ -1351,7 +1379,7 @@ class _LoginActivityState extends State<LoginActivity> {
                 .get()
                 .then((val) {
               List<String> favList = [];
-              if (val.docs.isNotEmpty) {
+              if (val!=null && val.docs.isNotEmpty) {
                 val.docs.forEach((val) {
                   favList.add(val.id);
                 });
