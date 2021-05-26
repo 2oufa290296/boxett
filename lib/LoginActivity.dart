@@ -209,12 +209,9 @@ class _LoginActivityState extends State<LoginActivity> {
             FirebaseFirestore.instance.collection('Users').doc(user.uid);
         docRef.get().then((value) async {
           if (value.exists) {
-
-             sharedPref.setString('username', value.data()['username']);
+            sharedPref.setString('username', value.data()['username']);
             sharedPref.setString('uid', value.data()['uid']);
-            sharedPref.setString(
-                'imgURL',
-                value.data()['imgURL']);
+            sharedPref.setString('imgURL', value.data()['imgURL']);
             sharedPref.setString('provider', value.data()['provider']);
             sharedPref.setString('userToken', value.data()['userToken']);
             if (value.data()['address'] != null) {
@@ -244,7 +241,7 @@ class _LoginActivityState extends State<LoginActivity> {
                   favList.add(val.id);
                 });
               }
-              
+
               sharedPref.setStringList('favorite', favList);
             });
           } else {
@@ -299,8 +296,6 @@ class _LoginActivityState extends State<LoginActivity> {
     super.initState();
     getSharedPref();
     getUserToken();
-
-   
   }
 
   getUserToken() async {
@@ -1314,8 +1309,7 @@ class _LoginActivityState extends State<LoginActivity> {
 
     switch (result.status) {
       case apple.AuthorizationStatus.authorized:
-      
-      final appleIdCredential=result.credential;
+        final appleIdCredential = result.credential;
         final oAuthProvider = OAuthProvider('apple.com');
         final credential = oAuthProvider.credential(
             idToken: String.fromCharCodes(appleIdCredential.identityToken),
@@ -1326,57 +1320,50 @@ class _LoginActivityState extends State<LoginActivity> {
 
         await auth.loginUserApple(credential);
         User user = await auth.getCurrentUser();
-        
-        
+
         DocumentReference docR =
             FirebaseFirestore.instance.collection('Users').doc(user.uid);
 
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xFF232323),
+            content: Container(
+              width: width,
+              alignment: Alignment.center,
+              child:
+                  Text(appleIdCredential.fullName.givenName +'----'+user.uid+'----'+userToken, style: TextStyle(fontSize: 16)),
+            )));
+        sharedPref.setString(
+            'username',
+            appleIdCredential.fullName.givenName +
+                result.credential.fullName.familyName);
+        sharedPref.setString('uid', user.uid);
+        sharedPref.setString('imgURL', '');
+        sharedPref.setString('provider', 'appleid');
+        sharedPref.setString('userToken', userToken != null ? userToken : "");
+        await docR.set({
+          'username': appleIdCredential.fullName.givenName +
+              appleIdCredential.fullName.familyName,
+          'uid': user.uid,
+          'provider': 'appleid',
+          'imgURL': '',
+          'userToken': userToken != null ? userToken : "",
+        }, SetOptions(merge: true));
 
-                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                backgroundColor: Color(0xFF232323),
-                content: Container(
-                  width: width,
-                  alignment: Alignment.center,
-                  child: Text( appleIdCredential.user ,
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //     backgroundColor: Color(0xFF232323),
+        //     content: Container(
+        //       width: width,
+        //       alignment: Alignment.center,
+        //       child: Text(
+        //           'Welcome New User ' +
+        //               result.credential.fullName.givenName +
+        //               ' ' +
+        //               result.credential.fullName.familyName,
+        //           style: TextStyle(fontSize: 16)),
+        //     )));
 
-                      style: TextStyle(fontSize: 16)),
-                )));
-            sharedPref.setString(
-                'username',
-                appleIdCredential.fullName.givenName +
-                        result.credential.fullName.familyName 
-                   );
-            sharedPref.setString('uid', user.uid);
-            sharedPref.setString('imgURL', '');
-            sharedPref.setString('provider', 'appleid');
-            sharedPref.setString(
-                'userToken', userToken != null ? userToken : "");
-            await docR.set({
-              'username':  appleIdCredential.fullName.givenName +
-                        appleIdCredential.fullName.familyName ,
-              'uid': user.uid,
-              'provider': 'appleid',
-              'imgURL': '',
-              'userToken': userToken != null ? userToken : "",
-            }, SetOptions(merge: true));
-
-            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            //     backgroundColor: Color(0xFF232323),
-            //     content: Container(
-            //       width: width,
-            //       alignment: Alignment.center,
-            //       child: Text(
-            //           'Welcome New User ' +
-            //               result.credential.fullName.givenName +
-            //               ' ' +
-            //               result.credential.fullName.familyName,
-            //           style: TextStyle(fontSize: 16)),
-            //     )));
-          
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => Redirecting()));
-
-
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => Redirecting()));
 
         // docR.get().then((data) async {
         //   if (data.exists) {
