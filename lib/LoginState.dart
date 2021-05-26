@@ -19,6 +19,12 @@ class LoginState with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> loginUserApple(OAuthCredential credential) async {
+    await _auth.signInWithCredential(credential);
+    _loggedIn = true;
+    notifyListeners();
+  }
+
   Future<User> getCurrentUser() async {
     return  _auth.currentUser;
   }
