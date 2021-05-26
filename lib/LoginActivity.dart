@@ -1327,67 +1327,12 @@ class _LoginActivityState extends State<LoginActivity> {
         await auth.loginUser(credential);
         User user = await auth.getCurrentUser();
         
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                backgroundColor: Color(0xFF232323),
-                content: Container(
-                  width: width,
-                  alignment: Alignment.center,
-                  child: Text('-----' +user.uid+'-----' ,
-                      style: TextStyle(fontSize: 16)),
-                )));
+        
         DocumentReference docR =
             FirebaseFirestore.instance.collection('Users').doc(user.uid);
-        docR.get().then((data) async {
-          if (data.exists) {
 
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                backgroundColor: Color(0xFF232323),
-                content: Container(
-                  width: width,
-                  alignment: Alignment.center,
-                  child: Text('-----' +user.uid+'-----'+data.data()['username'] +'-----'+data.data()['uid']
-                  +'-----'+data.data()['imgURL']+'-----'+data.data()['provider']+'-----'+data.data()['userToken']+user.email!=null? user.email:'null email',
 
-                      style: TextStyle(fontSize: 16)),
-                )));
-
-            sharedPref.setString('username', data.data()['username']);
-            sharedPref.setString('uid', data.data()['uid']);
-            sharedPref.setString('imgURL', data.data()['imgURL']);
-            sharedPref.setString('provider', data.data()['provider']);
-            sharedPref.setString('userToken', data.data()['userToken']);
-
-            if (data.data()['address'] != null) {
-              Map<String, dynamic> addressMap = data.data()['address'];
-              if (addressMap['customername'] != null &&
-                  addressMap['city'] != null &&
-                  addressMap['region'] != null &&
-                  addressMap['address'] != null &&
-                  addressMap['mobile'] != null) {
-                sharedPref.setString(
-                    'customername', addressMap['customername']);
-                sharedPref.setString('city', addressMap['city']);
-                sharedPref.setString('region', addressMap['region']);
-                sharedPref.setString('address', addressMap['address']);
-                sharedPref.setString('mobile', addressMap['mobile']);
-              }
-            }
-
-            await data.reference
-                .collection('favorites')
-                .orderBy('date', descending: true)
-                .get()
-                .then((val) {
-              List<String> favList = [];
-              if (val!=null && val.docs.isNotEmpty) {
-                val.docs.forEach((val) {
-                  favList.add(val.id);
-                });
-              }
-              sharedPref.setStringList('favorite', favList);
-            });
-          } else {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 backgroundColor: Color(0xFF232323),
                 content: Container(
                   width: width,
@@ -1395,8 +1340,7 @@ class _LoginActivityState extends State<LoginActivity> {
                   child: Text('--!!!--' +user.uid+'-----'+  result.credential.fullName.givenName +
                         ' ' +
                         result.credential.fullName.familyName
-                     +'-----'+user.uid
-                  +'-----'+user.photoURL!=null?user.photoURL:'empty img'+'-----'+user.providerData.last.providerId+'-----'+userToken!=null ? userToken:'null token',
+                     +'-----'+user.photoURL!=null?user.photoURL:'empty img'+'-----'+userToken!=null ? userToken:'null token',
 
                       style: TextStyle(fontSize: 16)),
                 )));
@@ -1436,10 +1380,115 @@ class _LoginActivityState extends State<LoginActivity> {
                           result.credential.fullName.familyName,
                       style: TextStyle(fontSize: 16)),
                 )));
-          }
+          
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (_) => Redirecting()));
-        });
+
+
+
+        // docR.get().then((data) async {
+        //   if (data.exists) {
+
+        //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //         backgroundColor: Color(0xFF232323),
+        //         content: Container(
+        //           width: width,
+        //           alignment: Alignment.center,
+        //           child: Text('-----' +user.uid+'-----'+data.data()['username'] +'-----'+data.data()['uid']
+        //           +'-----'+data.data()['imgURL']+'-----'+data.data()['provider']+'-----'+data.data()['userToken']+user.email!=null? user.email:'null email',
+
+        //               style: TextStyle(fontSize: 16)),
+        //         )));
+
+        //     sharedPref.setString('username', data.data()['username']);
+        //     sharedPref.setString('uid', data.data()['uid']);
+        //     sharedPref.setString('imgURL', data.data()['imgURL']);
+        //     sharedPref.setString('provider', data.data()['provider']);
+        //     sharedPref.setString('userToken', data.data()['userToken']);
+
+        //     if (data.data()['address'] != null) {
+        //       Map<String, dynamic> addressMap = data.data()['address'];
+        //       if (addressMap['customername'] != null &&
+        //           addressMap['city'] != null &&
+        //           addressMap['region'] != null &&
+        //           addressMap['address'] != null &&
+        //           addressMap['mobile'] != null) {
+        //         sharedPref.setString(
+        //             'customername', addressMap['customername']);
+        //         sharedPref.setString('city', addressMap['city']);
+        //         sharedPref.setString('region', addressMap['region']);
+        //         sharedPref.setString('address', addressMap['address']);
+        //         sharedPref.setString('mobile', addressMap['mobile']);
+        //       }
+        //     }
+
+        //     await data.reference
+        //         .collection('favorites')
+        //         .orderBy('date', descending: true)
+        //         .get()
+        //         .then((val) {
+        //       List<String> favList = [];
+        //       if (val!=null && val.docs.isNotEmpty) {
+        //         val.docs.forEach((val) {
+        //           favList.add(val.id);
+        //         });
+        //       }
+        //       sharedPref.setStringList('favorite', favList);
+        //     });
+        //   } else {
+        //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //         backgroundColor: Color(0xFF232323),
+        //         content: Container(
+        //           width: width,
+        //           alignment: Alignment.center,
+        //           child: Text('--!!!--' +user.uid+'-----'+  result.credential.fullName.givenName +
+        //                 ' ' +
+        //                 result.credential.fullName.familyName
+        //              +'-----'+user.uid
+        //           +'-----'+user.photoURL!=null?user.photoURL:'empty img'+'-----'+user.providerData.last.providerId+'-----'+userToken!=null ? userToken:'null token',
+
+        //               style: TextStyle(fontSize: 16)),
+        //         )));
+        //     sharedPref.setString(
+        //         'username',
+        //         result.credential.fullName != null
+        //             ? result.credential.fullName.givenName +
+        //                 ' ' +
+        //                 result.credential.fullName.familyName
+        //             : "username");
+        //     sharedPref.setString('uid', user.uid);
+        //     sharedPref.setString('imgURL', '');
+        //     sharedPref.setString('provider', 'appleid');
+        //     sharedPref.setString(
+        //         'userToken', userToken != null ? userToken : "");
+        //     await docR.set({
+        //       'username': result.credential.fullName != null
+        //           ? result.credential.fullName.givenName +
+        //               ' ' +
+        //               result.credential.fullName.familyName
+        //           : 'username',
+        //       'uid': user.uid,
+        //       'provider': 'appleid',
+        //       'imgURL': '',
+        //       'userToken': userToken != null ? userToken : "",
+        //     }, SetOptions(merge: true));
+
+        //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //         backgroundColor: Color(0xFF232323),
+        //         content: Container(
+        //           width: width,
+        //           alignment: Alignment.center,
+        //           child: Text(
+        //               'Welcome New User ' +
+        //                   result.credential.fullName.givenName +
+        //                   ' ' +
+        //                   result.credential.fullName.familyName,
+        //               style: TextStyle(fontSize: 16)),
+        //         )));
+        //   }
+        //   Navigator.pushReplacement(
+        //       context, MaterialPageRoute(builder: (_) => Redirecting()));
+        // });
 
         // Store user ID
 
