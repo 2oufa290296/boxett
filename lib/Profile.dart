@@ -55,6 +55,15 @@ pref = await SharedPreferences.getInstance();
     username = pref.getString('username');
     gender = pref.getString('gender');
     provider = pref.getString('provider');
+
+     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xFF232323),
+            content: Container(
+              width: width,
+              alignment: Alignment.center,
+              child:
+                  Text(username +'----'+userId+'----'+imgUrl, style: TextStyle(fontSize: 16)),
+            )));
    
 
     if (gender == null) {
