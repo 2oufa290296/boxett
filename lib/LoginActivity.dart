@@ -1337,49 +1337,41 @@ class _LoginActivityState extends State<LoginActivity> {
                 content: Container(
                   width: width,
                   alignment: Alignment.center,
-                  child: Text('--!!!--' +user.uid+'-----'+  result.credential.fullName.givenName +
-                        ' ' +
-                        result.credential.fullName.familyName
-                     +'-----'+user.photoURL!=null?user.photoURL:'empty img'+'-----'+userToken!=null ? userToken:'null token',
+                  child: Text( result.credential.user ,
 
                       style: TextStyle(fontSize: 16)),
                 )));
             sharedPref.setString(
                 'username',
-                result.credential.fullName != null
-                    ? result.credential.fullName.givenName +
-                        ' ' +
-                        result.credential.fullName.familyName
-                    : "username");
+                result.credential.fullName.givenName +
+                        result.credential.fullName.familyName 
+                   );
             sharedPref.setString('uid', user.uid);
             sharedPref.setString('imgURL', '');
             sharedPref.setString('provider', 'appleid');
             sharedPref.setString(
                 'userToken', userToken != null ? userToken : "");
             await docR.set({
-              'username': result.credential.fullName != null
-                  ? result.credential.fullName.givenName +
-                      ' ' +
-                      result.credential.fullName.familyName
-                  : 'username',
+              'username':  result.credential.fullName.givenName +
+                        result.credential.fullName.familyName ,
               'uid': user.uid,
               'provider': 'appleid',
               'imgURL': '',
               'userToken': userToken != null ? userToken : "",
             }, SetOptions(merge: true));
 
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                backgroundColor: Color(0xFF232323),
-                content: Container(
-                  width: width,
-                  alignment: Alignment.center,
-                  child: Text(
-                      'Welcome New User ' +
-                          result.credential.fullName.givenName +
-                          ' ' +
-                          result.credential.fullName.familyName,
-                      style: TextStyle(fontSize: 16)),
-                )));
+            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //     backgroundColor: Color(0xFF232323),
+            //     content: Container(
+            //       width: width,
+            //       alignment: Alignment.center,
+            //       child: Text(
+            //           'Welcome New User ' +
+            //               result.credential.fullName.givenName +
+            //               ' ' +
+            //               result.credential.fullName.familyName,
+            //           style: TextStyle(fontSize: 16)),
+            //     )));
           
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (_) => Redirecting()));
