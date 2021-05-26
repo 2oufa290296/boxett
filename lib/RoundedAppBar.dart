@@ -7,7 +7,6 @@ import 'package:boxet/CustomDialog.dart';
 import 'package:boxet/NotificationActivity.dart';
 import 'package:boxet/ProfileReviews.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 GlobalKey<CustomDialogState> profileCustomKey = GlobalKey();
@@ -29,19 +28,17 @@ class _RoundedAppBarState extends State<RoundedAppBar> {
   double height;
   double widthh;
 
-  SharedPreferences sharedPref;
+  
   bool firsttime = true;
   bool signingOut = false;
 
   @override
   void initState() {
     super.initState();
-    getSharedPref();
+    
   }
 
-  getSharedPref() async {
-    sharedPref = await SharedPreferences.getInstance();
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -126,15 +123,12 @@ class _RoundedAppBarState extends State<RoundedAppBar> {
                                           'assets/images/profilef.png'),
                                 )
                               : widget.imgUrl == "" || widget.imgUrl == null
-                                  ? Shimmer.fromColors(
-                                      enabled: true,
-                                      child: Container(
-                                        color: Color(0xFF282828),
-                                      ),
-                                      baseColor: Color(0xFF282828),
-                                      highlightColor:
-                                          Color.fromRGBO(75, 77, 76, 1.0),
-                                    )
+                                  ? CircleAvatar(
+                                  radius: (height * 0.08) / 2,
+                                  backgroundColor: Color(0xFF282828),
+                                  backgroundImage:  AssetImage('assets/images/profile.png')
+                                      ,
+                                )
                                   : CachedNetworkImage(
                                       imageUrl: widget.imgUrl,
                                       height: (height * 0.08),
