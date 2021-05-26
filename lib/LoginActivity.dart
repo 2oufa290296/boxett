@@ -202,7 +202,7 @@ class _LoginActivityState extends State<LoginActivity> {
 
         OAuthCredential credential =
             FacebookAuthProvider.credential(result.accessToken.token);
-        await auth.loginUser(credential);
+        await auth.loginUserApple(credential);
         User user = await auth.getCurrentUser();
 
         DocumentReference docRef =
@@ -300,9 +300,7 @@ class _LoginActivityState extends State<LoginActivity> {
     getSharedPref();
     getUserToken();
 
-    apple.TheAppleSignIn.onCredentialRevoked.listen((_) {
-      print("Credentials revoked");
-    });
+   
   }
 
   getUserToken() async {
@@ -1316,15 +1314,17 @@ class _LoginActivityState extends State<LoginActivity> {
 
     switch (result.status) {
       case apple.AuthorizationStatus.authorized:
+      
+      final appleIdCredential=result.credential;
         final oAuthProvider = OAuthProvider('apple.com');
         final credential = oAuthProvider.credential(
-            idToken: String.fromCharCodes(result.credential.identityToken),
+            idToken: String.fromCharCodes(appleIdCredential.identityToken),
             accessToken:
-                String.fromCharCodes(result.credential.authorizationCode));
+                String.fromCharCodes(appleIdCredential.authorizationCode));
 
         final auth = Provider.of<LoginState>(context, listen: false);
 
-        await auth.loginUser(credential);
+        await auth.loginUserApple(credential);
         User user = await auth.getCurrentUser();
         
         
@@ -1337,13 +1337,13 @@ class _LoginActivityState extends State<LoginActivity> {
                 content: Container(
                   width: width,
                   alignment: Alignment.center,
-                  child: Text( result.credential.user ,
+                  child: Text( appleIdCredential.user ,
 
                       style: TextStyle(fontSize: 16)),
                 )));
             sharedPref.setString(
                 'username',
-                result.credential.fullName.givenName +
+                appleIdCredential.fullName.givenName +
                         result.credential.fullName.familyName 
                    );
             sharedPref.setString('uid', user.uid);
@@ -1352,8 +1352,8 @@ class _LoginActivityState extends State<LoginActivity> {
             sharedPref.setString(
                 'userToken', userToken != null ? userToken : "");
             await docR.set({
-              'username':  result.credential.fullName.givenName +
-                        result.credential.fullName.familyName ,
+              'username':  appleIdCredential.fullName.givenName +
+                        appleIdCredential.fullName.familyName ,
               'uid': user.uid,
               'provider': 'appleid',
               'imgURL': '',
