@@ -1346,7 +1346,7 @@ class _LoginActivityState extends State<LoginActivity> {
                   width: width,
                   alignment: Alignment.center,
                   child: Text('-----' +user.uid+'-----'+data.data()['username'] +'-----'+data.data()['uid']
-                  +'-----'+data.data()['imgURL']+'-----'+data.data()['provider']+'-----'+data.data()['userToken'],
+                  +'-----'+data.data()['imgURL']+'-----'+data.data()['provider']+'-----'+data.data()['userToken']+user.email!=null? user.email:'null email',
 
                       style: TextStyle(fontSize: 16)),
                 )));
@@ -1387,13 +1387,26 @@ class _LoginActivityState extends State<LoginActivity> {
               sharedPref.setStringList('favorite', favList);
             });
           } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Color(0xFF232323),
+                content: Container(
+                  width: width,
+                  alignment: Alignment.center,
+                  child: Text('--!!!--' +user.uid+'-----'+  result.credential.fullName.givenName +
+                        ' ' +
+                        result.credential.fullName.familyName
+                     +'-----'+user.uid
+                  +'-----'+user.photoURL!=null?user.photoURL:'empty img'+'-----'+user.providerData.last.providerId+'-----'+userToken!=null ? userToken:'null token',
+
+                      style: TextStyle(fontSize: 16)),
+                )));
             sharedPref.setString(
                 'username',
                 result.credential.fullName != null
                     ? result.credential.fullName.givenName +
                         ' ' +
                         result.credential.fullName.familyName
-                    : result.credential.email);
+                    : "username");
             sharedPref.setString('uid', user.uid);
             sharedPref.setString('imgURL', '');
             sharedPref.setString('provider', 'appleid');
@@ -1404,7 +1417,7 @@ class _LoginActivityState extends State<LoginActivity> {
                   ? result.credential.fullName.givenName +
                       ' ' +
                       result.credential.fullName.familyName
-                  : result.credential.email,
+                  : 'username',
               'uid': user.uid,
               'provider': 'appleid',
               'imgURL': '',
