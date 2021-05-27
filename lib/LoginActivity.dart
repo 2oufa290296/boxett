@@ -202,13 +202,52 @@ class _LoginActivityState extends State<LoginActivity> {
 
         AuthCredential credential =
             FacebookAuthProvider.credential(result.accessToken.token);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xFF232323),
+            content: Container(
+              height: 20,
+              width: width,
+              alignment: Alignment.center,
+              child:
+                  Text('Logged in with facebook', style: TextStyle(fontSize: 16)),
+            )));
         await auth.loginUser(credential);
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xFF232323),
+            content: Container(
+              height: 20,
+              width: width,
+              alignment: Alignment.center,
+              child:
+                  Text('authentication succeed', style: TextStyle(fontSize: 16)),
+            )));
+        
         User user = await auth.getCurrentUser();
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xFF232323),
+            content: Container(
+              height: 20,
+              width: width,
+              alignment: Alignment.center,
+              child:
+                  Text(user!=null? user.displayName:'Null User', style: TextStyle(fontSize: 16)),
+            )));
 
         DocumentReference docRef =
             FirebaseFirestore.instance.collection('Users').doc(user.uid);
         await docRef.get().then((value) async {
           if (value.exists) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xFF232323),
+            content: Container(
+              height: 20,
+              width: width,
+              alignment: Alignment.center,
+              child:
+                  Text('exists', style: TextStyle(fontSize: 16)),
+            )));
             sharedPref.setString('username', value.data()['username']);
             sharedPref.setString('uid', value.data()['uid']);
             sharedPref.setString('imgURL', value.data()['imgURL']);
@@ -245,6 +284,15 @@ class _LoginActivityState extends State<LoginActivity> {
               sharedPref.setStringList('favorite', favList);
             });
           } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xFF232323),
+            content: Container(
+              height: 20,
+              width: width,
+              alignment: Alignment.center,
+              child:
+                  Text(user!=null? user.displayName:'New User', style: TextStyle(fontSize: 16)),
+            )));
             await docRef.set({
               'username': user.displayName,
               'uid': user.uid,
@@ -265,10 +313,12 @@ class _LoginActivityState extends State<LoginActivity> {
             sharedPref.setString('provider', 'facebook');
             sharedPref.setString('userToken', userToken);
           }
+
+          Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => Redirecting()));
         });
 
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (_) => Redirecting()));
+        
 
         break;
       case FacebookLoginStatus.cancelledByUser:
@@ -1405,7 +1455,7 @@ class _LoginActivityState extends State<LoginActivity> {
                       style: TextStyle(fontSize: 16)),
                 )));
           }
-          
+
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (_) => Redirecting()));
         });
