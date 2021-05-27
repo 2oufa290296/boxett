@@ -62,7 +62,7 @@ pref = await SharedPreferences.getInstance();
               width: width,
               alignment: Alignment.center,
               child:
-                  Text(username +'----'+userId+'----'+imgUrl, style: TextStyle(fontSize: 16)),
+                  Text(username!=null && username!=""?username:'Empty username' +'----'+userId!=null && userId!=""?userId:'Empty userid'+'----'+imgUrl!=null && imgUrl!=""?imgUrl:'Empty imgURL', style: TextStyle(fontSize: 16)),
             )));
    
 
