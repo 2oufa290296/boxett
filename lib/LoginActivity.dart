@@ -196,21 +196,14 @@ class _LoginActivityState extends State<LoginActivity> {
 
     final FacebookLoginResult result =
         await facebooklogin.logIn(['email', 'public_profile']);
+        
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         final auth = Provider.of<LoginState>(context, listen: false);
 
         AuthCredential credential =
             FacebookAuthProvider.credential(result.accessToken.token);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Color(0xFF232323),
-            content: Container(
-              height: 20,
-              width: width,
-              alignment: Alignment.center,
-              child:
-                  Text('Logged in with facebook', style: TextStyle(fontSize: 16)),
-            )));
+           
         await auth.loginUser(credential);
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -1350,6 +1343,7 @@ class _LoginActivityState extends State<LoginActivity> {
 
   void logIn() async {
     final apple.AuthorizationResult result =
+    
         await apple.TheAppleSignIn.performRequests([
       apple.AppleIdRequest(requestedScopes: [
         apple.Scope.email,
