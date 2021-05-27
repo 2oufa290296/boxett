@@ -200,14 +200,14 @@ class _LoginActivityState extends State<LoginActivity> {
       case FacebookLoginStatus.loggedIn:
         final auth = Provider.of<LoginState>(context, listen: false);
 
-        OAuthCredential credential =
+        AuthCredential credential =
             FacebookAuthProvider.credential(result.accessToken.token);
-        await auth.loginUserApple(credential);
+        await auth.loginUser(credential);
         User user = await auth.getCurrentUser();
 
         DocumentReference docRef =
             FirebaseFirestore.instance.collection('Users').doc(user.uid);
-        docRef.get().then((value) async {
+        await docRef.get().then((value) async {
           if (value.exists) {
             sharedPref.setString('username', value.data()['username']);
             sharedPref.setString('uid', value.data()['uid']);
@@ -1324,150 +1324,91 @@ class _LoginActivityState extends State<LoginActivity> {
         DocumentReference docR =
             FirebaseFirestore.instance.collection('Users').doc(user.uid);
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Color(0xFF232323),
-            content: Container(
-              width: width,
-              alignment: Alignment.center,
-              child:
-                  Text(appleIdCredential.fullName.givenName +'----'+user.uid+'----'+userToken, style: TextStyle(fontSize: 16)),
-            )));
-        sharedPref.setString(
-            'username',
-            appleIdCredential.fullName.givenName +
-                result.credential.fullName.familyName);
-        sharedPref.setString('uid', user.uid);
-        sharedPref.setString('imgURL', '');
-        sharedPref.setString('provider', 'appleid');
-        sharedPref.setString('userToken', userToken != null ? userToken : "");
-        await docR.set({
-          'username': appleIdCredential.fullName.givenName +
-              appleIdCredential.fullName.familyName,
-          'uid': user.uid,
-          'provider': 'appleid',
-          'imgURL': '',
-          'userToken': userToken != null ? userToken : "",
-        }, SetOptions(merge: true));
+        
 
-        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        //     backgroundColor: Color(0xFF232323),
-        //     content: Container(
-        //       width: width,
-        //       alignment: Alignment.center,
-        //       child: Text(
-        //           'Welcome New User ' +
-        //               result.credential.fullName.givenName +
-        //               ' ' +
-        //               result.credential.fullName.familyName,
-        //           style: TextStyle(fontSize: 16)),
-        //     )));
+        await docR.get().then((data) async {
+          if (data.exists) {
 
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (_) => Redirecting()));
+            
 
-        // docR.get().then((data) async {
-        //   if (data.exists) {
+            sharedPref.setString('username', data.data()['username']);
+            sharedPref.setString('uid', data.data()['uid']);
+            sharedPref.setString('imgURL', data.data()['imgURL']);
+            sharedPref.setString('provider', data.data()['provider']);
+            sharedPref.setString('userToken', data.data()['userToken']);
 
-        //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        //         backgroundColor: Color(0xFF232323),
-        //         content: Container(
-        //           width: width,
-        //           alignment: Alignment.center,
-        //           child: Text('-----' +user.uid+'-----'+data.data()['username'] +'-----'+data.data()['uid']
-        //           +'-----'+data.data()['imgURL']+'-----'+data.data()['provider']+'-----'+data.data()['userToken']+user.email!=null? user.email:'null email',
+            if (data.data()['address'] != null) {
+              Map<String, dynamic> addressMap = data.data()['address'];
+              if (addressMap['customername'] != null &&
+                  addressMap['city'] != null &&
+                  addressMap['region'] != null &&
+                  addressMap['address'] != null &&
+                  addressMap['mobile'] != null) {
+                sharedPref.setString(
+                    'customername', addressMap['customername']);
+                sharedPref.setString('city', addressMap['city']);
+                sharedPref.setString('region', addressMap['region']);
+                sharedPref.setString('address', addressMap['address']);
+                sharedPref.setString('mobile', addressMap['mobile']);
+              }
+            }
 
-        //               style: TextStyle(fontSize: 16)),
-        //         )));
+            await data.reference
+                .collection('favorites')
+                .orderBy('date', descending: true)
+                .get()
+                .then((val) {
+              List<String> favList = [];
+              if (val!=null && val.docs.isNotEmpty) {
+                val.docs.forEach((val) {
+                  favList.add(val.id);
+                });
+              }
+              sharedPref.setStringList('favorite', favList);
+            });
+          } else {
+              
+            sharedPref.setString(
+                'username',
+                result.credential.fullName != null
+                    ? result.credential.fullName.givenName +
+                        ' ' +
+                        result.credential.fullName.familyName
+                    : "username");
+            sharedPref.setString('uid', user.uid);
+            sharedPref.setString('imgURL', '');
+            sharedPref.setString('provider', 'appleid');
+            sharedPref.setString(
+                'userToken', userToken != null ? userToken : "");
+            await docR.set({
+              'username': result.credential.fullName != null
+                  ? result.credential.fullName.givenName +
+                      ' ' +
+                      result.credential.fullName.familyName
+                  : 'username',
+              'uid': user.uid,
+              'provider': 'appleid',
+              'imgURL': '',
+              'userToken': userToken != null ? userToken : "",
+            }, SetOptions(merge: true));
 
-        //     sharedPref.setString('username', data.data()['username']);
-        //     sharedPref.setString('uid', data.data()['uid']);
-        //     sharedPref.setString('imgURL', data.data()['imgURL']);
-        //     sharedPref.setString('provider', data.data()['provider']);
-        //     sharedPref.setString('userToken', data.data()['userToken']);
-
-        //     if (data.data()['address'] != null) {
-        //       Map<String, dynamic> addressMap = data.data()['address'];
-        //       if (addressMap['customername'] != null &&
-        //           addressMap['city'] != null &&
-        //           addressMap['region'] != null &&
-        //           addressMap['address'] != null &&
-        //           addressMap['mobile'] != null) {
-        //         sharedPref.setString(
-        //             'customername', addressMap['customername']);
-        //         sharedPref.setString('city', addressMap['city']);
-        //         sharedPref.setString('region', addressMap['region']);
-        //         sharedPref.setString('address', addressMap['address']);
-        //         sharedPref.setString('mobile', addressMap['mobile']);
-        //       }
-        //     }
-
-        //     await data.reference
-        //         .collection('favorites')
-        //         .orderBy('date', descending: true)
-        //         .get()
-        //         .then((val) {
-        //       List<String> favList = [];
-        //       if (val!=null && val.docs.isNotEmpty) {
-        //         val.docs.forEach((val) {
-        //           favList.add(val.id);
-        //         });
-        //       }
-        //       sharedPref.setStringList('favorite', favList);
-        //     });
-        //   } else {
-        //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        //         backgroundColor: Color(0xFF232323),
-        //         content: Container(
-        //           width: width,
-        //           alignment: Alignment.center,
-        //           child: Text('--!!!--' +user.uid+'-----'+  result.credential.fullName.givenName +
-        //                 ' ' +
-        //                 result.credential.fullName.familyName
-        //              +'-----'+user.uid
-        //           +'-----'+user.photoURL!=null?user.photoURL:'empty img'+'-----'+user.providerData.last.providerId+'-----'+userToken!=null ? userToken:'null token',
-
-        //               style: TextStyle(fontSize: 16)),
-        //         )));
-        //     sharedPref.setString(
-        //         'username',
-        //         result.credential.fullName != null
-        //             ? result.credential.fullName.givenName +
-        //                 ' ' +
-        //                 result.credential.fullName.familyName
-        //             : "username");
-        //     sharedPref.setString('uid', user.uid);
-        //     sharedPref.setString('imgURL', '');
-        //     sharedPref.setString('provider', 'appleid');
-        //     sharedPref.setString(
-        //         'userToken', userToken != null ? userToken : "");
-        //     await docR.set({
-        //       'username': result.credential.fullName != null
-        //           ? result.credential.fullName.givenName +
-        //               ' ' +
-        //               result.credential.fullName.familyName
-        //           : 'username',
-        //       'uid': user.uid,
-        //       'provider': 'appleid',
-        //       'imgURL': '',
-        //       'userToken': userToken != null ? userToken : "",
-        //     }, SetOptions(merge: true));
-
-        //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        //         backgroundColor: Color(0xFF232323),
-        //         content: Container(
-        //           width: width,
-        //           alignment: Alignment.center,
-        //           child: Text(
-        //               'Welcome New User ' +
-        //                   result.credential.fullName.givenName +
-        //                   ' ' +
-        //                   result.credential.fullName.familyName,
-        //               style: TextStyle(fontSize: 16)),
-        //         )));
-        //   }
-        //   Navigator.pushReplacement(
-        //       context, MaterialPageRoute(builder: (_) => Redirecting()));
-        // });
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Color(0xFF232323),
+                content: Container(
+                  width: width,
+                  alignment: Alignment.center,
+                  child: Text(
+                      'Welcome New User ' +
+                          result.credential.fullName.givenName +
+                          ' ' +
+                          result.credential.fullName.familyName,
+                      style: TextStyle(fontSize: 16)),
+                )));
+          }
+          
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => Redirecting()));
+        });
 
         // Store user ID
 
