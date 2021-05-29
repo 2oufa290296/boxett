@@ -1,0 +1,5 @@
+version: "Apple Swift version 5.4 (swiftlang-1205.0.26.9 clang-1205.0.19.55)"
+options: "1326193372515e846f280f52f720bfc1"
+build_time: [1622292696, 787804000]
+inputs:
+  "/Users/builder/clone/ios/ImageNotification/NotificationService.swift": [1622292691, 952888107]
