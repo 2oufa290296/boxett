@@ -12,21 +12,16 @@ class Welcome extends StatefulWidget {
 }
 
 class _WelcomeState extends State<Welcome> {
-  bool _initialized = false;
-  
+  String error = "";
 
   void initializeFlutterFire() async {
     try {
       // Wait for Firebase to initialize and set `_initialized` state to true
       await Firebase.initializeApp();
-      setState(() {
-        _initialized = true;
-      });
+      redirecting();
     } catch (e) {
       // Set `_error` state to true if Firebase initialization fails
-      setState(() {
-        _initialized = false;
-      });
+      print(e);
     }
   }
 
@@ -46,79 +41,73 @@ class _WelcomeState extends State<Welcome> {
   // }
 
   redirecting() async {
-    if (_initialized) {
-      await Future.delayed(Duration(milliseconds: 1000));
-      SharedPreferences sharedPref = await SharedPreferences.getInstance();
-      String userToken = sharedPref.getString('userToken');
-      String uid = sharedPref.getString('uid');
-      FirebaseMessaging messaging = FirebaseMessaging.instance;
+    await Future.delayed(Duration(milliseconds: 1000));
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    String userToken = sharedPref.getString('userToken');
+    String uid = sharedPref.getString('uid');
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
 
 // use the returned token to send messages to users from your custom server
-      String token = await messaging.getToken(
-        vapidKey: "BGpdLRs......",
-      );
-      if (userToken != null && token != userToken) {
-        sharedPref.setString('userToken', token);
-        if (uid != null) {
-          await FirebaseFirestore.instance
-              .collection('Users')
-              .doc(uid)
-              .set({'userToken': token}, SetOptions(merge: true));
-        }
-        print('----Tokenchanged');
-      } else {
-        print(token);
+    String token = await messaging.getToken(
+      vapidKey: "BGpdLRs......",
+    );
+    if (userToken != null && token != userToken) {
+      sharedPref.setString('userToken', token);
+      if (uid != null) {
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(uid)
+            .set({'userToken': token}, SetOptions(merge: true));
       }
-      
-      FirebaseMessaging.onMessageOpenedApp.listen((event) {
-        
-       });
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        print('Got a message whilst in the foreground!');
-        print('Message data: ${message.data}');
-
-        if (message.notification != null) {
-          print(
-              'Message also contained a notification: ${message.notification.title}');
-        }
-      });
-
-      if (Platform.isIOS) {
-        await messaging.requestPermission(
-          alert: true,
-          announcement: false,
-          badge: true,
-          carPlay: false,
-          criticalAlert: false,
-          provisional: false,
-          sound: true,
-        );
-      }
-      // FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
-      //   if (userToken != null && newToken != userToken) {
-      //     sharedPref.setString('userToken', newToken);
-      //     if (uid != null) {
-      //       await FirebaseFirestore.instance
-      //           .collection('Users')
-      //           .doc(uid)
-      //           .set({'userToken': userToken}, SetOptions(merge: true));
-      //     }
-      //     print('----Tokenchanged');
-      //   } else {
-      //     print(newToken);
-      //   }
-      // });
-
-      Navigator.pushNamed(context, '/redirect');
+      print('----Tokenchanged');
     } else {
-      print('error');
+      print(token);
     }
+
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {});
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        print(
+            'Message also contained a notification: ${message.notification.title}');
+      }
+    });
+
+    if (Platform.isIOS) {
+      await messaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+    }
+    // FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+    //   if (userToken != null && newToken != userToken) {
+    //     sharedPref.setString('userToken', newToken);
+    //     if (uid != null) {
+    //       await FirebaseFirestore.instance
+    //           .collection('Users')
+    //           .doc(uid)
+    //           .set({'userToken': userToken}, SetOptions(merge: true));
+    //     }
+    //     print('----Tokenchanged');
+    //   } else {
+    //     print(newToken);
+    //   }
+    // });
+
+    Navigator.pushNamed(context, '/redirect');
   }
 
   @override
   void initState() {
     initializeFlutterFire();
-    redirecting();
+
     super.initState();
 
     // handleUser();

@@ -192,7 +192,10 @@ class _LoginActivityState extends State<LoginActivity> {
   }
 
   Future _fbSignin(BuildContext context) async {
-    // facebooklogin.loginBehavior=FacebookLoginBehavior.webViewOnly;
+    if(Platform.isIOS){
+       facebooklogin.loginBehavior=FacebookLoginBehavior.webViewOnly;
+    }
+   
 
     final FacebookLoginResult result =
         await facebooklogin.logIn(['email', 'public_profile']);
@@ -232,15 +235,7 @@ class _LoginActivityState extends State<LoginActivity> {
             FirebaseFirestore.instance.collection('Users').doc(user.uid);
         await docRef.get().then((value) async {
           if (value.exists) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Color(0xFF232323),
-            content: Container(
-              height: 20,
-              width: width,
-              alignment: Alignment.center,
-              child:
-                  Text('exists', style: TextStyle(fontSize: 16)),
-            )));
+           
             sharedPref.setString('username', value.data()['username']);
             sharedPref.setString('uid', value.data()['uid']);
             sharedPref.setString('imgURL', value.data()['imgURL']);
@@ -277,15 +272,7 @@ class _LoginActivityState extends State<LoginActivity> {
               sharedPref.setStringList('favorite', favList);
             });
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Color(0xFF232323),
-            content: Container(
-              height: 20,
-              width: width,
-              alignment: Alignment.center,
-              child:
-                  Text(user!=null? user.displayName:'New User', style: TextStyle(fontSize: 16)),
-            )));
+           
             await docRef.set({
               'username': user.displayName,
               'uid': user.uid,
@@ -1436,18 +1423,7 @@ class _LoginActivityState extends State<LoginActivity> {
               'userToken': userToken != null ? userToken : "",
             }, SetOptions(merge: true));
 
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                backgroundColor: Color(0xFF232323),
-                content: Container(
-                  width: width,
-                  alignment: Alignment.center,
-                  child: Text(
-                      'Welcome New User ' +
-                          result.credential.fullName.givenName +
-                          ' ' +
-                          result.credential.fullName.familyName,
-                      style: TextStyle(fontSize: 16)),
-                )));
+            
           }
 
           Navigator.pushReplacement(
