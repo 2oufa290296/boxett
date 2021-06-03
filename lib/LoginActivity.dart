@@ -209,27 +209,11 @@ class _LoginActivityState extends State<LoginActivity> {
            
         await auth.loginUser(credential);
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Color(0xFF232323),
-            content: Container(
-              height: 20,
-              width: width,
-              alignment: Alignment.center,
-              child:
-                  Text('authentication succeed', style: TextStyle(fontSize: 16)),
-            )));
+    
         
         User user = await auth.getCurrentUser();
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Color(0xFF232323),
-            content: Container(
-              height: 20,
-              width: width,
-              alignment: Alignment.center,
-              child:
-                  Text(user!=null? user.displayName:'Null User', style: TextStyle(fontSize: 16)),
-            )));
+      
 
         DocumentReference docRef =
             FirebaseFirestore.instance.collection('Users').doc(user.uid);
