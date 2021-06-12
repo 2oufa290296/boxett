@@ -57,6 +57,8 @@
 	</dict>
 	<key>NSLocationUsageDescription</key>
 	<string>NSLocationAlwaysUsageDescription</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Boxet access your location to locate the nearby Gift Shops</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>NSLocationAlwaysAndWhenInUseUsageDescription</string>
 	<key>NSPhotoLibraryUsageDescription</key>
