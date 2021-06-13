@@ -56,11 +56,11 @@
 		<true/>
 	</dict>
 	<key>NSLocationUsageDescription</key>
-	<string>NSLocationAlwaysUsageDescription</string>
+	<string>Boxet access your location to locate the nearby Gift Shops</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Boxet access your location to locate the nearby Gift Shops</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>NSLocationAlwaysAndWhenInUseUsageDescription</string>
+	<string>Boxet access your location to locate the nearby Gift Shops</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>to upload profile picture</string>
 	<key>UIBackgroundModes</key>
