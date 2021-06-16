@@ -1,8 +1,10 @@
+import 'package:boxet/LoginActivity.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:boxet/OrderPage.dart';
@@ -15,7 +17,8 @@ import 'package:shimmer/shimmer.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:boxet/my_flutter_app_icons.dart' as custicons;
 import 'package:video_player/video_player.dart';
-// import 'package:video_player/video_player.dart';
+
+
 
 import 'PageActivity.dart';
 
@@ -29,6 +32,7 @@ class GiftPage extends StatefulWidget {
 }
 
 class _GiftPageState extends State<GiftPage> {
+  final _auth = FirebaseAuth.instance;
   bool _progressBarVisible = true;
   String videoLink = "";
   List<CachedNetworkImage> imgProv = [];
@@ -155,7 +159,7 @@ class _GiftPageState extends State<GiftPage> {
     });
     sharedPreferences.setStringList('favorite', favoriteList);
 
-    if (userId != null && userId.isNotEmpty) {
+    if (_auth.currentUser!=null &&userId != null && userId.isNotEmpty) {
       _saveToFavDB(widget.id, DateTime.now().toString(), mainImg, pageimg,
           pageId, price);
     }
@@ -167,7 +171,7 @@ class _GiftPageState extends State<GiftPage> {
     });
     sharedPreferences.setStringList('favorite', favoriteList);
 
-    if (userId != null && userId.isNotEmpty) {
+    if (_auth.currentUser!=null && userId != null && userId.isNotEmpty) {
       _deleteFromFavDB(widget.id);
     }
   }
@@ -1413,7 +1417,8 @@ class _GiftPageState extends State<GiftPage> {
                                                     ),
                                                     child: InkWell(
                                                       onTap: () {
-                                                        Navigator.push(
+                                                        if(_auth.currentUser !=null){
+                                                           Navigator.push(
                                                             context,
                                                             MaterialPageRoute(
                                                                 builder: (context) => new OrderPage(
@@ -1431,7 +1436,15 @@ class _GiftPageState extends State<GiftPage> {
                                                                     giftRate,
                                                                     reviewsList
                                                                         .length,shopPackagingFree,shopPackagingImg,selection)));
-                                                      },
+                                                  
+                                                        }else {
+                                                           Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) => new LoginActivity('order',widget.id)));
+                                                  
+                                                        }
+                                                            },
                                                       child: Center(
                                                           child: Text(
                                                               'Order Now',

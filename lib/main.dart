@@ -1,6 +1,6 @@
-
+import 'package:boxet/LoginActivity.dart';
 import 'package:boxet/LoginState.dart';
-import 'package:boxet/Redirecting.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,6 @@ import 'package:boxet/FavPage.dart';
 import 'package:boxet/GiftPage.dart';
 import 'package:boxet/classes/HeaderGifts.dart';
 import 'package:boxet/HomePage.dart';
-import 'package:boxet/LoginActivity.dart';
 import 'package:boxet/OrderPlaced.dart';
 import 'package:boxet/Profile.dart';
 import 'package:boxet/MapsPage.dart';
@@ -27,7 +26,6 @@ import 'AppLocalizations.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
- 
 }
 
 // const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -42,7 +40,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   // await flutterLocalNotificationsPlugin
   //     .resolvePlatformSpecificImplementation<
@@ -54,13 +52,7 @@ void main() async {
   //   sound: true,
   // );
 
-  
-  runApp(
-    ChangeNotifierProvider<LoginState>(
-      create: (_) => LoginState(),
-      child:MyApp(),
-    ),
-  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -81,11 +73,9 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/myApp': (BuildContext context) => MyApp(),
         '/homePage': (BuildContext context) => MyHomePage(),
-        '/redirect': (BuildContext context) => Redirecting(),
         '/giftPage': (BuildContext context) =>
             GiftPage(ModalRoute.of(context).settings.arguments),
         '/orderPlaced': (BuildContext context) => OrderPlaced(),
-        '/login': (BuildContext context) => LoginActivity(),
         '/assistantdone': (BuildContext context) => AssistantDone()
       },
       supportedLocales: [
@@ -121,13 +111,16 @@ class MyApp extends StatelessWidget {
           accentIconTheme: IconThemeData(color: Color.fromRGBO(5, 150, 197, 1)),
           scaffoldBackgroundColor: Colors.black,
           accentColor: Color.fromRGBO(5, 150, 197, 1)),
-      home: new Welcome(),
+      home: ChangeNotifierProvider<LoginState>(
+        create: (_) => LoginState(),
+        child: new Welcome(),
+      ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.title, this.attachment}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -139,6 +132,7 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final String attachment;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -147,6 +141,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<HomePageState> homeKey = GlobalKey();
   GlobalKey<ChatPageState> chatKey = GlobalKey();
+  final _auth = FirebaseAuth.instance;
   // List<Gifts> data = [];
   List<HeaderGifts> headerD = [];
   int currentLength = 0;
@@ -188,10 +183,26 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    
-    mainWidget = HomePage(
-      key: homeKey,
-    );
+
+    if (widget.attachment != null) {
+      if (widget.attachment == 'profile') {
+        mainWidget = Profile();
+        bottomBarIndex = 0;
+      } else if (widget.attachment == 'chat') {
+        mainWidget = ChatPage(
+            key: chatKey, uid: uid, profImg: profImg, backHome: backHome);
+        bottomBarIndex = 4;
+      } else {
+        mainWidget = HomePage(
+          key: homeKey,
+        );
+      }
+    } else {
+      mainWidget = HomePage(
+        key: homeKey,
+      );
+    }
+
     _getSharedPref();
   }
 
@@ -218,11 +229,11 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       child: SafeArea(
         child: Scaffold(
-                  body: Scaffold(
+          body: Scaffold(
             body: mainWidget,
             // floatingActionButtonLocation:
             //     FloatingActionButtonLocation.centerDocked,
-            
+
             extendBody: true,
             bottomNavigationBar: CustomNavBar(
               reloadMain: (String categ) {
@@ -262,10 +273,18 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: (index) {
                 switch (index) {
                   case 0:
-                    setState(() {
-                      bottomBarIndex = 0;
-                      mainWidget = Profile();
-                    });
+                    if (_auth.currentUser != null) {
+                      setState(() {
+                        bottomBarIndex = 0;
+                        mainWidget = Profile();
+                      });
+                    } else {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  new LoginActivity('main', 'profile')));
+                    }
 
                     break;
 
@@ -295,14 +314,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     break;
 
                   case 4:
-                    setState(() {
-                      bottomBarIndex = 4;
-                      mainWidget = ChatPage(
-                          key: chatKey,
-                          uid: uid,
-                          profImg: profImg,
-                          backHome: backHome);
-                    });
+                    if (_auth.currentUser != null) {
+                      setState(() {
+                        bottomBarIndex = 4;
+                        mainWidget = ChatPage(
+                            key: chatKey,
+                            uid: uid,
+                            profImg: profImg,
+                            backHome: backHome);
+                      });
+                    } else {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  new LoginActivity('main', 'chat')));
+                    }
 
                     break;
 

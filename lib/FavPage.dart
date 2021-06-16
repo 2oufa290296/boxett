@@ -9,7 +9,6 @@ import 'package:boxet/classes/Gifts.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
-
 import 'classes/PriceDecoration.dart';
 
 class FavPage extends StatefulWidget {
@@ -207,7 +206,7 @@ print(favIdList);
             width:width,alignment:Alignment.center,
               child: Text(
           'Your Favorite List is Empty',
-          style: TextStyle(color: Colors.white70, fontSize: 18),
+          style: TextStyle(color: Colors.white70, fontSize: 18,),
             ))
           : internetError
               ? Container(

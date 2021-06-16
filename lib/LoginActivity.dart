@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:boxet/GiftPage.dart';
 import 'package:boxet/LoginState.dart';
-import 'package:boxet/Redirecting.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,6 +17,10 @@ import 'package:boxet/Signup.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart' as apple;
 
 class LoginActivity extends StatefulWidget {
+  final String topWidget;
+  final String attachment;
+
+  LoginActivity(this.topWidget,this.attachment);
   @override
   _LoginActivityState createState() => _LoginActivityState();
 }
@@ -133,8 +137,15 @@ class _LoginActivityState extends State<LoginActivity> {
               await data.reference
                   .set({'userToken': userToken}, SetOptions(merge: true));
 
-              Navigator.push(context,
+                  if(widget.topWidget=='order'){
+                     Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => new GiftPage(widget.attachment)));
+                  }else {
+                    Navigator.push(context,
                   MaterialPageRoute(builder: (context) => new MyHomePage()));
+                  }
+
+              
             }
           });
         } else {
@@ -278,8 +289,13 @@ class _LoginActivityState extends State<LoginActivity> {
             sharedPref.setString('userToken', userToken);
           }
 
-          Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (_) => Redirecting()));
+          if(widget.topWidget=='order'){
+                     Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => new GiftPage(widget.attachment)));
+                  }else {
+                    Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => new MyHomePage()));
+                  }
         });
 
         
@@ -1162,10 +1178,13 @@ class _LoginActivityState extends State<LoginActivity> {
                                           }
                                         });
 
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (_) => Redirecting()));
+                                       if(widget.topWidget=='order'){
+                     Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => new GiftPage(widget.attachment)));
+                  }else {
+                    Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => new MyHomePage()));
+                  }
                                       });
                                     }
                                   });
@@ -1410,8 +1429,16 @@ class _LoginActivityState extends State<LoginActivity> {
             
           }
 
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => Redirecting()));
+         if(widget.topWidget=='order'){
+                     Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => new GiftPage(widget.attachment)));
+                  }else if(widget.topWidget=='main'){
+                     Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => new MyHomePage(attachment:widget.attachment ,)));
+                  } else {
+                    Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => new MyHomePage()));
+                  }
         });
 
         // Store user ID

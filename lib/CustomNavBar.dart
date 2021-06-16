@@ -1,4 +1,3 @@
-
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
@@ -211,13 +210,13 @@ class CustomNavBarState extends State<CustomNavBar>
             bottom: showw && indexxx==4?0:0 - (75.0 - widget.height),
             child: showw && indexxx ==4
                 ? SizedBox(
-                    height: 50.0,
+                    height: 60.0,
                     child: Row(
                       children: <Widget>[
                         Expanded(
                           child: Container(
                               padding: EdgeInsets.only(left: 10,
-                             
+                              
                               ),
                               child: TextField(
                                 cursorColor: Colors.white70,

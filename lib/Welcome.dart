@@ -19,26 +19,10 @@ class _WelcomeState extends State<Welcome> {
       // Wait for Firebase to initialize and set `_initialized` state to true
       await Firebase.initializeApp();
       redirecting();
-    } catch (e) {
-      // Set `_error` state to true if Firebase initialization fails
-      print(e);
-    }
+    } catch (e) {}
   }
 
   double width, height;
-  // handleUser() async {
-  //   Future.delayed(Duration(seconds: 2), () {
-  //     auth.authStateChanges().listen((user) {
-  //       if (user != null) {
-  //         print('user');
-  //         Navigator.pushNamed(context, '/homePage');
-  //       } else {
-  //         print('null');
-  //         Navigator.pushNamed(context, '/login');
-  //       }
-  //     });
-  //   });
-  // }
 
   redirecting() async {
     await Future.delayed(Duration(milliseconds: 1000));
@@ -51,17 +35,13 @@ class _WelcomeState extends State<Welcome> {
     String token = await messaging.getToken(
       vapidKey: "BGpdLRs......",
     );
-    if (userToken != null && token != userToken) {
+    if (userToken != null && token != userToken && uid != null) {
       sharedPref.setString('userToken', token);
-      if (uid != null) {
-        await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(uid)
-            .set({'userToken': token}, SetOptions(merge: true));
-      }
-      print('----Tokenchanged');
-    } else {
-      print(token);
+
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(uid)
+          .set({'userToken': token}, SetOptions(merge: true));
     }
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) {});
@@ -101,7 +81,7 @@ class _WelcomeState extends State<Welcome> {
     //   }
     // });
 
-    Navigator.pushNamed(context, '/redirect');
+    Navigator.pushNamed(context, '/homePage');
   }
 
   @override
@@ -117,6 +97,7 @@ class _WelcomeState extends State<Welcome> {
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
+
     return Scaffold(
         body: Center(
             child: Shimmer.fromColors(
