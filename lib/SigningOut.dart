@@ -1,8 +1,7 @@
-import 'package:boxet/LoginState.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SigningOut extends StatefulWidget {
@@ -19,7 +18,7 @@ class SigningOutState extends State<SigningOut> with TickerProviderStateMixin {
   SharedPreferences sharedPref;
   bool signingOut = false;
   double width;
-
+  final _auth = FirebaseAuth.instance;
   String uid;
 
   @override
@@ -127,12 +126,11 @@ class SigningOutState extends State<SigningOut> with TickerProviderStateMixin {
                                   Future.delayed(Duration(milliseconds: 2000),
                                       () async {
                                     sharedPref.clear();
-                                    final auth = Provider.of<LoginState>(
-                                        context,
-                                        listen: false);
-                                        Navigator.pop(context);
-                                    await auth.logout();
-                                    
+                                    if (_auth.currentUser != null) {
+                                      await _auth.signOut();
+                                    }
+
+                                    Navigator.pop(context);
                                   });
                                 },
                                 child: Container(

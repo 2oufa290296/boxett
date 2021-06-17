@@ -1418,15 +1418,7 @@ class _GiftPageState extends State<GiftPage> {
                                                     child: InkWell(
                                                       onTap: () {
                                                         if(_auth.currentUser !=null){
-                                                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Color(0xFF232323),
-              content: Container(
-                height: 20,
-                width: width,
-                alignment: Alignment.center,
-                child:
-                    Text(_auth.currentUser.displayName, style: TextStyle(fontSize: 16)),
-              )));
+                                                        
                                                            Navigator.push(
                                                             context,
                                                             MaterialPageRoute(

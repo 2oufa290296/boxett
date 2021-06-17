@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:boxet/AssistantActivity.dart';
@@ -9,7 +10,6 @@ import 'package:boxet/RoundedAppBar.dart';
 import 'package:boxet/classes/ProfileGifts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
-
 
 class Profile extends StatefulWidget {
   @override
@@ -20,6 +20,8 @@ class _ProfileState extends State<Profile> {
   double height;
   double width;
   List<ProfileGifts> preOrders = [];
+  final _auth = FirebaseAuth.instance;
+
   // List<String> bottomlist = new List<String>();
   // List<Icon> bottomlisticon = new List<Icon>();
   String imgUrl = "";
@@ -31,8 +33,8 @@ class _ProfileState extends State<Profile> {
   bool noPrevOrders = false;
   SharedPreferences pref;
   bool showProgress = true;
-  bool networkError=false;
-  bool retrying=false;
+  bool networkError = false;
+  bool retrying = false;
   FlareActor flareActor = FlareActor(
     'assets/loading.flr',
     animation: 'Loading',
@@ -46,86 +48,91 @@ class _ProfileState extends State<Profile> {
   }
 
   Future getData() async {
+    if (imgUrl == "") {
+      pref = await SharedPreferences.getInstance();
 
-    if(imgUrl==""){
-pref = await SharedPreferences.getInstance();
+      gender = pref.getString('gender');
+      provider = pref.getString('provider');
 
-    imgUrl = pref.getString('imgURL');
-    userId = pref.getString('uid');
-    username = pref.getString('username');
-    gender = pref.getString('gender');
-    provider = pref.getString('provider');
+      if (_auth.currentUser != null && _auth.currentUser.displayName != null) {
+        username = _auth.currentUser.displayName;
+      } else {
+        username = pref.getString('username');
+      }
 
-  
+      if (_auth.currentUser != null && _auth.currentUser.photoURL != null) {
+        imgUrl = _auth.currentUser.photoURL;
+      } else {
+        imgUrl = pref.getString('imgURL');
+      }
 
-    if (gender == null) {
-      gender = "";
+      if (_auth.currentUser != null && _auth.currentUser.uid != null) {
+        userId = _auth.currentUser.uid;
+      } else {
+        userId = pref.getString('uid');
+      }
     }
-    }
-    
 
-     var connectivityResult = await (Connectivity().checkConnectivity());
+    var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(userId)
-        .get()
-        .then((results) async {
-      if (results.data().isNotEmpty && results.data()['Orders'] != null) {
-        List ordersIds = results.data()['Orders'];
-        List ordersIdsRev = ordersIds.reversed.toList();
-        await FirebaseFirestore.instance
-            .collection('Orders')
-            .where(FieldPath.documentId, whereIn: ordersIdsRev)
-            .get()
-            .then((value) {
-          if (value.docs != null && value.docs.isNotEmpty) {
-            preOrders.length = value.docs.length;
-            value.docs.forEach((element) {
-              preOrders[ordersIdsRev.indexOf(element.id)] = new ProfileGifts(
-                  element.id,
-                  element.data()['GiftImg'],
-                  element.data()['GiftName'],
-                  element.data()['price'],
-                  element.data()['delivery'],
-                  element.data()['totalPrice'],
-                  element.data()['discount'],
-                  element.data()['giftId'],
-                  element.data()['customer'],
-                  element.data()['address'],
-                  element.data()['mobile'],
-                  element.data()['state'],
-                  element.data()['deliveryTime'],
-                  element.data()['special'],
-                  element.data()['reviewed']);
-            });
-          }
-        });
-      }
-    });
-
-    if (mounted) {
-      setState(() {
-        if (preOrders != null && preOrders.isNotEmpty) {
-          noPrevOrders = false;
-        } else {
-          noPrevOrders = true;
-        }
-        if(networkError) networkError=false;
-        if(retrying) retrying=false;
-        showProgress = false;
-      });
-    }
-
-        }else {
-          setState((){
-            networkError=true;
-            showProgress = false;
-            if(retrying)retrying=false;
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .get()
+          .then((results) async {
+        if (results.data().isNotEmpty && results.data()['Orders'] != null) {
+          List ordersIds = results.data()['Orders'];
+          List ordersIdsRev = ordersIds.reversed.toList();
+          await FirebaseFirestore.instance
+              .collection('Orders')
+              .where(FieldPath.documentId, whereIn: ordersIdsRev)
+              .get()
+              .then((value) {
+            if (value.docs != null && value.docs.isNotEmpty) {
+              preOrders.length = value.docs.length;
+              value.docs.forEach((element) {
+                preOrders[ordersIdsRev.indexOf(element.id)] = new ProfileGifts(
+                    element.id,
+                    element.data()['GiftImg'],
+                    element.data()['GiftName'],
+                    element.data()['price'],
+                    element.data()['delivery'],
+                    element.data()['totalPrice'],
+                    element.data()['discount'],
+                    element.data()['giftId'],
+                    element.data()['customer'],
+                    element.data()['address'],
+                    element.data()['mobile'],
+                    element.data()['state'],
+                    element.data()['deliveryTime'],
+                    element.data()['special'],
+                    element.data()['reviewed']);
+              });
+            }
           });
         }
-    
+      });
+
+      if (mounted) {
+        setState(() {
+          if (preOrders != null && preOrders.isNotEmpty) {
+            noPrevOrders = false;
+          } else {
+            noPrevOrders = true;
+          }
+          if (networkError) networkError = false;
+          if (retrying) retrying = false;
+          showProgress = false;
+        });
+      }
+    } else {
+      setState(() {
+        networkError = true;
+        showProgress = false;
+        if (retrying) retrying = false;
+      });
+    }
   }
 
   GlobalKey<ScaffoldState> scaffoldkey = new GlobalKey<ScaffoldState>();
@@ -232,105 +239,112 @@ await FirebaseFirestore.instance
                           ),
                         ),
                         Container(
-                          height: height/4,
+                          height: height / 4,
                           width: width,
                           child: showProgress
                               ? Center(
                                   child: Container(
                                       width: 50, height: 50, child: flareActor))
-                              :networkError||retrying?
-                     Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                            
-                            child: Text(
-                              'No Internet Connection',
-                              style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 18,
-                                 ),
-                            )),
-                        Container(
-                              margin: EdgeInsets.only(top: 10),
-                              width: width / 3,
-                              height: 30,
-                              clipBehavior: Clip.antiAlias,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Color.fromRGBO(18, 42, 76, 1),
-                                      Color.fromRGBO(5, 150, 197, 1),
-                                      Color.fromRGBO(18, 42, 76, 1),
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  )),
-                              child: Material(
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(4),
-                                clipBehavior: Clip.antiAlias,
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      retrying = true;
-                                    });
-                                    Future.delayed(Duration(milliseconds: 500),
-                                        () async {
-                                      getData() ;
-                                    });
-                                  },
-                                  child: Center(
-                                      child: retrying
-                                          ? Container(
-                                              height: 15,
-                                              width: 15,
-                                              child: CircularProgressIndicator(
-                                                valueColor:
-                                                    AlwaysStoppedAnimation(
-                                                        Colors.white),
-                                                strokeWidth: 1,
-                                              ),
-                                            )
-                                          : Text(
-                                              'RETRY',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16),
-                                            )),
-                                ),
-                              ),
-                            ),
-                      ],
-                    
-                  ): !noPrevOrders
-                                  ? ListView.builder(
-                                      padding:
-                                          EdgeInsets.only(left: 0.05 * width),
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: preOrders.length,
-                                      itemBuilder: (context, index) {
-                                        if (index == preOrders.length - 1) {
-                                          return Container(
-                                              margin: EdgeInsets.only(
-                                                  right: 0.05 * width),
-                                              child: displayCardItem(
-                                                  preOrders[index]));
-                                        } else {
-                                          return displayCardItem(
-                                              preOrders[index]);
-                                        }
-                                      })
-                                  : Container(
-                                      
-                                      child: Center(
-                                          child: Text('No Previous Orders',
-                                              style: TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: 16))),
-                                    ),
+                              : networkError || retrying
+                                  ? Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Container(
+                                            child: Text(
+                                          'No Internet Connection',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 18,
+                                          ),
+                                        )),
+                                        Container(
+                                          margin: EdgeInsets.only(top: 10),
+                                          width: width / 3,
+                                          height: 30,
+                                          clipBehavior: Clip.antiAlias,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  Color.fromRGBO(18, 42, 76, 1),
+                                                  Color.fromRGBO(
+                                                      5, 150, 197, 1),
+                                                  Color.fromRGBO(18, 42, 76, 1),
+                                                ],
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                              )),
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            clipBehavior: Clip.antiAlias,
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  retrying = true;
+                                                });
+                                                Future.delayed(
+                                                    Duration(milliseconds: 500),
+                                                    () async {
+                                                  getData();
+                                                });
+                                              },
+                                              child: Center(
+                                                  child: retrying
+                                                      ? Container(
+                                                          height: 15,
+                                                          width: 15,
+                                                          child:
+                                                              CircularProgressIndicator(
+                                                            valueColor:
+                                                                AlwaysStoppedAnimation(
+                                                                    Colors
+                                                                        .white),
+                                                            strokeWidth: 1,
+                                                          ),
+                                                        )
+                                                      : Text(
+                                                          'RETRY',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 16),
+                                                        )),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : !noPrevOrders
+                                      ? ListView.builder(
+                                          padding: EdgeInsets.only(
+                                              left: 0.05 * width),
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: preOrders.length,
+                                          itemBuilder: (context, index) {
+                                            if (index == preOrders.length - 1) {
+                                              return Container(
+                                                  margin: EdgeInsets.only(
+                                                      right: 0.05 * width),
+                                                  child: displayCardItem(
+                                                      preOrders[index]));
+                                            } else {
+                                              return displayCardItem(
+                                                  preOrders[index]);
+                                            }
+                                          })
+                                      : Container(
+                                          child: Center(
+                                              child: Text('No Previous Orders',
+                                                  style: TextStyle(
+                                                      color: Colors.white70,
+                                                      fontSize: 16))),
+                                        ),
                         ),
                       ],
                     )
