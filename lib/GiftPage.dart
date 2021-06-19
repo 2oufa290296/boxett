@@ -11,7 +11,6 @@ import 'package:boxet/OrderPage.dart';
 import 'package:boxet/classes/Descriptions.dart';
 import 'package:boxet/classes/SimilarGifts.dart';
 import 'package:boxet/classes/ReviewsClass.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
