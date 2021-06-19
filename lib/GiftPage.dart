@@ -18,13 +18,11 @@ import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:boxet/my_flutter_app_icons.dart' as custicons;
 import 'package:video_player/video_player.dart';
 
-
-
 import 'PageActivity.dart';
 
 class GiftPage extends StatefulWidget {
   final String id;
-  
+
   GiftPage(this.id);
 
   @override
@@ -41,9 +39,9 @@ class _GiftPageState extends State<GiftPage> {
   int price = 0;
   String pagename = "";
   String pageimg = "";
-  String shopPackagingImg="";
-  String shopPackagingFree="";
- int shopPackaging=0;
+  String shopPackagingImg = "";
+  String shopPackagingFree = "";
+  int shopPackaging = 0;
   String pageId = "";
   List description = [];
   num deliveryTime = 0;
@@ -61,7 +59,7 @@ class _GiftPageState extends State<GiftPage> {
   SharedPreferences sharedPreferences;
   List<String> favoriteList = [];
   List<String> recentList = [];
-  List selection=[];
+  List selection = [];
   List<ReviewsClass> reviewsList = [];
   String userId = "";
   bool internetError = false;
@@ -70,7 +68,7 @@ class _GiftPageState extends State<GiftPage> {
   num refId;
   double giftRate;
   VideoPlayerController videoContr;
-  bool wide=false;
+  bool wide = false;
 
   @override
   void initState() {
@@ -159,7 +157,7 @@ class _GiftPageState extends State<GiftPage> {
     });
     sharedPreferences.setStringList('favorite', favoriteList);
 
-    if (_auth.currentUser!=null &&userId != null && userId.isNotEmpty) {
+    if (_auth.currentUser != null && userId != null && userId.isNotEmpty) {
       _saveToFavDB(widget.id, DateTime.now().toString(), mainImg, pageimg,
           pageId, price);
     }
@@ -171,7 +169,7 @@ class _GiftPageState extends State<GiftPage> {
     });
     sharedPreferences.setStringList('favorite', favoriteList);
 
-    if (_auth.currentUser!=null && userId != null && userId.isNotEmpty) {
+    if (_auth.currentUser != null && userId != null && userId.isNotEmpty) {
       _deleteFromFavDB(widget.id);
     }
   }
@@ -199,152 +197,154 @@ class _GiftPageState extends State<GiftPage> {
                     FractionallySizedBox(
                       alignment: Alignment.topCenter,
                       heightFactor: 1,
-                      child: SingleChildScrollView(
-                        child: internetError
-                            ? Container(
-                                alignment: Alignment.center,
-                                height: height,
-                                width: width,
-                                child: Container(
-                                  width: width,
-                                  height: height / 2,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Container(
-                                        child: Icon(
-                                          MdiIcons.accessPointNetworkOff,
-                                          color: Colors.white70,
-                                          size: 40,
+                      child: internetError
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                Container(
+                                    child: Text(
+                                  'No Internet Connection',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 18,
+                                  ),
+                                )),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(top: 25),
+                                      width: width / 3,
+                                      height: 30,
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              Color.fromRGBO(18, 42, 76, 1),
+                                              Color.fromRGBO(5, 150, 197, 1),
+                                              Color.fromRGBO(18, 42, 76, 1),
+                                            ],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                          )),
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        borderRadius: BorderRadius.circular(4),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              retrying = true;
+                                            });
+                                            Future.delayed(
+                                                Duration(milliseconds: 500),
+                                                () async {
+                                              _loadGiftData();
+                                            });
+                                          },
+                                          child: Center(
+                                              child: retrying
+                                                  ? Container(
+                                                      height: 15,
+                                                      width: 15,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        valueColor:
+                                                            AlwaysStoppedAnimation(
+                                                                Colors.white),
+                                                        strokeWidth: 1,
+                                                      ),
+                                                    )
+                                                  : Text(
+                                                      'RETRY',
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 16),
+                                                    )),
                                         ),
                                       ),
-                                      Container(
-                                          margin: EdgeInsets.only(top: 15),
-                                          child: Text(
-                                            'No Internet Connection',
-                                            style: TextStyle(
-                                                color: Colors.white70,
-                                                fontSize: 18,
-                                               ),
-                                          )),
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Container(
-                                            margin: EdgeInsets.only(top: 25),
-                                            width: width / 3,
-                                            height: 30,
-                                            clipBehavior: Clip.antiAlias,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          : errorLoading
+                              ? Container(
+                                  height: height,
+                                  width: width,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Positioned(
+                                        top: 0,
+                                        left: 0,
+                                        child: Container(
+                                            height: 50,
+                                            width: width,
+                                            child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  InkWell(
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Container(
+                                                        margin: EdgeInsets.only(
+                                                            left: 20),
+                                                        child: Icon(
+                                                            Icons
+                                                                .arrow_back_ios,
+                                                            color:
+                                                                Colors.white)),
+                                                  ),
+                                                  Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 15),
+                                                      child: Text('Gift Page',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 20,
+                                                              fontFamily:
+                                                                  "Lobster",
+                                                              letterSpacing:
+                                                                  2)))
+                                                ]),
                                             decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black26,
+                                                    spreadRadius: 3,
+                                                    blurRadius: 4,
+                                                  ),
+                                                ],
                                                 gradient: LinearGradient(
-                                                  colors: [
-                                                      Color.fromRGBO(18, 42, 76, 1),
-                                    Color.fromRGBO(5, 150, 197, 1),
-                                    Color.fromRGBO(18, 42, 76, 1),
-                                                  ],
                                                   begin: Alignment.topLeft,
                                                   end: Alignment.bottomRight,
-                                                )),
-                                            child: Material(
-                                              color: Colors.transparent,
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                              clipBehavior: Clip.antiAlias,
-                                              child: InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    retrying = true;
-                                                  });
-                                                  Future.delayed(
-                                                      Duration(
-                                                          milliseconds: 500),
-                                                      () async {
-                                                    _loadGiftData();
-                                                  });
-                                                },
-                                                child: Center(
-                                                    child: retrying
-                                                        ? Container(
-                                                            height: 15,
-                                                            width: 15,
-                                                            child:
-                                                                CircularProgressIndicator(
-                                                              valueColor:
-                                                                  AlwaysStoppedAnimation(
-                                                                      Colors
-                                                                          .white),
-                                                              strokeWidth: 1,
-                                                            ),
-                                                          )
-                                                        : Text(
-                                                            'RETRY',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 16),
-                                                          )),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                                  colors: [
+                                                    Color.fromRGBO(
+                                                        18, 42, 76, 1),
+                                                    Color.fromRGBO(
+                                                        5, 150, 197, 1),
+                                                    Color.fromRGBO(
+                                                        18, 42, 76, 1),
+                                                  ],
+                                                ))),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : errorLoading
-                                ? Container(height:height,width:width,
-                                  child: Stack(alignment: Alignment.center,
-                                    children: [
-                                      Positioned(top:0,left:0,child: Container(
-            height: 50,
-            width:width,
-            child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                    margin: EdgeInsets.only(left: 20),
-                    child: Icon(Icons.arrow_back_ios, color: Colors.white)),
-              ),
-              Container(
-                  margin: EdgeInsets.only(left: 15),
-                  child: Text('Gift Page',
-                      style: TextStyle(color: Colors.white, fontSize: 20,fontFamily:"Lobster",letterSpacing:2)))
-            ]),
-            decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    spreadRadius: 3,
-                    blurRadius: 4,
-                  ),
-                ],
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                  Color.fromRGBO(18,42,76,1),
-                  Color.fromRGBO(5,150,197,1),
-                  Color.fromRGBO(18,42,76,1),
-                  ],
-                ))),),
                                       Text(
                                         'Gift is not available',
                                         style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18),
+                                            color: Colors.white, fontSize: 18),
                                       ),
                                     ],
                                   ),
                                 )
-                                : Column(
+                              : SingleChildScrollView(
+                                  child: Column(
                                     mainAxisSize: MainAxisSize.max,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
@@ -357,61 +357,57 @@ class _GiftPageState extends State<GiftPage> {
                                           child: videoLink != null
                                               ? Stack(
                                                   children: [
-                                                    Container( 
-                                                           height:
-                                                                    height /
-                                                                        2,
-                                                                width: width,
-                                                          child: Center(
-                                                            child:  videoContr != null &&
-                                                            videoContr.value
-                                                                .initialized
-                                                        ?AspectRatio(
-                                                                aspectRatio:
-                                                                    videoContr
-                                                                        .value
-                                                                        .aspectRatio,
-                                                                child: VideoPlayer(
-                                                                    videoContr)):  Shimmer.fromColors(
-                                                            enabled: true,
-                                                            child: Container(
-                                                                height:
-                                                                    height /
-                                                                        2,
-                                                                width: width,
-                                                                color: Color(
-                                                                    0xFF282828)),
-                                                            baseColor: Color(
-                                                                0xFF282828),
-                                                            highlightColor:
-                                                                Color(
-                                                                    0xFF383838),
-                                                          )
-                                                          ),
-                                                        )
-                                                        ,
+                                                    Container(
+                                                      height: height / 2,
+                                                      width: width,
+                                                      child: Center(
+                                                          child: videoContr !=
+                                                                      null &&
+                                                                  videoContr
+                                                                      .value
+                                                                      .initialized
+                                                              ? AspectRatio(
+                                                                  aspectRatio:
+                                                                      videoContr
+                                                                          .value
+                                                                          .aspectRatio,
+                                                                  child: VideoPlayer(
+                                                                      videoContr))
+                                                              : Shimmer
+                                                                  .fromColors(
+                                                                  enabled: true,
+                                                                  child: Container(
+                                                                      height:
+                                                                          height /
+                                                                              2,
+                                                                      width:
+                                                                          width,
+                                                                      color: Color(
+                                                                          0xFF282828)),
+                                                                  baseColor: Color(
+                                                                      0xFF282828),
+                                                                  highlightColor:
+                                                                      Color(
+                                                                          0xFF383838),
+                                                                )),
+                                                    ),
                                                     Positioned.fill(
                                                       child: GestureDetector(
                                                         onTap: () {
-                                                          if (videoContr
-                                                                    .value
-                                                                    .isPlaying) {
-                                                                  setState(
-                                                                      () {
-                                                                    videoContr
-                                                                        .pause();
-                                                                  });
-                                                                } else {
-                                                                  setState(
-                                                                      () {
-                                                                    videoContr
-                                                                        .play();
-                                                                  });
-                                                                }
+                                                          if (videoContr.value
+                                                              .isPlaying) {
+                                                            setState(() {
+                                                              videoContr
+                                                                  .pause();
+                                                            });
+                                                          } else {
+                                                            setState(() {
+                                                              videoContr.play();
+                                                            });
+                                                          }
                                                         },
                                                       ),
                                                     ),
-                                                    
                                                     Positioned(
                                                         top: 10,
                                                         child: Container(
@@ -422,8 +418,8 @@ class _GiftPageState extends State<GiftPage> {
                                                                   topRight: Radius
                                                                       .circular(
                                                                           10),
-                                                                  bottomRight:
-                                                                      Radius.circular(
+                                                                  bottomRight: Radius
+                                                                      .circular(
                                                                           10))),
                                                           padding:
                                                               EdgeInsets.only(
@@ -454,10 +450,14 @@ class _GiftPageState extends State<GiftPage> {
                                                                     child: Text(
                                                                         'Gift',
                                                                         style: TextStyle(
-                                                                            fontSize: 18,
-                                                                            color: Colors.white,
-                                                                            letterSpacing: 2,
-                                                                            fontFamily: "Lobster")))
+                                                                            fontSize:
+                                                                                18,
+                                                                            color: Colors
+                                                                                .white,
+                                                                            letterSpacing:
+                                                                                2,
+                                                                            fontFamily:
+                                                                                "Lobster")))
                                                               ]),
                                                         )),
                                                   ],
@@ -466,28 +466,32 @@ class _GiftPageState extends State<GiftPage> {
                                                   children: [
                                                     imgProv.isNotEmpty
                                                         ? Container(
-                                                            width: width,height: wide?0.75*width:1.33*width,
-                                                            color:  Color(0xFF181818),
+                                                            width: width,
+                                                            height: wide
+                                                                ? 0.75 * width
+                                                                : 1.33 * width,
+                                                            color: Color(
+                                                                0xFF181818),
                                                             child: Carousel(
-                                                              
                                                               images: imgProv,
-                                                              animationCurve:
-                                                                  Curves
-                                                                      .fastOutSlowIn,
+                                                              animationCurve: Curves
+                                                                  .fastOutSlowIn,
                                                               autoplay: false,
                                                               dotSize: 4,
                                                               indicatorBgPadding:
                                                                   6.0,
-                                                              dotBgColor:
-                                                                  Colors
-                                                                      .black54,
+                                                              dotBgColor: Colors
+                                                                  .black54,
                                                             ),
                                                           )
                                                         : Shimmer.fromColors(
                                                             enabled: true,
                                                             child: Container(
-                                                                height:
-                                                                    wide?0.75*width:1.33*width,
+                                                                height: wide
+                                                                    ? 0.75 *
+                                                                        width
+                                                                    : 1.33 *
+                                                                        width,
                                                                 width: width,
                                                                 color: Color(
                                                                     0xFF282828)),
@@ -507,8 +511,8 @@ class _GiftPageState extends State<GiftPage> {
                                                                   topRight: Radius
                                                                       .circular(
                                                                           10),
-                                                                  bottomRight:
-                                                                      Radius.circular(
+                                                                  bottomRight: Radius
+                                                                      .circular(
                                                                           10))),
                                                           padding:
                                                               EdgeInsets.only(
@@ -539,10 +543,14 @@ class _GiftPageState extends State<GiftPage> {
                                                                     child: Text(
                                                                         'Gift',
                                                                         style: TextStyle(
-                                                                            fontSize: 18,
-                                                                            color: Colors.white,
-                                                                            letterSpacing: 2,
-                                                                            fontFamily: "Lobster")))
+                                                                            fontSize:
+                                                                                18,
+                                                                            color: Colors
+                                                                                .white,
+                                                                            letterSpacing:
+                                                                                2,
+                                                                            fontFamily:
+                                                                                "Lobster")))
                                                               ]),
                                                         )),
                                                   ],
@@ -553,17 +561,15 @@ class _GiftPageState extends State<GiftPage> {
                                         mainAxisSize: MainAxisSize.max,
                                         children: <Widget>[
                                           Container(
-                                              margin:
-                                                  EdgeInsets.only(left: 10),
+                                              margin: EdgeInsets.only(left: 10),
                                               child: Label(
                                                 triangleHeight: 17,
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius
-                                                              .circular(4),
-                                                      gradient:
-                                                          LinearGradient(
+                                                          BorderRadius.circular(
+                                                              4),
+                                                      gradient: LinearGradient(
                                                         colors: [
                                                           Color.fromRGBO(
                                                               18, 42, 76, 1),
@@ -572,15 +578,15 @@ class _GiftPageState extends State<GiftPage> {
                                                           Color.fromRGBO(
                                                               18, 42, 76, 1),
                                                         ],
-                                                        begin: Alignment
-                                                            .topCenter,
+                                                        begin:
+                                                            Alignment.topCenter,
                                                         end: Alignment
                                                             .bottomCenter,
                                                       ),
                                                       boxShadow: [
                                                         BoxShadow(
-                                                            color: Colors
-                                                                .black38,
+                                                            color:
+                                                                Colors.black38,
                                                             offset:
                                                                 Offset(5, 0))
                                                       ]),
@@ -614,20 +620,16 @@ class _GiftPageState extends State<GiftPage> {
                                                 ),
                                               )),
                                           Container(
-                                            margin:
-                                                EdgeInsets.only(right: 20),
+                                            margin: EdgeInsets.only(right: 20),
                                             child: InkWell(
-                                                splashColor:
-                                                    Colors.transparent,
+                                                splashColor: Colors.transparent,
                                                 onTap: () {
-                                                  
                                                   if (favoriteList
                                                       .contains(widget.id)) {
                                                     _removeFromFavorites(
                                                         widget.id);
                                                   } else {
-                                                    _saveToFavorites(
-                                                        widget.id);
+                                                    _saveToFavorites(widget.id);
                                                   }
                                                 },
                                                 child: AnimatedSwitcher(
@@ -644,8 +646,7 @@ class _GiftPageState extends State<GiftPage> {
                                                         scale: animation,
                                                       );
                                                     } else if (child.key ==
-                                                        Key(widget.id +
-                                                            'un')) {
+                                                        Key(widget.id + 'un')) {
                                                       return ScaleTransition(
                                                         child: child,
                                                         scale: animation,
@@ -657,8 +658,8 @@ class _GiftPageState extends State<GiftPage> {
                                                   child: favoriteList
                                                           .contains(widget.id)
                                                       ? Container(
-                                                          key: Key(widget.id +
-                                                              'un'),
+                                                          key: Key(
+                                                              widget.id + 'un'),
                                                           // key: UniqueKey(),
                                                           child: Icon(
                                                               custicons
@@ -715,19 +716,31 @@ class _GiftPageState extends State<GiftPage> {
                                                   letterSpacing: 2),
                                             ),
                                           ),
-                                          description!=null && description.isNotEmpty?Container(
-                                            margin: EdgeInsets.only(
-                                                left: 15, top: 5, bottom: 10),
-                                            child: ListView.builder(physics: NeverScrollableScrollPhysics(),shrinkWrap: true,itemCount:description.length,itemBuilder: (context,index){return Text(
-                                              description[index],
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.white),
-                                            );},)
-                                            
-                                            
-                                            
-                                          ):Container(),
+                                          description != null &&
+                                                  description.isNotEmpty
+                                              ? Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: 15,
+                                                      top: 5,
+                                                      bottom: 10),
+                                                  child: ListView.builder(
+                                                    physics:
+                                                        NeverScrollableScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    itemCount:
+                                                        description.length,
+                                                    itemBuilder:
+                                                        (context, index) {
+                                                      return Text(
+                                                        description[index],
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            color:
+                                                                Colors.white),
+                                                      );
+                                                    },
+                                                  ))
+                                              : Container(),
                                           Padding(
                                             padding: const EdgeInsets.only(
                                                 top: 10, bottom: 10),
@@ -765,13 +778,12 @@ class _GiftPageState extends State<GiftPage> {
                                                                 .start,
                                                         children: <Widget>[
                                                           Container(
-                                                              width: (width /
-                                                                      2) -
-                                                                  30,
+                                                              width:
+                                                                  (width / 2) -
+                                                                      30,
                                                               margin: EdgeInsets
                                                                   .only(
-                                                                      left:
-                                                                          20),
+                                                                      left: 20),
                                                               child: Text(
                                                                 f.title,
                                                                 style: TextStyle(
@@ -785,15 +797,14 @@ class _GiftPageState extends State<GiftPage> {
                                                               )),
                                                           Text(" :",
                                                               style: TextStyle(
-                                                                  fontSize:
-                                                                      16,
+                                                                  fontSize: 16,
                                                                   color: Colors
                                                                       .white)),
                                                           Expanded(
                                                             child: Container(
-                                                                width: (width /
-                                                                        2) -
-                                                                    30,
+                                                                width:
+                                                                    (width / 2) -
+                                                                        30,
                                                                 margin: EdgeInsets
                                                                     .only(
                                                                         right:
@@ -806,13 +817,12 @@ class _GiftPageState extends State<GiftPage> {
                                                                     overflow:
                                                                         TextOverflow
                                                                             .ellipsis,
-                                                                    maxLines:
-                                                                        5,
+                                                                    maxLines: 5,
                                                                     style: TextStyle(
                                                                         fontSize:
                                                                             16,
-                                                                        color:
-                                                                            Colors.white))),
+                                                                        color: Colors
+                                                                            .white))),
                                                           )
                                                         ],
                                                       ))
@@ -851,16 +861,15 @@ class _GiftPageState extends State<GiftPage> {
                                                 MainAxisAlignment.start,
                                             children: <Widget>[
                                               Container(
-                                                  margin: EdgeInsets.only(
-                                                      left: 20),
+                                                  margin:
+                                                      EdgeInsets.only(left: 20),
                                                   child:
                                                       pageimg != null &&
                                                               pageimg != ""
                                                           ? Container(
                                                               padding:
                                                                   EdgeInsets
-                                                                      .all(
-                                                                          0.5),
+                                                                      .all(0.5),
                                                               decoration: BoxDecoration(
                                                                   shape: BoxShape
                                                                       .circle,
@@ -869,28 +878,26 @@ class _GiftPageState extends State<GiftPage> {
                                                               child: Card(
                                                                 margin:
                                                                     EdgeInsets
-                                                                        .all(
-                                                                            0),
-                                                                clipBehavior:
-                                                                    Clip.antiAlias,
+                                                                        .all(0),
+                                                                clipBehavior: Clip
+                                                                    .antiAlias,
                                                                 shape: RoundedRectangleBorder(
                                                                     borderRadius:
                                                                         BorderRadius.circular(
                                                                             20)),
-                                                                child:
-                                                                    InkWell(
+                                                                child: InkWell(
                                                                   onTap: () {
                                                                     Navigator.push(
                                                                         context,
                                                                         MaterialPageRoute(
-                                                                            builder: (context) => new PageActivity(pageId, 'product')));
+                                                                            builder: (context) =>
+                                                                                new PageActivity(pageId, 'product')));
                                                                   },
                                                                   child:
                                                                       CachedNetworkImage(
                                                                     imageUrl:
                                                                         pageimg,
-                                                                    height:
-                                                                        40,
+                                                                    height: 40,
                                                                     width: 40,
                                                                     fit: BoxFit
                                                                         .cover,
@@ -903,9 +910,12 @@ class _GiftPageState extends State<GiftPage> {
                                                                         enabled:
                                                                             true,
                                                                         child: Container(
-                                                                            height: 40,
-                                                                            width: 40,
-                                                                            color: Color(0xFF282828)),
+                                                                            height:
+                                                                                40,
+                                                                            width:
+                                                                                40,
+                                                                            color:
+                                                                                Color(0xFF282828)),
                                                                         baseColor:
                                                                             Color(0xFF282828),
                                                                         highlightColor:
@@ -931,8 +941,8 @@ class _GiftPageState extends State<GiftPage> {
                                                       child: Text(pagename,
                                                           style: TextStyle(
                                                               fontSize: 16,
-                                                              color: Colors
-                                                                  .white,
+                                                              color:
+                                                                  Colors.white,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold))),
@@ -968,10 +978,8 @@ class _GiftPageState extends State<GiftPage> {
                                               : Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          top: 10,
-                                                          bottom: 10),
-                                                  child:
-                                                      Row(children: <Widget>[
+                                                          top: 10, bottom: 10),
+                                                  child: Row(children: <Widget>[
                                                     Expanded(
                                                         child: Container(
                                                       child: new Divider(
@@ -985,10 +993,9 @@ class _GiftPageState extends State<GiftPage> {
                                                     new Text('Reviews',
                                                         style: TextStyle(
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .bold,
-                                                            color: Colors
-                                                                .white)),
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.white)),
                                                     Expanded(
                                                         child: Container(
                                                       child: new Divider(
@@ -1008,8 +1015,7 @@ class _GiftPageState extends State<GiftPage> {
                                                   ? Container(
                                                       width: width - 20,
                                                       margin: EdgeInsets.only(
-                                                          bottom: 10,
-                                                          left: 10),
+                                                          bottom: 10, left: 10),
                                                       child: Card(
                                                         margin:
                                                             EdgeInsets.all(0),
@@ -1030,29 +1036,35 @@ class _GiftPageState extends State<GiftPage> {
                                                             crossAxisAlignment:
                                                                 CrossAxisAlignment
                                                                     .start,
-                                                            children: <
-                                                                Widget>[
+                                                            children: <Widget>[
                                                               Row(
                                                                 mainAxisSize:
                                                                     MainAxisSize
                                                                         .max,
                                                                 children: <
                                                                     Widget>[
-                                                                  reviewsList[0].profilepic != null &&
+                                                                  reviewsList[0]
+                                                                                  .profilepic !=
+                                                                              null &&
                                                                           reviewsList[0]
                                                                               .profilepic
                                                                               .isNotEmpty
                                                                       ? Container(
                                                                           padding:
                                                                               EdgeInsets.all(0.5),
-                                                                          decoration:
-                                                                              BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                                                                          decoration: BoxDecoration(
+                                                                              shape: BoxShape.circle,
+                                                                              color: Colors.white),
                                                                           child:
                                                                               Card(
-                                                                            margin: EdgeInsets.all(0),
-                                                                            clipBehavior: Clip.antiAlias,
-                                                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-                                                                            child: CachedNetworkImage(
+                                                                            margin:
+                                                                                EdgeInsets.all(0),
+                                                                            clipBehavior:
+                                                                                Clip.antiAlias,
+                                                                            shape:
+                                                                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+                                                                            child:
+                                                                                CachedNetworkImage(
                                                                               imageUrl: reviewsList[0].profilepic,
                                                                               height: 44,
                                                                               width: 44,
@@ -1077,14 +1089,17 @@ class _GiftPageState extends State<GiftPage> {
                                                                     child:
                                                                         Column(
                                                                       crossAxisAlignment:
-                                                                          CrossAxisAlignment.start,
+                                                                          CrossAxisAlignment
+                                                                              .start,
                                                                       children: <
                                                                           Widget>[
                                                                         Container(
-                                                                            margin: EdgeInsets.only(left: 10),
+                                                                            margin:
+                                                                                EdgeInsets.only(left: 10),
                                                                             child: Text(reviewsList[0].name, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16))),
                                                                         Container(
-                                                                            margin: EdgeInsets.only(left: 10),
+                                                                            margin:
+                                                                                EdgeInsets.only(left: 10),
                                                                             child: SmoothStarRating(
                                                                               allowHalfRating: true,
                                                                               color: Colors.yellow[700],
@@ -1101,7 +1116,8 @@ class _GiftPageState extends State<GiftPage> {
                                                               ),
                                                               reviewsList[0].review !=
                                                                           null &&
-                                                                      reviewsList[0]
+                                                                      reviewsList[
+                                                                              0]
                                                                           .review
                                                                           .isNotEmpty
                                                                   ? Container(
@@ -1113,8 +1129,9 @@ class _GiftPageState extends State<GiftPage> {
                                                                       child: Text(
                                                                           reviewsList[0]
                                                                               .review,
-                                                                          style:
-                                                                              TextStyle(color: Colors.white, fontSize: 16)))
+                                                                          style: TextStyle(
+                                                                              color: Colors.white,
+                                                                              fontSize: 16)))
                                                                   : Container()
                                                             ],
                                                           ),
@@ -1128,9 +1145,8 @@ class _GiftPageState extends State<GiftPage> {
                                                           left: 10,
                                                           top: 10),
                                                       child: ListView.builder(
-                                                          itemCount:
-                                                              reviewsList
-                                                                  .length,
+                                                          itemCount: reviewsList
+                                                              .length,
                                                           padding:
                                                               EdgeInsets.only(
                                                                   top: 0),
@@ -1139,20 +1155,21 @@ class _GiftPageState extends State<GiftPage> {
                                                             return Card(
                                                               margin: EdgeInsets
                                                                   .only(
-                                                                      bottom:
-                                                                          4,
+                                                                      bottom: 4,
                                                                       top: 4),
                                                               color: Color(
                                                                   0xff232323),
-                                                              child:
-                                                                  Container(
+                                                              child: Container(
                                                                 width: width,
-                                                                padding: EdgeInsets.only(
-                                                                    left: 10,
-                                                                    right: 10,
-                                                                    top: 10,
-                                                                    bottom:
-                                                                        10),
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            10,
+                                                                        right:
+                                                                            10,
+                                                                        top: 10,
+                                                                        bottom:
+                                                                            10),
                                                                 child: Column(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
@@ -1164,10 +1181,12 @@ class _GiftPageState extends State<GiftPage> {
                                                                       Widget>[
                                                                     Row(
                                                                       mainAxisSize:
-                                                                          MainAxisSize.max,
+                                                                          MainAxisSize
+                                                                              .max,
                                                                       children: <
                                                                           Widget>[
-                                                                        reviewsList[i].profilepic != null && reviewsList[i].profilepic.isNotEmpty
+                                                                        reviewsList[i].profilepic != null &&
+                                                                                reviewsList[i].profilepic.isNotEmpty
                                                                             ? Container(
                                                                                 padding: EdgeInsets.all(0.5),
                                                                                 decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
@@ -1195,7 +1214,8 @@ class _GiftPageState extends State<GiftPage> {
                                                                         Expanded(
                                                                           child:
                                                                               Column(
-                                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
                                                                             children: <Widget>[
                                                                               Container(margin: EdgeInsets.only(left: 10), child: Text(reviewsList[i].name, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16))),
                                                                               Container(
@@ -1214,9 +1234,14 @@ class _GiftPageState extends State<GiftPage> {
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                    reviewsList[i].review != null && reviewsList[i].review.isNotEmpty
+                                                                    reviewsList[i].review !=
+                                                                                null &&
+                                                                            reviewsList[i]
+                                                                                .review
+                                                                                .isNotEmpty
                                                                         ? Container(
-                                                                            margin: EdgeInsets.only(top: 10, left: 10),
+                                                                            margin:
+                                                                                EdgeInsets.only(top: 10, left: 10),
                                                                             child: Text(reviewsList[i].review, style: TextStyle(color: Colors.white, fontSize: 16)))
                                                                         : Container()
                                                                   ],
@@ -1230,10 +1255,8 @@ class _GiftPageState extends State<GiftPage> {
                                               : Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          top: 10,
-                                                          bottom: 10),
-                                                  child:
-                                                      Row(children: <Widget>[
+                                                          top: 10, bottom: 10),
+                                                  child: Row(children: <Widget>[
                                                     Expanded(
                                                         child: Container(
                                                       child: new Divider(
@@ -1247,10 +1270,9 @@ class _GiftPageState extends State<GiftPage> {
                                                     new Text('Similar Gifts',
                                                         style: TextStyle(
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .bold,
-                                                            color: Colors
-                                                                .white)),
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.white)),
                                                     Expanded(
                                                         child: Container(
                                                       child: new Divider(
@@ -1283,8 +1305,9 @@ class _GiftPageState extends State<GiftPage> {
                                                                 Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            new GiftPage(similarList[i].giftid)));
+                                                                        builder:
+                                                                            (context) =>
+                                                                                new GiftPage(similarList[i].giftid)));
                                                               },
                                                               child: Card(
                                                                   color: Color
@@ -1293,9 +1316,8 @@ class _GiftPageState extends State<GiftPage> {
                                                                           57,
                                                                           56,
                                                                           1.0),
-                                                                  clipBehavior:
-                                                                      Clip
-                                                                          .antiAlias,
+                                                                  clipBehavior: Clip
+                                                                      .antiAlias,
                                                                   child:
                                                                       CachedNetworkImage(
                                                                     imageUrl:
@@ -1318,9 +1340,12 @@ class _GiftPageState extends State<GiftPage> {
                                                                         enabled:
                                                                             true,
                                                                         child: Container(
-                                                                            height: height / 4,
-                                                                            width: width - 20,
-                                                                            color: Color(0xFF282828)),
+                                                                            height: height /
+                                                                                4,
+                                                                            width: width -
+                                                                                20,
+                                                                            color:
+                                                                                Color(0xFF282828)),
                                                                         baseColor:
                                                                             Color(0xFF282828),
                                                                         highlightColor:
@@ -1335,25 +1360,31 @@ class _GiftPageState extends State<GiftPage> {
                                                                 child:
                                                                     Container(
                                                                   decoration: BoxDecoration(
-                                                                      color: Color.fromRGBO(
-                                                                          0,
-                                                                          0,
-                                                                          0,
-                                                                          0.6),
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              0,
+                                                                              0,
+                                                                              0,
+                                                                              0.6),
                                                                       borderRadius: BorderRadius.only(
-                                                                          topLeft:
-                                                                              Radius.circular(5),
-                                                                          bottomLeft: Radius.circular(5))),
-                                                                  padding: EdgeInsets.only(
-                                                                      top: 3,
-                                                                      bottom:
-                                                                          3,
-                                                                      right:
-                                                                          20,
-                                                                      left:
-                                                                          20),
-                                                                  child: Container(
-                                                                      child: Row(
+                                                                          topLeft: Radius.circular(
+                                                                              5),
+                                                                          bottomLeft:
+                                                                              Radius.circular(5))),
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          top:
+                                                                              3,
+                                                                          bottom:
+                                                                              3,
+                                                                          right:
+                                                                              20,
+                                                                          left:
+                                                                              20),
+                                                                  child:
+                                                                      Container(
+                                                                          child:
+                                                                              Row(
                                                                     children: [
                                                                       Text(
                                                                           similarList[i]
@@ -1388,10 +1419,9 @@ class _GiftPageState extends State<GiftPage> {
                                                   height: 40,
                                                   decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius
-                                                              .circular(10),
-                                                      gradient:
-                                                          LinearGradient(
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      gradient: LinearGradient(
                                                         colors: [
                                                           Color.fromRGBO(
                                                               18, 42, 76, 1),
@@ -1412,48 +1442,52 @@ class _GiftPageState extends State<GiftPage> {
                                                     shape:
                                                         RoundedRectangleBorder(
                                                       borderRadius:
-                                                          BorderRadius
-                                                              .circular(10),
+                                                          BorderRadius.circular(
+                                                              10),
                                                     ),
                                                     child: InkWell(
                                                       onTap: () {
-                                                        if(_auth.currentUser !=null){
-                                                        
-                                                           Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) => new OrderPage(
-                                                                    widget.id,
-                                                                    mainImg,
-                                                                    name,
-                                                                    price,
-                                                                    deliveryTime,
-                                                                    delivery,
-                                                                    boxetPackaging,
-                                                                    shopPackaging,
-                                                                    pageimg,
-                                                                    pageId,
-                                                                    pagename,
-                                                                    giftRate,
-                                                                    reviewsList
-                                                                        .length,shopPackagingFree,shopPackagingImg,selection)));
-                                                  
-                                                        }else {
-                                                           Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) => new LoginActivity('order',widget.id)));
-                                                  
+                                                        if (_auth.currentUser !=
+                                                            null) {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) => new OrderPage(
+                                                                      widget.id,
+                                                                      mainImg,
+                                                                      name,
+                                                                      price,
+                                                                      deliveryTime,
+                                                                      delivery,
+                                                                      boxetPackaging,
+                                                                      shopPackaging,
+                                                                      pageimg,
+                                                                      pageId,
+                                                                      pagename,
+                                                                      giftRate,
+                                                                      reviewsList
+                                                                          .length,
+                                                                      shopPackagingFree,
+                                                                      shopPackagingImg,
+                                                                      selection)));
+                                                        } else {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      new LoginActivity(
+                                                                          'order',
+                                                                          widget
+                                                                              .id)));
                                                         }
-                                                            },
+                                                      },
                                                       child: Center(
                                                           child: Text(
                                                               'Order Now',
                                                               style: TextStyle(
                                                                   color: Colors
                                                                       .white,
-                                                                  fontSize:
-                                                                      18,
+                                                                  fontSize: 18,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
@@ -1467,7 +1501,7 @@ class _GiftPageState extends State<GiftPage> {
                                       )
                                     ],
                                   ),
-                      ),
+                                ),
                     ),
                   ],
                 )),
@@ -1485,42 +1519,41 @@ class _GiftPageState extends State<GiftPage> {
           .then((results) async {
         if (results.exists) {
           num giftRateNum = 0;
-          if(results.data()['wide']!=null && results.data()['wide']==true){
-
-            setState((){
-              wide=true;
+          if (results.data()['wide'] != null &&
+              results.data()['wide'] == true) {
+            setState(() {
+              wide = true;
             });
           }
           name = results.data()['name'];
           mainImg = results.data()['img'];
           description = results.data()['description'];
-          shopPackaging=results.data()['shoppackaging'];
-          boxetPackaging=results.data()['boxetpackaging'];
+          shopPackaging = results.data()['shoppackaging'];
+          boxetPackaging = results.data()['boxetpackaging'];
           details = results.data()['details'];
           price = results.data()['price'];
           pageId = results.data()['pageid'];
           refId = results.data()['id'];
-          selection=results.data()['selection'];
+          selection = results.data()['selection'];
           giftRateNum = results.data()['rate'];
           if (giftRateNum != null && giftRateNum != 0) {
             giftRate =
                 giftRateNum is double ? giftRateNum : giftRateNum.toDouble();
           }
 
-          if(selection==null){
-            selection=[];
+          if (selection == null) {
+            selection = [];
           }
-          if(shopPackaging==null){
-            shopPackaging=0;
+          if (shopPackaging == null) {
+            shopPackaging = 0;
           }
-          if(boxetPackaging==null){
-            boxetPackaging=0;
+          if (boxetPackaging == null) {
+            boxetPackaging = 0;
           }
           pageimg = results.data()['page'];
           pagename = results.data()['pagename'];
           deliveryTime = results.data()['deliverytime'];
           delivery = results.data()['delivery'];
-          
 
           videoLink = results.data()['video'];
 
@@ -1597,14 +1630,13 @@ class _GiftPageState extends State<GiftPage> {
                 .then((results) async {
               if (results.exists) {
                 num aa = results.data()['pagerate'];
-                if(aa!=null){
+                if (aa != null) {
                   if (aa is int) {
-                  pagerate = aa.toDouble();
-                } else {
-                  pagerate = aa;
+                    pagerate = aa.toDouble();
+                  } else {
+                    pagerate = aa;
+                  }
                 }
-                }
-                
 
                 pageInfo = results.data()['pageinfo'];
                 await FirebaseFirestore.instance

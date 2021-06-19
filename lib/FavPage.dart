@@ -210,7 +210,7 @@ print(favIdList);
             ))
           : internetError
               ? Container(
-                  height: height-150,
+                  height: height-140,
                   width: width,
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

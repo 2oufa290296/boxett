@@ -192,7 +192,7 @@ class _SearchActivityState extends State<SearchActivity>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                              margin: EdgeInsets.only(top: 15),
+                             
                               child: Text(
                                 'No Internet Connection',
                                 style: TextStyle(
@@ -737,7 +737,7 @@ class _SearchActivityState extends State<SearchActivity>
               child: TestDropdown(key: menuKey, changeIcon: changeIcon)),
           Positioned(
             left: 30,
-            top: 30,
+           
             child: SlideTransition(
               position: dropAnimation,
               child: Container(
