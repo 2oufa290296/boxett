@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +69,7 @@ class CustomNavBarState extends State<CustomNavBar>
   FlareActor flareAc;
   TextEditingController inputController;
   bool showw = false;
+  final _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -86,37 +88,30 @@ class CustomNavBarState extends State<CustomNavBar>
     overlayState = Overlay.of(context);
     inputController = new TextEditingController();
     entry = OverlayEntry(
-        builder: (context) => new MenuItems(
-              entry,
-              categImg,
-              updateNavBar: (String selectedCat) {
-                if ( !flareState) {
-                  
-                  flareContr.play('fly');
-                  
-                  if (categImg != selectedCat) {
-                    setState(() {
-                      categImg = selectedCat;
-                      widget.reloadMain(selectedCat);
-                    });
-                  }
-                } 
-              },
-              updateNavBarDelayed:(String selectedCat){
-                if ( !flareState) {
-                  
-                  flareContr.play('fly');
-                  
-                  Future.delayed(Duration(milliseconds:1400),(){  setState(() {
-                      categImg = selectedCat;
-                      widget.reloadMain(selectedCat);
-                    });});
-                  
-                  
-                } 
+        builder: (context) =>
+            new MenuItems(entry, categImg, updateNavBar: (String selectedCat) {
+              if (!flareState) {
+                flareContr.play('fly');
 
+                if (categImg != selectedCat) {
+                  setState(() {
+                    categImg = selectedCat;
+                    widget.reloadMain(selectedCat);
+                  });
+                }
               }
-            ));
+            }, updateNavBarDelayed: (String selectedCat) {
+              if (!flareState) {
+                flareContr.play('fly');
+
+                Future.delayed(Duration(milliseconds: 1400), () {
+                  setState(() {
+                    categImg = selectedCat;
+                    widget.reloadMain(selectedCat);
+                  });
+                });
+              }
+            }));
     flareAc = FlareActor(
       'assets/zzz.flr',
       animation: 'Breathing',
@@ -147,11 +142,11 @@ class CustomNavBarState extends State<CustomNavBar>
   void didUpdateWidget(CustomNavBar oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if(widget.index!=4 && showw==true){
-      setState((){showw=false;});
+    if (widget.index != 4 && showw == true) {
+      setState(() {
+        showw = false;
+      });
     }
-
-    
 
     if (widget.index == 2 && _pos != 0.4) {
       final newPosition = widget.index / _length;
@@ -207,16 +202,16 @@ class CustomNavBarState extends State<CustomNavBar>
           Positioned(
             left: 0,
             right: indexxx == 4 ? size.width / _length : 0,
-            bottom: showw && indexxx==4?0:0 - (75.0 - widget.height),
-            child: showw && indexxx ==4
+            bottom: showw && indexxx == 4 ? 0 : 0 - (75.0 - widget.height),
+            child: showw && indexxx == 4
                 ? SizedBox(
                     height: 60.0,
                     child: Row(
                       children: <Widget>[
                         Expanded(
                           child: Container(
-                              padding: EdgeInsets.only(left: 10,
-                              
+                              padding: EdgeInsets.only(
+                                left: 10,
                               ),
                               child: TextField(
                                 cursorColor: Colors.white70,
@@ -238,7 +233,9 @@ class CustomNavBarState extends State<CustomNavBar>
                         Container(
                             width: 45,
                             height: 45,
-                            margin: EdgeInsets.only(right: 10,),
+                            margin: EdgeInsets.only(
+                              right: 10,
+                            ),
                             child: InkWell(
                                 onTap: () {
                                   widget.chatKey.currentState.giftOnTap();
@@ -250,7 +247,8 @@ class CustomNavBarState extends State<CustomNavBar>
                       ],
                     ))
                 : indexxx == 4
-                    ? SizedBox(height: 100.0,child:Center(child:JumpingDots()))
+                    ? SizedBox(
+                        height: 100.0, child: Center(child: JumpingDots()))
                     : SizedBox(
                         height: 100.0,
                         child: Row(
@@ -291,9 +289,9 @@ class CustomNavBarState extends State<CustomNavBar>
                             onTap: () {
                               // blinkController.forward();
 
-                              if(!flareState){
+                              if (!flareState) {
                                 flareContr.play('fly');
-                                   Future.delayed(Duration(milliseconds: 400), () {
+                                Future.delayed(Duration(milliseconds: 400), () {
                                   overlayState.insert(entry);
                                 });
                               }
@@ -313,7 +311,7 @@ class CustomNavBarState extends State<CustomNavBar>
                         : indexxx == 4
                             ? Material(
                                 color: widget.buttonBackgroundColor ??
-                                    Color.fromRGBO(3, 99, 130,1),
+                                    Color.fromRGBO(3, 99, 130, 1),
                                 type: MaterialType.circle,
                                 child: InkWell(
                                     splashColor: Colors.transparent,
@@ -335,7 +333,7 @@ class CustomNavBarState extends State<CustomNavBar>
                               )
                             : Material(
                                 color: widget.buttonBackgroundColor ??
-                                     Color.fromRGBO(3, 99, 130,1),
+                                    Color.fromRGBO(3, 99, 130, 1),
                                 type: MaterialType.circle,
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -361,7 +359,7 @@ class CustomNavBarState extends State<CustomNavBar>
     categImg = 'default';
     indexxx = index;
     if (indexxx == 4) {
-      if(inputController!=null){
+      if (inputController != null) {
         inputController.clear();
       }
       Future.delayed(Duration(milliseconds: 1000), () {
@@ -370,18 +368,19 @@ class CustomNavBarState extends State<CustomNavBar>
         });
       });
     } else {
-      
       setState(() {
         showw = false;
       });
     }
 
     final newPosition = index / _length;
-    setState(() {
-      _startingPos = _pos;
-      _endingIndex = index;
-      _animationController.animateTo(newPosition,
-          duration: widget.animationDuration, curve: widget.animationCurve);
-    });
+    if (_auth.currentUser != null) {
+      setState(() {
+        _startingPos = _pos;
+        _endingIndex = index;
+        _animationController.animateTo(newPosition,
+            duration: widget.animationDuration, curve: widget.animationCurve);
+      });
+    }
   }
 }

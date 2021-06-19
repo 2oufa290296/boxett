@@ -541,7 +541,7 @@ class _SearchActivityState extends State<SearchActivity>
                           )),
           Positioned(
             left: 0,
-            top: 30,
+            
             child: SlideTransition(
               position: dropAnimation,
               child: Container(
@@ -737,7 +737,7 @@ class _SearchActivityState extends State<SearchActivity>
               child: TestDropdown(key: menuKey, changeIcon: changeIcon)),
           Positioned(
             left: 30,
-           
+            top: 30,
             child: SlideTransition(
               position: dropAnimation,
               child: Container(
