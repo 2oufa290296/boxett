@@ -347,7 +347,8 @@ class _LoginActivityState extends State<LoginActivity> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Stack(children: <Widget>[
-            Positioned(
+            Positioned(right:10,top:20,child:GestureDetector(onTap:(){Navigator.pop(context);},child:Icon(Icons.close,color:Colors.white54,size:20)))
+            ,Positioned(
                 top: 0,
                 left: 0,
                 height: height * 0.3,

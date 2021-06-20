@@ -358,23 +358,37 @@ class CustomNavBarState extends State<CustomNavBar>
     }
     categImg = 'default';
     indexxx = index;
-    if (indexxx == 4) {
-      if (inputController != null) {
-        inputController.clear();
-      }
-      Future.delayed(Duration(milliseconds: 1000), () {
+    if (_auth.currentUser == null && indexxx != 0 && indexxx != 4) {
+      if (showw == true) {
         setState(() {
-          showw = true;
+          showw = false;
         });
-      });
-    } else {
+      }
+      final newPosition = index / _length;
       setState(() {
-        showw = false;
+        _startingPos = _pos;
+        _endingIndex = index;
+        _animationController.animateTo(newPosition,
+            duration: widget.animationDuration, curve: widget.animationCurve);
       });
-    }
+    } else if (_auth.currentUser != null) {
+      if (indexxx == 4) {
+        if (inputController != null) {
+          inputController.clear();
+        }
+        Future.delayed(Duration(milliseconds: 1000), () {
+          setState(() {
+            showw = true;
+          });
+        });
+      }
 
-    final newPosition = index / _length;
-    if (_auth.currentUser != null) {
+      if (showw == true) {
+        setState(() {
+          showw = false;
+        });
+      }
+      final newPosition = index / _length;
       setState(() {
         _startingPos = _pos;
         _endingIndex = index;
