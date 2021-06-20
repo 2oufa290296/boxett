@@ -541,7 +541,7 @@ class _SearchActivityState extends State<SearchActivity>
                           )),
           Positioned(
             left: 0,
-            top: 30,
+            
             child: SlideTransition(
               position: dropAnimation,
               child: Container(
@@ -570,7 +570,7 @@ class _SearchActivityState extends State<SearchActivity>
             ),
           ),
           Positioned(
-              top: 180,
+              top: 150,
               right: 10,
               child: AnimatedContainer(
                   duration: Duration(milliseconds: 200),
@@ -737,7 +737,7 @@ class _SearchActivityState extends State<SearchActivity>
               child: TestDropdown(key: menuKey, changeIcon: changeIcon)),
           Positioned(
             left: 30,
-            top: 30,
+            
             child: SlideTransition(
               position: dropAnimation,
               child: Container(
@@ -878,7 +878,7 @@ class _SearchActivityState extends State<SearchActivity>
           ),
           Positioned(
               left: (width / 2) - 15,
-              top: 35,
+              top: 5,
               height: 30,
               width: 30,
               child: SlideTransition(

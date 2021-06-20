@@ -278,7 +278,7 @@ class CustomNavBarState extends State<CustomNavBar>
                       0,
                       indexxx == 2
                           ? -(1 - _buttonHide) * 45
-                          : indexxx == 4
+                          : _auth.currentUser!=null && indexxx == 4
                               ? -(1 - _buttonHide) * 35
                               : -(1 - _buttonHide) * 40,
                     ),
@@ -308,7 +308,7 @@ class CustomNavBarState extends State<CustomNavBar>
                               // }
                             },
                             child: flareAc)
-                        : indexxx == 4
+                        : _auth.currentUser!=null && indexxx == 4 
                             ? Material(
                                 color: widget.buttonBackgroundColor ??
                                     Color.fromRGBO(3, 99, 130, 1),
@@ -357,8 +357,9 @@ class CustomNavBarState extends State<CustomNavBar>
       widget.onTap(index);
     }
     categImg = 'default';
-    indexxx = index;
+  
     if (_auth.currentUser == null && indexxx != 0 && indexxx != 4) {
+        indexxx = index;
       if (showw == true) {
         setState(() {
           showw = false;
@@ -372,6 +373,7 @@ class CustomNavBarState extends State<CustomNavBar>
             duration: widget.animationDuration, curve: widget.animationCurve);
       });
     } else if (_auth.currentUser != null) {
+        indexxx = index;
       if (indexxx == 4) {
         if (inputController != null) {
           inputController.clear();
