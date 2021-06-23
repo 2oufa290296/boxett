@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:boxet/classes/PriceDecoration.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
@@ -14,7 +12,7 @@ import 'package:boxet/classes/SearchGifts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
-
+import 'classes/PriceDecoration.dart';
 
 class SearchActivity extends StatefulWidget {
   @override
@@ -176,7 +174,7 @@ class _SearchActivityState extends State<SearchActivity>
     height = MediaQuery.of(context).size.height;
 
     return SafeArea(
-      child: Scaffold(
+          child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(children: <Widget>[
           showLoading
@@ -196,9 +194,9 @@ class _SearchActivityState extends State<SearchActivity>
                               child: Text(
                                 'No Internet Connection',
                                 style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 18,
-                                ),
+                                    color: Colors.white70,
+                                    fontSize: 18,
+                                    ),
                               )),
                           Row(
                             mainAxisSize: MainAxisSize.min,
@@ -228,8 +226,7 @@ class _SearchActivityState extends State<SearchActivity>
                                       setState(() {
                                         retrying = true;
                                       });
-                                      Future.delayed(
-                                          Duration(milliseconds: 1000),
+                                      Future.delayed(Duration(milliseconds: 1000),
                                           () async {
                                         _loadData(searchText);
                                       });
@@ -239,8 +236,7 @@ class _SearchActivityState extends State<SearchActivity>
                                             ? Container(
                                                 height: 15,
                                                 width: 15,
-                                                child:
-                                                    CircularProgressIndicator(
+                                                child: CircularProgressIndicator(
                                                   valueColor:
                                                       AlwaysStoppedAnimation(
                                                           Colors.white),
@@ -267,8 +263,7 @@ class _SearchActivityState extends State<SearchActivity>
                             noMatches
                                 ? 'No matched gifts'
                                 : 'You havent viewed any gifts',
-                            style:
-                                TextStyle(color: Colors.white70, fontSize: 18),
+                            style: TextStyle(color: Colors.white70, fontSize: 18),
                           ),
                         )
                       : Positioned(
@@ -295,8 +290,7 @@ class _SearchActivityState extends State<SearchActivity>
                                                       top: 40, bottom: 10),
                                                   child: Row(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
+                                                        CrossAxisAlignment.center,
                                                     children: <Widget>[
                                                       Expanded(
                                                           child: Container(
@@ -328,10 +322,10 @@ class _SearchActivityState extends State<SearchActivity>
                                                         ),
                                                         margin: EdgeInsets.only(
                                                             left: 10.0,
-                                                            right: searchText
-                                                                    .isEmpty
-                                                                ? 10.0
-                                                                : 0),
+                                                            right:
+                                                                searchText.isEmpty
+                                                                    ? 10.0
+                                                                    : 0),
                                                       )),
                                                       InkWell(
                                                         onTap: () {
@@ -342,20 +336,17 @@ class _SearchActivityState extends State<SearchActivity>
                                                             });
                                                           } else {
                                                             setState(() {
-                                                              filterOpened =
-                                                                  true;
+                                                              filterOpened = true;
                                                             });
                                                           }
                                                         },
                                                         child: Padding(
                                                             padding:
-                                                                EdgeInsets.all(
-                                                                    5),
+                                                                EdgeInsets.all(5),
                                                             child: Icon(
-                                                                Icons
-                                                                    .filter_list,
-                                                                color: Colors
-                                                                    .white,
+                                                                Icons.filter_list,
+                                                                color:
+                                                                    Colors.white,
                                                                 size: 20)),
                                                       )
                                                     ],
@@ -368,10 +359,8 @@ class _SearchActivityState extends State<SearchActivity>
                                                       child: SlideAnimation(
                                                         verticalOffset: 100.0,
                                                         child: FadeInAnimation(
-                                                          child:
-                                                              displayCardItem(
-                                                                  searchList[
-                                                                      index]),
+                                                          child: displayCardItem(
+                                                              searchList[index]),
                                                         ),
                                                       ))
                                             ]);
@@ -407,10 +396,9 @@ class _SearchActivityState extends State<SearchActivity>
                                                             color: Colors.grey,
                                                             height: 10,
                                                           ),
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  left: 10.0,
-                                                                  right: 10.0),
+                                                          margin: EdgeInsets.only(
+                                                              left: 10.0,
+                                                              right: 10.0),
                                                         )),
                                                         Container(
                                                           alignment:
@@ -431,24 +419,20 @@ class _SearchActivityState extends State<SearchActivity>
                                                             color: Colors.grey,
                                                             height: 10,
                                                           ),
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  left: 10.0,
-                                                                  right: 10.0),
+                                                          margin: EdgeInsets.only(
+                                                              left: 10.0,
+                                                              right: 10.0),
                                                         )),
                                                       ],
                                                     )),
                                                 AnimationConfiguration
                                                     .staggeredList(
                                                         position: index,
-                                                        duration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    375),
+                                                        duration: const Duration(
+                                                            milliseconds: 375),
                                                         child: SlideAnimation(
                                                           verticalOffset: 100.0,
-                                                          child:
-                                                              FadeInAnimation(
+                                                          child: FadeInAnimation(
                                                             child: index ==
                                                                     recentList
                                                                             .length -
@@ -460,38 +444,30 @@ class _SearchActivityState extends State<SearchActivity>
                                                                           recentList[
                                                                               index]),
                                                                       Container(
-                                                                          height: showMore
-                                                                              ? 15
-                                                                              : 20,
-                                                                          width: showMore
-                                                                              ? 15
-                                                                              : width,
-                                                                          child: showMore
-                                                                              ? Center(
-                                                                                  child: CircularProgressIndicator(
-                                                                                    valueColor: AlwaysStoppedAnimation(
-                                                                                      Colors.white70,
-                                                                                    ),
-                                                                                    strokeWidth: 1,
+                                                                        height:
+                                                                            showMore?15:20,
+                                                                        width: showMore?15:width,
+                                                                        child: showMore
+                                                                            ? Center(
+                                                                                child: CircularProgressIndicator(
+                                                                                  valueColor: AlwaysStoppedAnimation(
+                                                                                    Colors.white70,
                                                                                   ),
-                                                                                )
-                                                                              : Row(children: <Widget>[
-                                                                                  SizedBox(width: 10),
-                                                                                  Expanded(
-                                                                                    child: Divider(
-                                                                                      color: Colors.grey,
-                                                                                      height: 10,
-                                                                                    ),
-                                                                                  ),
-                                                                                  Container(margin: EdgeInsets.only(left: 10, right: 10), child: Text('No More Gifts Available', style: TextStyle(color: Colors.white70))),
-                                                                                  Expanded(
-                                                                                      child: Divider(
-                                                                                    color: Colors.grey,
-                                                                                    height: 10,
-                                                                                  )),
-                                                                                  SizedBox(width: 10),
-                                                                                ]),
-                                                                          margin: EdgeInsets.only(bottom: 20, top: 5))
+                                                                                  strokeWidth: 1,
+                                                                                ),
+                                                                              )
+                                                                            : Row(children:<Widget>[
+                                                  SizedBox(width:10),
+                                                  Expanded(child:Divider(color: Colors.grey,height: 10,),),
+                                                  Container(margin:EdgeInsets.only(left:10,right:10),child: Text('No More Gifts Available',style:TextStyle(color:Colors.white70))),
+                                                  Expanded(child:Divider(color: Colors.grey,height: 10,)),
+                                                    SizedBox(width:10),]),
+
+                                                                        margin:  EdgeInsets.only(
+                                                                                bottom: 20,
+                                                                                top: 5)
+                                                                            
+                                                                      )
                                                                     ],
                                                                   )
                                                                 : displayCardItem(
@@ -521,44 +497,34 @@ class _SearchActivityState extends State<SearchActivity>
                                                                       recentList[
                                                                           index]),
                                                                   Container(
-                                                                      height: showMore
-                                                                          ? 15
-                                                                          : 20,
-                                                                      width: showMore
-                                                                          ? 15
-                                                                          : width,
-                                                                      child:
-                                                                          showMore
-                                                                              ? Center(
-                                                                                  child: CircularProgressIndicator(
-                                                                                    valueColor: AlwaysStoppedAnimation(
-                                                                                      Colors.white70,
-                                                                                    ),
-                                                                                    strokeWidth: 1,
-                                                                                  ),
-                                                                                )
-                                                                              : Row(children: <
-                                                                                  Widget>[
-                                                                                  SizedBox(width: 10),
-                                                                                  Expanded(
-                                                                                    child: Divider(
-                                                                                      color: Colors.grey,
-                                                                                      height: 10,
-                                                                                    ),
-                                                                                  ),
-                                                                                  Container(margin: EdgeInsets.only(left: 10, right: 10), child: Text('No More Gifts Available', style: TextStyle(color: Colors.white70))),
-                                                                                  Expanded(
-                                                                                      child: Divider(
-                                                                                    color: Colors.grey,
-                                                                                    height: 10,
-                                                                                  )),
-                                                                                  SizedBox(width: 10),
-                                                                                ]),
-                                                                      margin: EdgeInsets.only(
-                                                                          bottom:
-                                                                              20,
-                                                                          top:
-                                                                              5))
+                                                                    height: showMore?15:20,
+                                                                    width: showMore?15:width,
+                                                                    child: showMore
+                                                                        ? Center(
+                                                                            child:
+                                                                                CircularProgressIndicator(
+                                                                              valueColor:
+                                                                                  AlwaysStoppedAnimation(
+                                                                                Colors.white70,
+                                                                              ),
+                                                                              strokeWidth:
+                                                                                  1,
+                                                                            ),
+                                                                          )
+                                                                        :  Row(children:<Widget>[
+                                                  SizedBox(width:10),
+                                                  Expanded(child:Divider(color: Colors.grey,height: 10,),),
+                                                  Container(margin:EdgeInsets.only(left:10,right:10),child: Text('No More Gifts Available',style:TextStyle(color:Colors.white70))),
+                                                  Expanded(child:Divider(color: Colors.grey,height: 10,)),
+                                                    SizedBox(width:10),]),
+
+                                                                    margin:  EdgeInsets.only(
+                                                                            bottom:
+                                                                                20,
+                                                                            top:
+                                                                                5)
+                                                                        
+                                                                  )
                                                                 ],
                                                               )
                                                             : displayCardItem(
@@ -573,6 +539,7 @@ class _SearchActivityState extends State<SearchActivity>
                           )),
           Positioned(
             left: 0,
+            
             child: SlideTransition(
               position: dropAnimation,
               child: Container(
@@ -636,8 +603,8 @@ class _SearchActivityState extends State<SearchActivity>
                                   showLoading = true;
                                 });
                                 Future.delayed(Duration(milliseconds: 500), () {
-                                  sortedList.sort(
-                                      (a, b) => a.price.compareTo(b.price));
+                                  sortedList
+                                      .sort((a, b) => a.price.compareTo(b.price));
                                   searchList = sortedList;
 
                                   setState(() {
@@ -671,8 +638,8 @@ class _SearchActivityState extends State<SearchActivity>
                                   showLoading = true;
                                 });
                                 Future.delayed(Duration(milliseconds: 500), () {
-                                  sortedList.sort(
-                                      (a, b) => b.price.compareTo(a.price));
+                                  sortedList
+                                      .sort((a, b) => b.price.compareTo(a.price));
                                   searchList = sortedList;
 
                                   setState(() {
@@ -764,8 +731,11 @@ class _SearchActivityState extends State<SearchActivity>
                                           : Colors.white54)))),
                     ],
                   ))),
+          Positioned.fill(
+              child: TestDropdown(key: menuKey, changeIcon: changeIcon)),
           Positioned(
             left: 30,
+            
             child: SlideTransition(
               position: dropAnimation,
               child: Container(
@@ -793,8 +763,7 @@ class _SearchActivityState extends State<SearchActivity>
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Container(
-                                    margin:
-                                        EdgeInsets.only(left: 10, right: 10),
+                                    margin: EdgeInsets.only(left: 10, right: 10),
                                     child: new Icon(
                                       Icons.search,
                                       size: 30,
@@ -813,13 +782,11 @@ class _SearchActivityState extends State<SearchActivity>
                                             : menuIcon == Icons.calendar_today
                                                 ? 'Search Occasions'
                                                 : menuIcon ==
-                                                        Icons
-                                                            .store_mall_directory
+                                                        Icons.store_mall_directory
                                                     ? 'Search Gift Shops'
                                                     : 'Search',
                                         hintStyle: TextStyle(
-                                            color: Colors.white70,
-                                            fontSize: 20)),
+                                            color: Colors.white70, fontSize: 20)),
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 20,
@@ -843,8 +810,7 @@ class _SearchActivityState extends State<SearchActivity>
                                     width: 1)),
                             child: InkWell(
                               onTap: () {
-                                if (resetTimer == null ||
-                                    !resetTimer.isActive) {
+                                if (resetTimer == null || !resetTimer.isActive) {
                                   resetTimer =
                                       Timer(Duration(milliseconds: 1000), () {
                                     if (clicked) clicked = false;
@@ -908,8 +874,6 @@ class _SearchActivityState extends State<SearchActivity>
                   )),
             ),
           ),
-          Positioned.fill(
-              child: TestDropdown(key: menuKey, changeIcon: changeIcon)),
           Positioned(
               left: (width / 2) - 15,
               top: 5,
@@ -1038,24 +1002,25 @@ class _SearchActivityState extends State<SearchActivity>
         child: Container(
           width: width,
           height: 200,
-          foregroundDecoration:
-              content.discount != null && content.discount.isNotEmpty
-                  ? PriceDecoration(
-                      badgeColor: Color.fromRGBO(5, 150, 197, 1),
-                      badgeSize: 60,
-                      textSpan: TextSpan(
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: content.discount,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: "Lobster",
-                                fontSize: 18),
-                          )
-                        ],
-                      ),
-                    )
-                  : null,
+          
+           foregroundDecoration: content.discount != null &&
+                                  content.discount.isNotEmpty
+                              ? PriceDecoration(
+                                  badgeColor: Color.fromRGBO(5, 150, 197, 1),
+                                  badgeSize: 60,
+                                  textSpan: TextSpan(
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: content.discount,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: "Lobster",
+                                            fontSize: 18),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : null,
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
@@ -1068,7 +1033,11 @@ class _SearchActivityState extends State<SearchActivity>
                     return Shimmer.fromColors(
                       enabled: true,
                       child: Container(
-                          height: 200, width: width, color: Color(0xFF282828)),
+                          height: 200,
+                          
+                         
+                          width: width,
+                          color: Color(0xFF282828)),
                       baseColor: Color(0xFF282828),
                       highlightColor: Color(0xFF383838),
                     );

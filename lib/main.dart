@@ -1,5 +1,4 @@
 import 'package:boxet/LoginActivity.dart';
-import 'package:boxet/LoginState.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,7 +18,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:boxet/Welcome.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'AppLocalizations.dart';
@@ -111,10 +109,7 @@ class MyApp extends StatelessWidget {
           accentIconTheme: IconThemeData(color: Color.fromRGBO(5, 150, 197, 1)),
           scaffoldBackgroundColor: Colors.black,
           accentColor: Color.fromRGBO(5, 150, 197, 1)),
-      home: ChangeNotifierProvider<LoginState>(
-        create: (_) => LoginState(),
-        child: new Welcome(),
-      ),
+      home: Welcome()
     );
   }
 }

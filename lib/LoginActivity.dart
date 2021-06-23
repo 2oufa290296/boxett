@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:boxet/GiftPage.dart';
-import 'package:boxet/LoginState.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,7 +10,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:boxet/CustomDialog.dart';
 import 'package:boxet/main.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boxet/Signup.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart' as apple;
@@ -56,6 +54,7 @@ class _LoginActivityState extends State<LoginActivity> {
   GlobalKey<CustomDialogState> customKey = GlobalKey();
   String uid = '';
   String forgotErrorText = '';
+  final auth = FirebaseAuth.instance;
 
   Future<bool> checkUser() async {
     bool exists;
@@ -190,15 +189,15 @@ class _LoginActivityState extends State<LoginActivity> {
       return null;
     } else {
       GoogleSignInAuthentication authentication = await account.authentication;
-      final auth = Provider.of<LoginState>(context, listen: false);
+      
 
       AuthCredential credential = GoogleAuthProvider.credential(
           accessToken: authentication.accessToken,
           idToken: authentication.idToken);
 
-      await auth.loginUser(credential);
-      User user = await auth.getCurrentUser();
-      return (user);
+      await auth.signInWithCredential(credential);
+      
+      return (auth.currentUser);
     }
   }
 
@@ -213,16 +212,16 @@ class _LoginActivityState extends State<LoginActivity> {
         
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
-        final auth = Provider.of<LoginState>(context, listen: false);
+        
 
         AuthCredential credential =
             FacebookAuthProvider.credential(result.accessToken.token);
            
-        await auth.loginUser(credential);
+        await auth.signInWithCredential(credential);
 
     
         
-        User user = await auth.getCurrentUser();
+        User user =  auth.currentUser;
 
       
 
@@ -347,8 +346,7 @@ class _LoginActivityState extends State<LoginActivity> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Stack(children: <Widget>[
-            Positioned(right:10,top:20,child:GestureDetector(onTap:(){Navigator.pop(context);},child:Icon(Icons.close,color:Colors.white54,size:20)))
-            ,Positioned(
+Positioned(
                 top: 0,
                 left: 0,
                 height: height * 0.3,
@@ -1321,7 +1319,8 @@ class _LoginActivityState extends State<LoginActivity> {
                       //     },
                       //   ))
                       // : Container()
-                    ]))
+                    ])),            Positioned(right:10,top:20,child:GestureDetector(onTap:(){Navigator.pop(context);},child:Icon(Icons.close,color:Colors.white54,size:20)))
+            ,
           ]),
         ));
   }
@@ -1345,10 +1344,10 @@ class _LoginActivityState extends State<LoginActivity> {
             accessToken:
                 String.fromCharCodes(appleIdCredential.authorizationCode));
 
-        final auth = Provider.of<LoginState>(context, listen: false);
+        
 
-        await auth.loginUserApple(credential);
-        User user = await auth.getCurrentUser();
+        await auth.signInWithCredential(credential);
+        User user =  auth.currentUser;
 
         DocumentReference docR =
             FirebaseFirestore.instance.collection('Users').doc(user.uid);
