@@ -1,3 +1,4 @@
+import 'package:boxet/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +108,15 @@ class SigningOutState extends State<SigningOut> with TickerProviderStateMixin {
                             margin: EdgeInsets.only(
                               top: 10,
                             ),
-                            child: Text('Are you sure you want to Sign Out?',
+                            child: Text('Are you sure you want to',textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 18,
+                                )),
+                          ),
+                          Container(
+                            
+                            child: Text('Sign Out?',textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.white70,
                                   fontSize: 18,
@@ -130,7 +139,7 @@ class SigningOutState extends State<SigningOut> with TickerProviderStateMixin {
                                       await _auth.signOut();
                                     }
 
-                                    Navigator.pop(context);
+                                    Navigator.push(context, MaterialPageRoute(builder:(context)=>MyHomePage()));
                                   });
                                 },
                                 child: Container(
