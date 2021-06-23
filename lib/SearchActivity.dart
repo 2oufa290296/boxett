@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:boxet/classes/PriceDecoration.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
@@ -14,7 +15,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
-import 'package:boxet/classes/PriceDecoration.dart';
 
 class SearchActivity extends StatefulWidget {
   @override
