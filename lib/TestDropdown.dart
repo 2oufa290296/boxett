@@ -115,7 +115,7 @@ class TestDropdownState extends State<TestDropdown>
         AnimatedPositioned(
           duration: Duration(milliseconds: 400),
           left: width - 70,
-          top: opened ? 130 : 90,
+          top: opened ? 100 : 60,
           child: _buildIcon(
               Icon(
                 MdiIcons.gift,
@@ -129,7 +129,7 @@ class TestDropdownState extends State<TestDropdown>
         AnimatedPositioned(
           duration: Duration(milliseconds: 450),
           left: width - 70,
-          top: opened ? 180 : 90,
+          top: opened ? 150 : 60,
           child: _buildIcon(
               Icon(
                 Icons.calendar_today,
@@ -143,7 +143,7 @@ class TestDropdownState extends State<TestDropdown>
         AnimatedPositioned(
           duration: Duration(milliseconds: 500),
           left: width - 70,
-          top: opened ? 230 : 90,
+          top: opened ? 200 : 60,
           child: _buildIcon(
               Icon(
                 Icons.store_mall_directory,
