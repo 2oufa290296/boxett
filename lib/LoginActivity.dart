@@ -1189,7 +1189,7 @@ Positioned(
                       ),
                       Platform.isIOS
                           ? SizedBox(
-                              width: 280,
+                              width: 140,
                               child: FutureBuilder<bool>(
                                 future: _isAvailableFuture,
                                 builder: (context, isAvailableSnapshot) {
@@ -1201,7 +1201,7 @@ Positioned(
                                               CrossAxisAlignment.center,
                                           children: [
                                               SizedBox(
-                                                height: 20,
+                                                height: 15,
                                               ),
                                               apple.AppleSignInButton(type: apple.ButtonType.defaultButton,
                                                 onPressed: logIn,
