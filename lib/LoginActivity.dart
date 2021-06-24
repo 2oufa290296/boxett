@@ -1201,13 +1201,13 @@ Positioned(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                              SizedBox(
+                                             SizedBox(
                                                 height: 10,
                                               ),
                                               apple.AppleSignInButton(type: apple.ButtonType.defaultButton,
                                                 onPressed: logIn,cornerRadius: 10,
                                                 style: apple.ButtonStyle.white,
-                                              ),
+                                              ),SizedBox(height:10)
                                             
                                             ])
                                       : Text(
