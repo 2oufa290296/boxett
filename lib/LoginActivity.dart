@@ -1189,7 +1189,8 @@ Positioned(
                       ),
                       Platform.isIOS
                           ? SizedBox(
-                              width: 140,
+                              width: width *0.6,
+                              height:50,
                               child: FutureBuilder<bool>(
                                 future: _isAvailableFuture,
                                 builder: (context, isAvailableSnapshot) {
@@ -1201,15 +1202,13 @@ Positioned(
                                               CrossAxisAlignment.center,
                                           children: [
                                               SizedBox(
-                                                height: 15,
+                                                height: 10,
                                               ),
                                               apple.AppleSignInButton(type: apple.ButtonType.defaultButton,
                                                 onPressed: logIn,cornerRadius: 10,
                                                 style: apple.ButtonStyle.white,
                                               ),
-                                              SizedBox(
-                                                height: 20,
-                                              ),
+                                            
                                             ])
                                       : Text(
                                           'Sign in With Apple not available. Must be run on iOS 13+');
