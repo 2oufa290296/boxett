@@ -1203,9 +1203,9 @@ Positioned(
                                               SizedBox(
                                                 height: 20,
                                               ),
-                                              apple.AppleSignInButton(
+                                              apple.AppleSignInButton(type: apple.ButtonType.defaultButton,
                                                 onPressed: logIn,
-                                                style: apple.ButtonStyle.black,
+                                                style: apple.ButtonStyle.white,
                                               ),
                                               SizedBox(
                                                 height: 20,
