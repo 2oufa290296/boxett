@@ -1207,7 +1207,8 @@ Positioned(
                                               apple.AppleSignInButton(type: apple.ButtonType.defaultButton,
                                                 onPressed: logIn,cornerRadius: 10,
                                                 style: apple.ButtonStyle.white,
-                                              ),SizedBox(height:10)
+                                              ),
+                                              SizedBox(height:20)
                                             
                                             ])
                                       : Text(
