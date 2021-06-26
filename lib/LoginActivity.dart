@@ -1319,7 +1319,7 @@ Positioned(
                       //     },
                       //   ))
                       // : Container()
-                    ])),            Positioned(right:10,top:20,child:GestureDetector(onTap:(){Navigator.pop(context);},child:Icon(Icons.close,color:Colors.white54,size:20)))
+                    ])),            Positioned(right:10,top:20,child:GestureDetector(onTap:(){Navigator.pop(context);},child:Icon(MdiIcons.closeCircleOutline,color:Colors.white,size:20)))
             ,
           ]),
         ));
